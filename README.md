@@ -10,7 +10,7 @@ This is a light-weight Java library to measure the behavior of critical componen
 
 ### Philosophy
 
-Everything is measured as a long integer, being an every increasing value (monotonically increasing counter). 
+Everything is measured as a long integer, being an increasing value (monotonically increasing counter). 
 So instead of measuring 10, 10, 10 for a constant value you will have 10, 20, 30.
 This way you can get cheap aggregates (at a given resolution), as you don't have to visit every value.
 
