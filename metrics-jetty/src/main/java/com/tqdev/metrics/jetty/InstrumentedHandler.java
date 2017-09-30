@@ -185,9 +185,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 		if (response.getContentType().matches(".*" + contentTypes + ".*")) {
 			String parts[] = request.getRequestURI().split("/");
 			for (int i = 0; i < parts.length; i++) {
-				if (parts[i].matches("[^a-zA-Z]+") && parts[i].matches(".*[0-9].*")) {
-					parts[i] = "(number)";
-				} else if (parts[i].matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")) {
+				if (parts[i].matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")) {
 					parts[i] = "(uuid)";
 				} else if (parts[i].matches("[a-f0-9]{128}")) {
 					parts[i] = "(sha512)";
@@ -197,6 +195,8 @@ public class InstrumentedHandler extends HandlerWrapper {
 					parts[i] = "(sha1)";
 				} else if (parts[i].matches("[a-f0-9]{32}")) {
 					parts[i] = "(md5)";
+				} else if (parts[i].matches("[^a-zA-Z]+") && parts[i].matches(".*[0-9].*")) {
+					parts[i] = "(number)";
 				}
 			}
 			String path = String.join("/", parts);
