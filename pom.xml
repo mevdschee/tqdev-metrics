@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.tqdev.metrics</groupId>
+    <artifactId>tqdev-metrics-parent</artifactId>
+    <version>0.9.0</version>
+    <packaging>pom</packaging>
+    
+    <name>TQdev.com's Metrics aggregator</name>
+    <url>https://tqdev.com/</url>
+    <description>Aggregator of the TQdev.com's Metric modules.</description>
+
+    <developers>
+        <developer>
+            <id>mevdschee</id>
+            <name>Maurits van der Schee</name>
+            <email>maurits@vdschee.nl</email>
+        </developer>
+    </developers>
+    
+    <modules>
+        <module>metrics-core</module>
+        <module>metrics-jetty</module>
+        <module>metrics-aspect</module>
+        <module>metrics-jmx</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- versions of module dependencies -->
+        <jetty9.version>9.4.7.v20170914</jetty9.version>
+        <aspectj.version>1.8.11</aspectj.version>
+    </properties>
+</project>
