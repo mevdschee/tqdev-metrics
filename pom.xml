@@ -18,7 +18,25 @@
             <email>maurits@vdschee.nl</email>
         </developer>
     </developers>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/mevdschee/tqdev-metrics.git</connection>
+        <developerConnection>scm:git:ssh://github.com:mevdschee/tqdev-metrics.git</developerConnection>
+        <url>https://github.com/mevdschee/tqdev-metrics/</url>
+    </scm>
     
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/mevdschee/tqdev-metrics/issues/</url>
+    </issueManagement>
+
     <modules>
         <module>metrics-core</module>
         <module>metrics-jetty</module>
@@ -35,4 +53,6 @@
         <jetty9.version>9.4.7.v20170914</jetty9.version>
         <aspectj.version>1.8.11</aspectj.version>
     </properties>
+    
+    
 </project>
