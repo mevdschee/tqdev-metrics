@@ -18,7 +18,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.tqdev.metrics.aspect;
+package com.tqdev.metrics.aspectj;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

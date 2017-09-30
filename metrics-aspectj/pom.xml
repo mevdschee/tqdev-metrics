@@ -9,9 +9,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>tqdev-metrics-aspect</artifactId>
+    <artifactId>tqdev-metrics-aspectj</artifactId>
 
-    <name>TQdev.com's Metrics aspect</name>
+    <name>TQdev.com's Metrics for AspectJ weaving</name>
     <description>
         ...
     </description>
