@@ -13,7 +13,7 @@
 
     <name>TQdev.com's Metrics for AspectJ weaving</name>
     <description>
-        ...
+        Instrumentation of any method using a simple annotation on the class or method using the power of AspectJ weaving.
     </description>
 
     <dependencies>
