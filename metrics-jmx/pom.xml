@@ -13,7 +13,7 @@
 
     <name>TQdev.com's Metrics reporting via JMX</name>
     <description>
-        ...
+        Support for publishing the metrics from instrumented components via JMX.
     </description>
 
     <dependencies>
