@@ -12,7 +12,7 @@ This is a light-weight Java library to measure the behavior of critical componen
 
 Everything is measured as a long integer, being an increasing value (monotonically increasing counter). 
 So instead of measuring 10, 10, 10 for a constant value you will have 10, 20, 30.
-This way you can get cheap aggregates (at a given resolution), as you don't have to visit every value.
+This way you can get cheap aggregates (at any given resolution), as you don't have to visit every value.
 
 It uses at max two long integers per metric: one for duration in nanoseconds and one for invocation count.
 For on-demand measured values (Gauges) it also uses a long integer to unify the storage model.
