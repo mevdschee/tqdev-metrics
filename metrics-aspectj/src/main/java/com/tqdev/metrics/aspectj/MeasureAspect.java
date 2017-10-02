@@ -26,11 +26,32 @@ import org.aspectj.lang.annotation.Aspect;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
+/**
+ * The Class MeasureAspect keeps track of total duration and invocation count of
+ * public functions using AspectJ weaving.
+ */
 @Aspect
 public class MeasureAspect {
 
+	/** The registry. */
 	private final MetricRegistry registry = MetricRegistry.getInstance();
 
+	/**
+	 * Measure the total duration and invocation count of public functions of a
+	 * class using the "MeasureClass" annotation. This method should not be
+	 * invoked manually. It should be automatically invoked using AspectJ
+	 * weaving.
+	 *
+	 * @param joinPoint
+	 *            the public function of the class on which the measurement is
+	 *            executed
+	 * @param annotation
+	 *            the annotation of the class
+	 * @return the return value of the public function that is measured
+	 * @throws Throwable
+	 *             any exception that may be thrown by the public function that
+	 *             is measured
+	 */
 	/*
 	 * Advice for the public methods in a class, where the class is marked with
 	 * Annotation "MeasureClass"
@@ -50,6 +71,20 @@ public class MeasureAspect {
 		return result;
 	}
 
+	/**
+	 * Measure the total duration and invocation count of a public function
+	 * using the "MeasureMethod" annotation.
+	 *
+	 * @param joinPoint
+	 *            the public function (the method) on which the measurement is
+	 *            executed
+	 * @param annotation
+	 *            the annotation of the method
+	 * @return the return value of the public function that is measured
+	 * @throws Throwable
+	 *             any exception that may be thrown by the public function that
+	 *             is measured
+	 */
 	/*
 	 * Advice for the public methods in a class, where the methods are marked
 	 * with Annotation "MeasureMethod"

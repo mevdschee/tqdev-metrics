@@ -47,18 +47,41 @@ import javax.management.openmbean.SimpleType;
 import com.tqdev.metrics.core.MetricRegistry;
 
 /**
- * OpenMBean for accessing the
+ * OpenMBean for accessing (a part of) the metric registry via JMX
  */
 public class JMXReporter implements DynamicMBean {
 
+	/**
+	 * The type of the metrics in the registry that this JMXReporter reports.
+	 */
 	private final String type;
-	private final MetricRegistry storage;
 
+	/**
+	 * The registry in which the metrics, that this JMXReporter reports, are
+	 * stored.
+	 */
+	private final MetricRegistry registry;
+
+	/**
+	 * Instantiates a new JMX reporter.
+	 *
+	 * @param type
+	 *            the type of the metrics in the registry that this JMXReporter
+	 *            reports
+	 * @param registry
+	 *            the registry in which the metrics, that this JMXReporter
+	 *            reports, are stored
+	 */
 	public JMXReporter(String type, MetricRegistry registry) {
 		this.type = type;
-		storage = registry;
+		this.registry = registry;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see javax.management.DynamicMBean#getAttribute(java.lang.String)
+	 */
 	@Override
 	public Object getAttribute(String attribute_name)
 			throws AttributeNotFoundException, MBeanException, ReflectionException {
@@ -67,12 +90,18 @@ public class JMXReporter implements DynamicMBean {
 			throw new RuntimeOperationsException(new IllegalArgumentException("Attribute name cannot be null"),
 					"Cannot call getAttributeInfo with null attribute name");
 		}
-		if (storage.has(type, attribute_name)) {
-			return storage.get(type, attribute_name);
+		if (registry.has(type, attribute_name)) {
+			return registry.get(type, attribute_name);
 		}
 		throw new AttributeNotFoundException("Cannot find attribute: " + type + "." + attribute_name);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * javax.management.DynamicMBean#setAttribute(javax.management.Attribute)
+	 */
 	@Override
 	public void setAttribute(Attribute attribute)
 			throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {
@@ -80,6 +109,11 @@ public class JMXReporter implements DynamicMBean {
 		throw new AttributeNotFoundException("No attribute can be set in this MBean");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see javax.management.DynamicMBean#getAttributes(java.lang.String[])
+	 */
 	@Override
 	public AttributeList getAttributes(String[] attributeNames) {
 
@@ -104,11 +138,23 @@ public class JMXReporter implements DynamicMBean {
 		return (resultList);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see javax.management.DynamicMBean#setAttributes(javax.management.
+	 * AttributeList)
+	 */
 	@Override
 	public AttributeList setAttributes(AttributeList attributes) {
 		return new AttributeList();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see javax.management.DynamicMBean#invoke(java.lang.String,
+	 * java.lang.Object[], java.lang.String[])
+	 */
 	@Override
 	public Object invoke(String operationName, Object[] params, String[] signature)
 			throws MBeanException, ReflectionException {
@@ -117,12 +163,17 @@ public class JMXReporter implements DynamicMBean {
 				"No operations defined for this OpenMBean");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see javax.management.DynamicMBean#getMBeanInfo()
+	 */
 	@Override
 	public MBeanInfo getMBeanInfo() {
 
 		ArrayList<OpenMBeanAttributeInfoSupport> attributes = new ArrayList<>();
 
-		for (String key : storage.getKeys(type)) {
+		for (String key : registry.getKeys(type)) {
 			attributes.add(
 					new OpenMBeanAttributeInfoSupport(key, type + " of " + key, SimpleType.LONG, true, false, false));
 		}
@@ -133,11 +184,23 @@ public class JMXReporter implements DynamicMBean {
 
 		return PSOMBInfo;
 	}
-	
+
+	/**
+	 * Start with the default domain (the package name of this class).
+	 */
 	public static void start() {
 		start(JMXReporter.class.getPackage().getName());
 	}
-	
+
+	/**
+	 * Start with a specific domain. Note that for each metric the first part of
+	 * the type (before the first dot) is added to the domain, while the second
+	 * part is used as the MBean ObjectName. The key of the metric is
+	 * represented as an MBean Attribute.
+	 *
+	 * @param domain
+	 *            the domain on which the metrics are reported.
+	 */
 	public static void start(String domain) {
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 		MetricRegistry registry = MetricRegistry.getInstance();

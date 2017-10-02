@@ -23,51 +23,141 @@ package com.tqdev.metrics.core;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MetricRegistry.
+ */
 public class MetricRegistry {
 
+	/** The values. */
 	private volatile ConcurrentHashMap<String, ConcurrentHashMap<String, Object>> values;
 
+	/**
+	 * Instantiates a new metric registry.
+	 */
 	public MetricRegistry() {
 		values = new ConcurrentHashMap<>();
 	}
 
+	/**
+	 * Increment.
+	 *
+	 * @param type
+	 *            the type
+	 * @param key
+	 *            the key
+	 */
 	public void increment(String type, String key) {
 		((LongAdder) values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
 				k -> new LongAdder())).increment();
 	}
 
+	/**
+	 * Decrement.
+	 *
+	 * @param type
+	 *            the type
+	 * @param key
+	 *            the key
+	 */
 	public void decrement(String type, String key) {
 		((LongAdder) values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
 				k -> new LongAdder())).decrement();
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param type
+	 *            the type
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
 	public void add(String type, String key, long value) {
 		((LongAdder) values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
 				k -> new LongAdder())).add(value);
 	}
 
+	/**
+	 * Sets the.
+	 *
+	 * @param type
+	 *            the type
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
 	public void set(String type, String key, long value) {
 		LongAdder adder = new LongAdder();
 		adder.add(value);
 		values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).put(key, adder);
 	}
 
+	/**
+	 * Sets the.
+	 *
+	 * @param type
+	 *            the type
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
 	public void set(String type, String key, Gauge value) {
 		values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).put(key, value);
 	}
 
+	/**
+	 * Gets the types.
+	 *
+	 * @return the types
+	 */
 	public Iterable<String> getTypes() {
 		return values.keySet();
 	}
 
+	/**
+	 * Gets the keys.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the keys
+	 * @throws NullPointerException
+	 *             the null pointer exception
+	 */
 	public Iterable<String> getKeys(String type) throws NullPointerException {
 		return values.get(type).keySet();
 	}
 
+	/**
+	 * Checks for.
+	 *
+	 * @param type
+	 *            the type
+	 * @param key
+	 *            the key
+	 * @return true, if successful
+	 * @throws NullPointerException
+	 *             the null pointer exception
+	 */
 	public boolean has(String type, String key) throws NullPointerException {
 		return values.get(type).containsKey(key);
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param type
+	 *            the type
+	 * @param key
+	 *            the key
+	 * @return the long
+	 * @throws NullPointerException
+	 *             the null pointer exception
+	 */
 	public long get(String type, String key) throws NullPointerException {
 		Object o = values.get(type).get(key);
 		if (o instanceof LongAdder) {
