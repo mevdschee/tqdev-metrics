@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>com.tqdev.metrics</groupId>
-    <artifactId>tqdev-metrics-parent</artifactId>
+    <artifactId>metrics-parent</artifactId>
     <version>0.9.0</version>
     <packaging>pom</packaging>
     

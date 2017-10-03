@@ -221,8 +221,7 @@ public class JMXReporter implements DynamicMBean {
 					}
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 		}, 1, 5, TimeUnit.SECONDS);
 	}

@@ -26,17 +26,26 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation type MeasureClass can be added to a class to measure total
- * duration and invocation count of it's public functions.
+ * The annotation type MeasuredMethod can be added to a public function of a
+ * class to measure total duration and invocation count of this annotated
+ * method.
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MeasureClass {
+public @interface MeasuredMethod {
 
 	/**
-	 * Category is a
+	 * Category.
 	 *
 	 * @return the string
 	 */
 	String category() default "";
+
+	/**
+	 * Signature.
+	 *
+	 * @return the string
+	 */
+	String signature() default "";
+
 }

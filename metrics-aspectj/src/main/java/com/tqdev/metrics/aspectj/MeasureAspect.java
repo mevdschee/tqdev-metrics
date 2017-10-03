@@ -38,7 +38,7 @@ public class MeasureAspect {
 
 	/**
 	 * Measure the total duration and invocation count of public functions of a
-	 * class using the "MeasureClass" annotation. This method should not be
+	 * class using the "MeasuredClass" annotation. This method should not be
 	 * invoked manually. It should be automatically invoked using AspectJ
 	 * weaving.
 	 *
@@ -54,10 +54,10 @@ public class MeasureAspect {
 	 */
 	/*
 	 * Advice for the public methods in a class, where the class is marked with
-	 * Annotation "MeasureClass"
+	 * Annotation "MeasuredClass"
 	 */
-	@Around("execution(public * *(..)) && @within(annotation)")
-	public Object MeasureClass(final ProceedingJoinPoint joinPoint, final MeasureClass annotation) throws Throwable {
+	@Around("execution(public * *(..)) && @within(annotation) && !annotation(MeasuredMethod)")
+	public Object MeasuredClass(final ProceedingJoinPoint joinPoint, final MeasuredClass annotation) throws Throwable {
 		long start = System.nanoTime();
 		Object result = joinPoint.proceed();
 		long duration = System.nanoTime() - start;
@@ -73,7 +73,7 @@ public class MeasureAspect {
 
 	/**
 	 * Measure the total duration and invocation count of a public function
-	 * using the "MeasureMethod" annotation.
+	 * using the "MeasuredMethod" annotation.
 	 *
 	 * @param joinPoint
 	 *            the public function (the method) on which the measurement is
@@ -87,10 +87,10 @@ public class MeasureAspect {
 	 */
 	/*
 	 * Advice for the public methods in a class, where the methods are marked
-	 * with Annotation "MeasureMethod"
+	 * with Annotation "MeasuredMethod"
 	 */
 	@Around("execution(public * *(..)) && @annotation(annotation)")
-	public Object MeasureMethod(final ProceedingJoinPoint joinPoint, final MeasureMethod annotation) throws Throwable {
+	public Object MeasuredMethod(final ProceedingJoinPoint joinPoint, final MeasuredMethod annotation) throws Throwable {
 		long start = System.nanoTime();
 		Object result = joinPoint.proceed();
 		long duration = System.nanoTime() - start;

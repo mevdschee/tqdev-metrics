@@ -23,13 +23,15 @@ package com.tqdev.metrics.core;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class MetricRegistry.
+ * The Class MetricRegistry provides access to all metrics that are tracked.
  */
 public class MetricRegistry {
 
-	/** The values. */
+	/**
+	 * The values in the metric registry have a type and a key and are of type
+	 * LongAdder or Gauge.
+	 */
 	private volatile ConcurrentHashMap<String, ConcurrentHashMap<String, Object>> values;
 
 	/**
@@ -40,7 +42,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Increment.
+	 * Increment a metric for a given type and key.
 	 *
 	 * @param type
 	 *            the type
@@ -53,7 +55,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Decrement.
+	 * Decrement a metric for a given type and key.
 	 *
 	 * @param type
 	 *            the type
@@ -66,7 +68,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Adds the.
+	 * Adds a value to a metric for a given type and key.
 	 *
 	 * @param type
 	 *            the type
@@ -81,7 +83,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Sets the.
+	 * Sets the value of a metric for a given type and key.
 	 *
 	 * @param type
 	 *            the type
@@ -97,7 +99,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Sets the.
+	 * Sets the Gauge (measure function) of a metric for a given type and key.
 	 *
 	 * @param type
 	 *            the type
@@ -111,7 +113,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Gets the types.
+	 * Gets the (unique) set of types of all registered metrics.
 	 *
 	 * @return the types
 	 */
@@ -120,7 +122,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Gets the keys.
+	 * Gets the (unique) set of keys of all registered metrics of a given type.
 	 *
 	 * @param type
 	 *            the type
@@ -133,7 +135,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Checks for.
+	 * Checks for existence of a metric for a given type and key.
 	 *
 	 * @param type
 	 *            the type
@@ -148,7 +150,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Gets the.
+	 * Gets the value of a metric for a given type and key.
 	 *
 	 * @param type
 	 *            the type

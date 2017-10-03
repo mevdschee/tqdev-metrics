@@ -4,12 +4,12 @@
 
     <parent>
         <groupId>com.tqdev.metrics</groupId>
-        <artifactId>tqdev-metrics-parent</artifactId>
+        <artifactId>metrics-parent</artifactId>
         <version>0.9.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>tqdev-metrics-jmx</artifactId>
+    <artifactId>metrics-jmx</artifactId>
 
     <name>TQdev.com's Metrics reporting via JMX</name>
     <description>
@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>tqdev-metrics-core</artifactId>
+            <artifactId>metrics-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
