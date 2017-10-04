@@ -189,7 +189,7 @@ public class JMXReporter implements DynamicMBean {
 	 * Start with the default domain (the package name of this class).
 	 */
 	public static void start() {
-		start(JMXReporter.class.getPackage().getName());
+		start("com.tqdev.metrics");
 	}
 
 	/**
