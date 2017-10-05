@@ -4,7 +4,7 @@
     
     <groupId>com.tqdev.metrics</groupId>
     <artifactId>metrics-parent</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.2</version>
     <packaging>pom</packaging>
     
     <name>TQdev.com's Metrics aggregator</name>
@@ -111,7 +111,7 @@
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>

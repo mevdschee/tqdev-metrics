@@ -56,7 +56,7 @@ public class MeasureAspect {
 	 * Advice for the public methods in a class, where the class is marked with
 	 * Annotation "MeasuredClass"
 	 */
-	@Around("execution(public * *(..)) && @within(annotation) && !annotation(MeasuredMethod)")
+	@Around("execution(!@MeasuredMethod public * *(..)) && @within(annotation)")
 	public Object MeasuredClass(final ProceedingJoinPoint joinPoint, final MeasuredClass annotation) throws Throwable {
 		long start = System.nanoTime();
 		Object result = joinPoint.proceed();
