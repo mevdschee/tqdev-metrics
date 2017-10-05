@@ -4,7 +4,7 @@
     
     <groupId>com.tqdev.metrics</groupId>
     <artifactId>metrics-parent</artifactId>
-    <version>0.9.2</version>
+    <version>0.9.3</version>
     <packaging>pom</packaging>
     
     <name>TQdev.com's Metrics aggregator</name>
@@ -51,7 +51,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- versions of module dependencies -->
         <jetty9.version>9.4.7.v20170914</jetty9.version>
-        <aspectj.version>1.8.11</aspectj.version>
+        <aspectj.version>1.8.2</aspectj.version>
     </properties>
 
     <distributionManagement>

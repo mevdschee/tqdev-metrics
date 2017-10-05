@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.tqdev.metrics</groupId>
         <artifactId>metrics-parent</artifactId>
-        <version>0.9.2</version>
+        <version>0.9.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -24,9 +24,38 @@
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectj.version}</version>
         </dependency>
     </dependencies>
+    
+ <build>
+	<plugins>
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>aspectj-maven-plugin</artifactId>
+			<version>1.7</version>
+			<executions>
+				<execution>
+					<goals>
+						<goal>compile</goal>
+					</goals>
+					<configuration>
+						<complianceLevel>1.8</complianceLevel>
+						<source>1.8</source>
+						<target>1.8</target>
+						<showWeaveInfo>true</showWeaveInfo>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
+</build>
+
 </project>
 
