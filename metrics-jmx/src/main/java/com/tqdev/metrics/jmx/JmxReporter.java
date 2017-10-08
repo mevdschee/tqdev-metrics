@@ -49,7 +49,7 @@ import com.tqdev.metrics.core.MetricRegistry;
 /**
  * OpenMBean for accessing (a part of) the metric registry via JMX
  */
-public class JMXReporter implements DynamicMBean {
+public class JmxReporter implements DynamicMBean {
 
 	/**
 	 * The type of the metrics in the registry that this JMXReporter reports.
@@ -72,7 +72,7 @@ public class JMXReporter implements DynamicMBean {
 	 *            the registry in which the metrics, that this JMXReporter
 	 *            reports, are stored
 	 */
-	public JMXReporter(String type, MetricRegistry registry) {
+	public JmxReporter(String type, MetricRegistry registry) {
 		this.type = type;
 		this.registry = registry;
 	}
@@ -217,7 +217,7 @@ public class JMXReporter implements DynamicMBean {
 						name = new ObjectName(domain + "." + parts[0] + ":type=" + parts[1]);
 					}
 					if (!mbs.isRegistered(name)) {
-						mbs.registerMBean(new JMXReporter(type, registry), name);
+						mbs.registerMBean(new JmxReporter(type, registry), name);
 					}
 				}
 			} catch (Exception e) {

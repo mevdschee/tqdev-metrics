@@ -4,7 +4,7 @@
     
     <groupId>com.tqdev.metrics</groupId>
     <artifactId>metrics-parent</artifactId>
-    <version>0.9.3</version>
+    <version>0.9.4</version>
     <packaging>pom</packaging>
     
     <name>TQdev.com's Metrics aggregator</name>
@@ -42,6 +42,7 @@
         <module>metrics-jetty</module>
         <module>metrics-aspectj</module>
         <module>metrics-jmx</module>
+        <module>metrics-influxdb</module>
     </modules>
 
     <properties>
@@ -51,7 +52,13 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- versions of module dependencies -->
         <jetty9.version>9.4.7.v20170914</jetty9.version>
-        <aspectj.version>1.8.2</aspectj.version>
+        <aspectj.version>1.8.9</aspectj.version>
+        <!-- versions of plugins -->
+        <maven-source.version>3.0.1</maven-source.version>
+        <maven-javadoc.version>3.0.0-M1</maven-javadoc.version>
+        <maven-gpg.version>1.6</maven-gpg.version>
+        <nexus-staging-maven.version>1.6.8</nexus-staging-maven.version>
+        <aspectj-maven.version>1.10</aspectj-maven.version>
     </properties>
 
     <distributionManagement>
@@ -66,7 +73,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>${maven-source.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -79,7 +86,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>${maven-javadoc.version}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -92,7 +99,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <version>${maven-gpg.version}</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -106,7 +113,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
+                <version>${nexus-staging-maven.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>

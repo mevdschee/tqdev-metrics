@@ -90,7 +90,8 @@ public class MeasureAspect {
 	 * with Annotation "MeasuredMethod"
 	 */
 	@Around("execution(public * *(..)) && @annotation(annotation)")
-	public Object MeasuredMethod(final ProceedingJoinPoint joinPoint, final MeasuredMethod annotation) throws Throwable {
+	public Object MeasuredMethod(final ProceedingJoinPoint joinPoint, final MeasuredMethod annotation)
+			throws Throwable {
 		long start = System.nanoTime();
 		Object result = joinPoint.proceed();
 		long duration = System.nanoTime() - start;
