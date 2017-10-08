@@ -18,4 +18,4 @@ This way you can get cheap aggregates (at any given resolution), as you don't ha
 It uses at max two long integers per metric: one for duration in nanoseconds and one for invocation count.
 For on-demand measured values (Gauges) it also uses a long integer to unify the storage model.
 If you need historic values you should hook the metrics up to a time series database such as InfluxDB.
-In InfluxDB you can then use the "non_negative_derivative" function to graph the measures values.
+In InfluxDB you can then use the "`non_negative_derivative`" function to graph the measures values.
