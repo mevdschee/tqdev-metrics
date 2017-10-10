@@ -143,9 +143,7 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter(reportUrl, instanceName, registry);
 
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate((Runnable) () -> {
-			reporter.report();
-		}, 1, intervalInSeconds, TimeUnit.SECONDS);
+		exec.scheduleAtFixedRate(() -> reporter.report(),1, intervalInSeconds, TimeUnit.SECONDS);
 	}
 
 }

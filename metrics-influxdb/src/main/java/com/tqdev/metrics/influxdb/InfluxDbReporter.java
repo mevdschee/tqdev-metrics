@@ -61,42 +61,6 @@ public class InfluxDbReporter {
 	 * @param out
 	 *            the out
 	 */
-	public void write(Logger logger) {
-		String instanceStr = instanceName.replaceAll("[, =]", "\\$1");
-		String time = String.valueOf(System.currentTimeMillis() / 1000);
-		for (String type : registry.getTypes()) {
-			String typeStr = type.replaceAll("[, ]", "\\$1");
-			for (String key : registry.getKeys(type)) {
-				String keyStr = key.replaceAll("[, =]", "\\$1");
-				String parts[] = typeStr.split("\\.", 3);
-				StringBuilder w = new StringBuilder();
-				w.append(parts[0]);
-				w.append(",host=");
-				w.append(instanceStr);
-				w.append(",instance=");
-				if (parts.length > 1) {
-					w.append(parts[1]);
-				}
-				w.append(",type=");
-				if (parts.length > 2) {
-					w.append(parts[2]);
-				}
-				w.append(",type_instance=");
-				w.append(keyStr);
-				w.append(" value=");
-				w.append(registry.get(type, key));
-				w.append("i " + time);
-				logger.info(w.toString());
-			}
-		}
-	}
-
-	/**
-	 * Write.
-	 *
-	 * @param out
-	 *            the out
-	 */
 	public void write(OutputStream out) {
 		PrintWriter w = new PrintWriter(out);
 		String instanceStr = instanceName.replaceAll("[, =]", "\\$1");
