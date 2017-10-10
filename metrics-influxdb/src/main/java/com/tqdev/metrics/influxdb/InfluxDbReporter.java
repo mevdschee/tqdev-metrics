@@ -23,6 +23,8 @@ package com.tqdev.metrics.influxdb;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import org.apache.log4j.Logger;
+
 import com.tqdev.metrics.core.MetricRegistry;
 
 public class InfluxDbReporter {
@@ -49,8 +51,44 @@ public class InfluxDbReporter {
 	 *            reports, are stored
 	 */
 	public InfluxDbReporter(String instanceName, MetricRegistry registry) {
-		this.instanceName = instanceName.replaceAll("[, =]", "\\$1");
+		this.instanceName = instanceName;
 		this.registry = registry;
+	}
+
+	/**
+	 * Write.
+	 *
+	 * @param out
+	 *            the out
+	 */
+	public void write(Logger logger) {
+		String instanceStr = instanceName.replaceAll("[, =]", "\\$1");
+		String time = String.valueOf(System.currentTimeMillis() / 1000);
+		for (String type : registry.getTypes()) {
+			String typeStr = type.replaceAll("[, ]", "\\$1");
+			for (String key : registry.getKeys(type)) {
+				String keyStr = key.replaceAll("[, =]", "\\$1");
+				String parts[] = typeStr.split("\\.", 3);
+				StringBuilder w = new StringBuilder();
+				w.append(parts[0]);
+				w.append(",host=");
+				w.append(instanceStr);
+				w.append(",instance=");
+				if (parts.length > 1) {
+					w.append(parts[1]);
+				}
+				w.append(",type=");
+				if (parts.length > 2) {
+					w.append(parts[2]);
+				}
+				w.append(",type_instance=");
+				w.append(keyStr);
+				w.append(" value=");
+				w.append(registry.get(type, key));
+				w.append("i " + time);
+				logger.info(w.toString());
+			}
+		}
 	}
 
 	/**
@@ -61,16 +99,16 @@ public class InfluxDbReporter {
 	 */
 	public void write(OutputStream out) {
 		PrintWriter w = new PrintWriter(out);
+		String instanceStr = instanceName.replaceAll("[, =]", "\\$1");
 		String time = String.valueOf(System.currentTimeMillis() / 1000);
 		for (String type : registry.getTypes()) {
-			type = type.replaceAll("[, ]", "\\$1");
-
+			String typeStr = type.replaceAll("[, ]", "\\$1");
 			for (String key : registry.getKeys(type)) {
-				key = key.replaceAll("[, =]", "\\$1");
-				String parts[] = type.split("\\.", 3);
+				String keyStr = key.replaceAll("[, =]", "\\$1");
+				String parts[] = typeStr.split("\\.", 3);
 				w.print(parts[0]);
 				w.print(",host=");
-				w.print(instanceName);
+				w.print(instanceStr);
 				w.print(",instance=");
 				if (parts.length > 1) {
 					w.print(parts[1]);
@@ -80,7 +118,7 @@ public class InfluxDbReporter {
 					w.append(parts[2]);
 				}
 				w.print(",type_instance=");
-				w.print(key);
+				w.print(keyStr);
 				w.print(" value=");
 				w.print(registry.get(type, key));
 				w.println("i " + time);
