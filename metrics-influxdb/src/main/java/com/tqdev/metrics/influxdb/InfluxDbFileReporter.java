@@ -20,7 +20,12 @@
  */
 package com.tqdev.metrics.influxdb;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -81,11 +86,11 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	private void compress(String filename) throws IOException {
 		File current = new File(filename);
 		File dir = new File(metricPath);
-		FilenameFilter textFileFilter = (file, s) -> file.isFile() && s.endsWith(".txt");
+		FilenameFilter textFileFilter = (f, s) -> s.endsWith(".txt");
 		File[] directoryListing = dir.listFiles(textFileFilter);
 		if (directoryListing != null) {
 			for (File file : directoryListing) {
-				if (file.getCanonicalPath()!=current.getCanonicalPath()) {
+				if (file.getCanonicalPath() != current.getCanonicalPath()) {
 					FileOutputStream fos = new FileOutputStream(file.getPath() + ".gz");
 					GZIPOutputStream gzos = new GZIPOutputStream(fos);
 					byte[] buffer = new byte[8192];
@@ -101,21 +106,21 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 				}
 			}
 		} else {
-			throw new IOException("Directory not listable: "+metricPath);
+			throw new IOException("Directory not listable: " + metricPath);
 		}
 	}
 
 	private void remove(int maxFileCount) throws IOException {
 		File dir = new File(metricPath);
-		FilenameFilter gzipFileFilter = (file, s) -> file.isFile() && s.endsWith(".gz");
+		FilenameFilter gzipFileFilter = (f, s) -> s.endsWith(".gz");
 		File[] directoryListing = dir.listFiles(gzipFileFilter);
 		Arrays.sort(directoryListing);
 		if (directoryListing != null) {
-			for (int i=0;i < directoryListing.length-maxFileCount; i++) {
-					directoryListing[i].delete();
+			for (int i = 0; i < directoryListing.length - maxFileCount; i++) {
+				directoryListing[i].delete();
 			}
 		} else {
-			throw new IOException("Directory not listable: "+metricPath);
+			throw new IOException("Directory not listable: " + metricPath);
 		}
 	}
 
