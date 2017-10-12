@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.tqdev.metrics</groupId>
+        <artifactId>metrics-parent</artifactId>
+        <version>0.9.5</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>metrics-sigar</artifactId>
+
+    <name>TQdev.com's Metrics from Sigar system-level statistics</name>
+    <description>
+        SIGAR is a cross-platform API for system-level metrics. 
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
+

@@ -45,10 +45,13 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 
 	private final String metricPath;
 	private final int maxFileCount;
+	private final String dateFormat;
 
-	public InfluxDbFileReporter(String metricPath, int maxFileCount, String instanceName, MetricRegistry registry) {
+	public InfluxDbFileReporter(String metricPath, String dateFormat, int maxFileCount, String instanceName,
+			MetricRegistry registry) {
 		super(instanceName, registry);
 		this.metricPath = metricPath;
+		this.dateFormat = dateFormat;
 		this.maxFileCount = maxFileCount;
 	}
 
@@ -58,7 +61,7 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 * @return true, if successful
 	 */
 	public boolean report() {
-		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH");
+		DateFormat formatter = new SimpleDateFormat(dateFormat);
 		String filename = metricPath + "/" + formatter.format(new Date(System.currentTimeMillis())) + ".txt";
 		BufferedOutputStream out = null;
 		try {
@@ -134,9 +137,11 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 * @param intervalInSeconds
 	 *            the interval in seconds
 	 */
-	public static void start(String metricPath, int maxFileCount, String instanceName, int intervalInSeconds) {
+	public static void start(String metricPath, String dateFormat, int maxFileCount, String instanceName,
+			int intervalInSeconds) {
 		MetricRegistry registry = MetricRegistry.getInstance();
-		InfluxDbFileReporter reporter = new InfluxDbFileReporter(metricPath, maxFileCount, instanceName, registry);
+		InfluxDbFileReporter reporter = new InfluxDbFileReporter(metricPath, dateFormat, maxFileCount, instanceName,
+				registry);
 
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 		exec.scheduleAtFixedRate(() -> reporter.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
