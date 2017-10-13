@@ -10,11 +10,14 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
+/**
+ * Instrumentation wrapper class for {@link CallableStatement}.
+ */
 public class InstrumentedCallableStatement extends InstrumentedPreparedStatement implements CallableStatement {
     private final CallableStatement callableStatement;
 
-    InstrumentedCallableStatement(CallableStatement callableStatement, MetricRegistry registry) {
-        super(callableStatement, registry);
+    InstrumentedCallableStatement(String sql, CallableStatement callableStatement, MetricRegistry registry) {
+        super(sql, callableStatement, registry);
         this.callableStatement = callableStatement;
     }
 

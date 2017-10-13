@@ -9,32 +9,37 @@ import java.net.URL;
 import java.sql.*;
 import java.util.Calendar;
 
+/**
+ * Instrumentation wrapper class for {@link PreparedStatement}.
+ */
 public class InstrumentedPreparedStatement extends InstrumentedStatement implements PreparedStatement {
+    private final String sql;
     private final PreparedStatement preparedStatement;
 
-    public InstrumentedPreparedStatement(PreparedStatement preparedStatement, MetricRegistry registry) {
+    InstrumentedPreparedStatement(String sql, PreparedStatement preparedStatement, MetricRegistry registry) {
         super(preparedStatement, registry);
+        this.sql = sql;
         this.preparedStatement = preparedStatement;
     }
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        return preparedStatement.executeQuery();
+        return timedExecute(sql, preparedStatement::executeQuery);
     }
 
     @Override
     public int executeUpdate() throws SQLException {
-        return preparedStatement.executeUpdate();
+        return timedExecute(sql, preparedStatement::executeUpdate);
     }
 
     @Override
     public boolean execute() throws SQLException {
-        return preparedStatement.execute();
+        return timedExecute(sql, preparedStatement::execute);
     }
 
     @Override
     public long executeLargeUpdate() throws SQLException {
-        return preparedStatement.executeLargeUpdate();
+        return timedExecute(sql, preparedStatement::executeLargeUpdate);
     }
 
     //
