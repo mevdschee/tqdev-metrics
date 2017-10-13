@@ -26,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -58,20 +59,30 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 		String[] pairs = query.split("&");
 		for (String pair : pairs) {
 			int idx = pair.indexOf("=");
-			String key = pair.substring(0, idx);
-			String value = pair.substring(idx + 1);
-			parameters.put(key, value);
+			// An '=' sign can be omitted in URL query params
+			if (idx > 0) {
+				String key = pair.substring(0, idx);
+				String value = pair.substring(idx + 1);
+				parameters.put(key, value);
+			} else {
+				parameters.put(pair, "");
+			}
 		}
 		parameters.put("precision", "s");
-		String newQuery = "";
+		StringBuilder newQuery = new StringBuilder();
+		boolean first = true;
 		for (String key : parameters.keySet()) {
 			String value = parameters.get(key);
-			if (newQuery != "") {
-				newQuery += "&";
+			if (!first) {
+				newQuery.append("&");
 			}
-			newQuery += key + "=" + value;
+			first = false;
+			newQuery.append(key);
+			if (!"".equals(value)) {
+				newQuery.append('=').append(value);
+			}
 		}
-		return new URI(url.getScheme(), url.getAuthority(), url.getPath(), newQuery, url.getFragment());
+		return new URI(url.getScheme(), url.getAuthority(), url.getPath(), newQuery.toString(), url.getFragment());
 
 	}
 

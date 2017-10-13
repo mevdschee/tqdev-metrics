@@ -47,11 +47,10 @@ public class InstrumentedHandler extends HandlerWrapper {
 	/** The registry to store metrics in. */
 	private final MetricRegistry registry;
 
-	/** The prefix of all metrics in this class. */
-	public final String prefix = "jetty.";
-
-	/** The content types for which the path is grouped. */
-	public final String contentTypes = "json|xml|html|csv";
+	/**
+	 * The content types for which the path is grouped, e.g: "json|xml|html|csv"
+	 */
+	public final String contentTypes;
 
 	/**
 	 * Instantiates a new instrumented handler.
@@ -59,7 +58,8 @@ public class InstrumentedHandler extends HandlerWrapper {
 	 * @param registry
 	 *            the registry
 	 */
-	public InstrumentedHandler(MetricRegistry registry) {
+	public InstrumentedHandler(String contentTypes, MetricRegistry registry) {
+		this.contentTypes = contentTypes;
 		this.registry = registry;
 	}
 
@@ -69,7 +69,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 
 		@Override
 		public void onTimeout(AsyncEvent event) throws IOException {
-			registry.increment(prefix + "Other.Counters", "async-timeouts");
+			registry.increment("jetty.Other.Counters", "async-timeouts");
 		}
 
 		@Override
@@ -80,7 +80,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 
 		@Override
 		public void onError(AsyncEvent event) throws IOException {
-			registry.increment(prefix + "Other.Counters", "async-errors");
+			registry.increment("jetty.Other.Counters", "async-errors");
 		}
 
 		@Override
@@ -90,7 +90,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 			final HttpServletResponse response = (HttpServletResponse) state.getResponse();
 			updateResponses(request, response, startTime);
 			if (state.getHttpChannelState().getState() != HttpChannelState.State.DISPATCHED) {
-				registry.decrement(prefix + "Other.Gauges", "active-suspended");
+				registry.decrement("jetty.Other.Gauges", "active-suspended");
 			}
 		}
 	};
@@ -104,38 +104,37 @@ public class InstrumentedHandler extends HandlerWrapper {
 	protected void doStart() throws Exception {
 		super.doStart();
 
-		registry.set(prefix + "Other.Counters", "async-timeouts", 0);
-		registry.set(prefix + "Other.Counters", "async-errors", 0);
-		registry.set(prefix + "Other.Gauges", "active-suspended", 0);
-		registry.set(prefix + "Other.Gauges", "active-dispatches", 0);
-		registry.set(prefix + "Other.Gauges", "active-requests", 0);
-		registry.set(prefix + "Other.Gauges", "async-dispatches", 0);
+		registry.set("jetty.Other.Counters", "async-timeouts", 0);
+		registry.set("jetty.Other.Counters", "async-errors", 0);
+		registry.set("jetty.Other.Gauges", "active-suspended", 0);
+		registry.set("jetty.Other.Gauges", "active-dispatches", 0);
+		registry.set("jetty.Other.Gauges", "active-requests", 0);
+		registry.set("jetty.Other.Gauges", "async-dispatches", 0);
 		for (int responseStatus = 1; responseStatus <= 5; responseStatus++) {
-			registry.set(prefix + "Response.Invocations", responseStatus + "xx-responses", 0);
-			registry.set(prefix + "Response.Durations", responseStatus + "xx-responses", 0);
+			registry.set("jetty.Response.Invocations", responseStatus + "xx-responses", 0);
+			registry.set("jetty.Response.Durations", responseStatus + "xx-responses", 0);
 		}
-		registry.set(prefix + "Response.Invocations", "other-responses", 0);
-		registry.set(prefix + "Response.Durations", "other-responses", 0);
+		registry.set("jetty.Response.Invocations", "other-responses", 0);
+		registry.set("jetty.Response.Durations", "other-responses", 0);
 		for (HttpMethod method : HttpMethod.values()) {
-			registry.set(prefix + "Request.Invocations", method.asString().toLowerCase() + "-requests", 0);
-			registry.set(prefix + "Request.Durations", method.asString().toLowerCase() + "-requests", 0);
+			registry.set("jetty.Request.Invocations", method.asString().toLowerCase() + "-requests", 0);
+			registry.set("jetty.Request.Durations", method.asString().toLowerCase() + "-requests", 0);
 		}
-		registry.set(prefix + "Request.Invocations", "other-requests", 0);
-		registry.set(prefix + "Request.Durations", "other-requests", 0);
-		registry.set(prefix + "Aggregated.Invocations", "requests", 0);
-		registry.set(prefix + "Aggregated.Durations", "requests", 0);
-		registry.set(prefix + "Aggregated.Invocations", "dispatches", 0);
-		registry.set(prefix + "Aggregated.Durations", "dispatches", 0);
+		registry.set("jetty.Request.Invocations", "other-requests", 0);
+		registry.set("jetty.Request.Durations", "other-requests", 0);
+		registry.set("jetty.Aggregated.Invocations", "requests", 0);
+		registry.set("jetty.Aggregated.Durations", "requests", 0);
+		registry.set("jetty.Aggregated.Invocations", "dispatches", 0);
+		registry.set("jetty.Aggregated.Durations", "dispatches", 0);
 
-		registry.set(prefix + "Thread.Gauges", "threads", (Gauge) () -> getServer().getThreadPool().getThreads());
-		registry.set(prefix + "Thread.Gauges", "idle-threads",
-				(Gauge) () -> getServer().getThreadPool().getIdleThreads());
+		registry.set("jetty.Thread.Gauges", "threads", (Gauge) () -> getServer().getThreadPool().getThreads());
+		registry.set("jetty.Thread.Gauges", "idle-threads", (Gauge) () -> getServer().getThreadPool().getIdleThreads());
 		if (getServer().getThreadPool() instanceof QueuedThreadPool) {
-			registry.set(prefix + "Thread.Gauges", "busy-threads",
+			registry.set("jetty.Thread.Gauges", "busy-threads",
 					(Gauge) () -> ((QueuedThreadPool) getServer().getThreadPool()).getBusyThreads());
-			registry.set(prefix + "Thread.Gauges", "min-threads",
+			registry.set("jetty.Thread.Gauges", "min-threads",
 					(Gauge) () -> ((QueuedThreadPool) getServer().getThreadPool()).getMinThreads());
-			registry.set(prefix + "Thread.Gauges", "max-threads",
+			registry.set("jetty.Thread.Gauges", "max-threads",
 					(Gauge) () -> ((QueuedThreadPool) getServer().getThreadPool()).getMaxThreads());
 		}
 	}
@@ -152,21 +151,21 @@ public class InstrumentedHandler extends HandlerWrapper {
 	public void handle(String path, Request request, HttpServletRequest httpRequest, HttpServletResponse httpResponse)
 			throws IOException, ServletException {
 
-		registry.increment(prefix + "Other.Gauges", "active-dispatches");
+		registry.increment("jetty.Other.Gauges", "active-dispatches");
 
 		final long start;
 		final HttpChannelState state = request.getHttpChannelState();
 		if (state.isInitial()) {
 			// new request
-			registry.increment(prefix + "Other.Gauges", "active-requests");
+			registry.increment("jetty.Other.Gauges", "active-requests");
 			start = request.getTimeStamp();
 			state.addListener(listener);
 		} else {
 			// resumed request
 			start = System.currentTimeMillis();
-			registry.decrement(prefix + "Other.Gauges", "active-suspended");
+			registry.decrement("jetty.Other.Gauges", "active-suspended");
 			if (state.getState() == HttpChannelState.State.DISPATCHED) {
-				registry.increment(prefix + "Other.Gauges", "async-dispatches");
+				registry.increment("jetty.Other.Gauges", "async-dispatches");
 			}
 		}
 
@@ -175,12 +174,12 @@ public class InstrumentedHandler extends HandlerWrapper {
 		} finally {
 			final long duration = System.currentTimeMillis() - start;
 
-			registry.decrement(prefix + "Other.Gauges", "active-dispatches");
-			registry.increment(prefix + "Aggregated.Invocations", "dispatches");
-			registry.add(prefix + "Aggregated.Durations", "dispatches", duration);
+			registry.decrement("jetty.Other.Gauges", "active-dispatches");
+			registry.increment("jetty.Aggregated.Invocations", "dispatches");
+			registry.add("jetty.Aggregated.Durations", "dispatches", duration);
 
 			if (state.isSuspended()) {
-				registry.increment(prefix + "Other.Gauges", "active-suspended");
+				registry.increment("jetty.Other.Gauges", "active-suspended");
 			} else if (state.isInitial()) {
 				updateResponses(httpRequest, httpResponse, start);
 			}
@@ -265,18 +264,20 @@ public class InstrumentedHandler extends HandlerWrapper {
 	 *            the start
 	 */
 	private void updateResponses(HttpServletRequest request, HttpServletResponse response, long start) {
-		registry.decrement(prefix + "Other.Gauges", "active-requests");
+		registry.decrement("jetty.Other.Gauges", "active-requests");
 		final long duration = System.currentTimeMillis() - start;
-		registry.increment(prefix + "Aggregated.Invocations", "requests");
-		registry.add(prefix + "Aggregated.Durations", "requests", duration);
+		registry.increment("jetty.Aggregated.Invocations", "requests");
+		registry.add("jetty.Aggregated.Durations", "requests", duration);
 		final String methodGroup = getMethodGroup(request.getMethod());
-		registry.increment(prefix + "Request.Invocations", methodGroup + "-requests");
-		registry.add(prefix + "Request.Durations", methodGroup + "-requests", duration);
+		registry.increment("jetty.Request.Invocations", methodGroup + "-requests");
+		registry.add("jetty.Request.Durations", methodGroup + "-requests", duration);
 		final String statusGroup = getStatusGroup(response.getStatus());
-		registry.increment(prefix + "Response.Invocations", statusGroup + "-responses");
-		registry.add(prefix + "Response.Durations", statusGroup + "-responses", duration);
-		final String pathGroup = getPathGroup(request.getRequestURI(), response.getContentType());
-		registry.increment(prefix + "Path.Invocations", pathGroup);
-		registry.add(prefix + "Path.Durations", pathGroup, duration);
+		registry.increment("jetty.Response.Invocations", statusGroup + "-responses");
+		registry.add("jetty.Response.Durations", statusGroup + "-responses", duration);
+		if (contentTypes != null) {
+			final String pathGroup = getPathGroup(request.getRequestURI(), response.getContentType());
+			registry.increment("jetty.Path.Invocations", pathGroup);
+			registry.add("jetty.Path.Durations", pathGroup, duration);
+		}
 	}
 }

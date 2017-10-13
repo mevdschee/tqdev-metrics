@@ -37,18 +37,41 @@ import java.util.zip.GZIPOutputStream;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
+// TODO: Auto-generated Javadoc
 /**
  * The InfluxDbFileReporter class reports values in the metric registry to
  * InfluxDB readable files.
  */
 public class InfluxDbFileReporter extends InfluxDbReporter {
 
+	/** The metric path. */
 	private final String metricPath;
+
+	/** The max file count. */
 	private final int maxFileCount;
 
-	public InfluxDbFileReporter(String metricPath, int maxFileCount, String instanceName, MetricRegistry registry) {
+	/** The date format. */
+	private final String dateFormat;
+
+	/**
+	 * Instantiates a new influx db file reporter.
+	 *
+	 * @param metricPath
+	 *            the metric path
+	 * @param dateFormat
+	 *            the date format
+	 * @param maxFileCount
+	 *            the max file count
+	 * @param instanceName
+	 *            the instance name
+	 * @param registry
+	 *            the registry
+	 */
+	public InfluxDbFileReporter(String metricPath, String dateFormat, int maxFileCount, String instanceName,
+			MetricRegistry registry) {
 		super(instanceName, registry);
 		this.metricPath = metricPath;
+		this.dateFormat = dateFormat;
 		this.maxFileCount = maxFileCount;
 	}
 
@@ -58,11 +81,9 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 * @return true, if successful
 	 */
 	public boolean report() {
-		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd_HH");
+		DateFormat formatter = new SimpleDateFormat(dateFormat);
 		String filename = metricPath + "/" + formatter.format(new Date(System.currentTimeMillis())) + ".txt";
-		BufferedOutputStream out = null;
-		try {
-			out = new BufferedOutputStream(new FileOutputStream(filename, true), 8192);
+		try(BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename, true), 8192)) {
 			write(out);
 			compress(filename);
 			remove(maxFileCount);
@@ -70,19 +91,18 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
 		return false;
 	}
 
+	/**
+	 * Compress.
+	 *
+	 * @param filename
+	 *            the filename
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void compress(String filename) throws IOException {
 		File current = new File(filename);
 		File dir = new File(metricPath);
@@ -91,17 +111,16 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 		if (directoryListing != null) {
 			for (File file : directoryListing) {
 				if (file.getCanonicalPath() != current.getCanonicalPath()) {
-					FileOutputStream fos = new FileOutputStream(file.getPath() + ".gz");
-					GZIPOutputStream gzos = new GZIPOutputStream(fos);
-					byte[] buffer = new byte[8192];
-					int length;
-					FileInputStream fis = new FileInputStream(file.getPath());
-					while ((length = fis.read(buffer)) > 0) {
-						gzos.write(buffer, 0, length);
+					try (FileOutputStream fos = new FileOutputStream(file.getPath() + ".gz");
+						GZIPOutputStream gzos = new GZIPOutputStream(fos)) {
+						byte[] buffer = new byte[8192];
+						int length;
+						try (FileInputStream fis = new FileInputStream(file.getPath())) {
+							while ((length = fis.read(buffer)) > 0) {
+								gzos.write(buffer, 0, length);
+							}
+						}
 					}
-					fis.close();
-					gzos.finish();
-					gzos.close();
 					file.delete();
 				}
 			}
@@ -110,12 +129,20 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 		}
 	}
 
+	/**
+	 * Removes the.
+	 *
+	 * @param maxFileCount
+	 *            the max file count
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void remove(int maxFileCount) throws IOException {
 		File dir = new File(metricPath);
 		FilenameFilter gzipFileFilter = (f, s) -> s.endsWith(".gz");
 		File[] directoryListing = dir.listFiles(gzipFileFilter);
-		Arrays.sort(directoryListing);
 		if (directoryListing != null) {
+			Arrays.sort(directoryListing);
 			for (int i = 0; i < directoryListing.length - maxFileCount; i++) {
 				directoryListing[i].delete();
 			}
@@ -129,16 +156,20 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 *
 	 * @param metricPath
 	 *            the metric path
+	 * @param dateFormat
+	 *            the date format
 	 * @param maxFileCount
-	 *            the maximum number of files to keep
+	 *            the max file count
 	 * @param instanceName
 	 *            the instance name
 	 * @param intervalInSeconds
 	 *            the interval in seconds
 	 */
-	public static void start(String metricPath, int maxFileCount, String instanceName, int intervalInSeconds) {
+	public static void start(String metricPath, String dateFormat, int maxFileCount, String instanceName,
+			int intervalInSeconds) {
 		MetricRegistry registry = MetricRegistry.getInstance();
-		InfluxDbFileReporter reporter = new InfluxDbFileReporter(metricPath, maxFileCount, instanceName, registry);
+		InfluxDbFileReporter reporter = new InfluxDbFileReporter(metricPath, dateFormat, maxFileCount, instanceName,
+				registry);
 
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 		exec.scheduleAtFixedRate(() -> reporter.report(), 1, intervalInSeconds, TimeUnit.SECONDS);

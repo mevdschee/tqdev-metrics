@@ -5,15 +5,15 @@
     <parent>
         <groupId>com.tqdev.metrics</groupId>
         <artifactId>metrics-parent</artifactId>
-        <version>0.9.6</version>
+        <version>0.9.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>metrics-jetty</artifactId>
+    <artifactId>metrics-sigar</artifactId>
 
-    <name>TQdev.com's Metrics for Jetty 9.3 and higher</name>
+    <name>TQdev.com's Metrics from Sigar system-level statistics</name>
     <description>
-        Instrumentation of the Jetty thread pool and request handler to identify application bottlenecks by status code, method and path.
+        SIGAR is a cross-platform API for system-level metrics. 
     </description>
 
     <dependencies>
@@ -22,10 +22,7 @@
             <artifactId>metrics-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>${jetty9.version}</version>
-        </dependency>
     </dependencies>
+
 </project>
+
