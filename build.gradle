@@ -9,14 +9,14 @@ buildscript {
 }
 
 plugins {
-    id 'pl.allegro.tech.build.axion-release' version '1.8.1'
+  id 'pl.allegro.tech.build.axion-release' version '1.8.1'
 }
 
 scmVersion {
-    tag {
-        prefix = 'v'
-        versionSeparator = ''
-    }
+  tag {
+    prefix = 'v'
+    versionSeparator = ''
+  }
 }
 
 allprojects {
