@@ -21,8 +21,8 @@ abstract class InstrumentedSqlWrapper {
             return f.execute();
         } finally {
             long duration = System.nanoTime() - start;
-            registry.increment("jdbc.query.Invocations", sql);
-            registry.add("jdbc.query.Durations", sql, duration);
+            registry.increment("jdbc.statement.Invocations", sql);
+            registry.add("jdbc.statement.Durations", sql, duration);
         }
     }
 
