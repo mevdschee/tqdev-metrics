@@ -1,0 +1,62 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'ru.vyarus:gradle-java-lib-plugin:1.0.5'
+    classpath 'ru.vyarus:gradle-github-info-plugin:1.1.0'
+  }
+}
+
+plugins {
+    id 'pl.allegro.tech.build.axion-release' version '1.8.1'
+}
+
+scmVersion {
+    tag {
+        prefix = 'v'
+        versionSeparator = ''
+    }
+}
+
+allprojects {
+  version = scmVersion.version
+}
+
+subprojects {
+  apply plugin: 'java'
+  apply plugin: 'ru.vyarus.github-info'
+  apply plugin: 'ru.vyarus.java-lib'
+
+  group = 'com.tqdev.metrics'
+
+  repositories {
+    mavenCentral()
+  }
+
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  configurations.compile.transitive = false
+
+  github {
+    user 'mevdschee'
+    license 'MIT'
+    repository 'tqdev-metrics'
+  }
+
+  pom {
+    description 'TQdev.com\'s Metrics'
+    url 'https://tqdev.com/'
+    developers {
+      developer {
+        id "mevdschee"
+        name "Maurits van der Schee"
+        email "maurits@vdschee.nl"
+        roles {
+          role "Lead developer"
+        }
+      }
+    }
+  }
+}

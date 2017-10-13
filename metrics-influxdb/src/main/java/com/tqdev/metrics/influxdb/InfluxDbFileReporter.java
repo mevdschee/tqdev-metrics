@@ -129,6 +129,8 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 *
 	 * @param metricPath
 	 *            the metric path
+	 * @param maxFileCount
+	 *            the maximum number of files to keep
 	 * @param instanceName
 	 *            the instance name
 	 * @param intervalInSeconds

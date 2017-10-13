@@ -43,9 +43,8 @@ public class InfluxDbReporter {
 	/**
 	 * Instantiates a new JMX reporter.
 	 *
-	 * @param type
-	 *            the type of the metrics in the registry that this JMXReporter
-	 *            reports
+	 * @param instanceName
+	 *            The instanceName used to identify the source of the metrics in InfluxDB
 	 * @param registry
 	 *            the registry in which the metrics, that this JMXReporter
 	 *            reports, are stored
