@@ -23,8 +23,6 @@ package com.tqdev.metrics.influxdb;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import org.apache.log4j.Logger;
-
 import com.tqdev.metrics.core.MetricRegistry;
 
 public class InfluxDbReporter {
@@ -43,9 +41,9 @@ public class InfluxDbReporter {
 	/**
 	 * Instantiates a new JMX reporter.
 	 *
-	 * @param type
-	 *            the type of the metrics in the registry that this JMXReporter
-	 *            reports
+	 * @param instanceName
+	 *            the name of the JVM instance or machine that generates the
+	 *            metrics
 	 * @param registry
 	 *            the registry in which the metrics, that this JMXReporter
 	 *            reports, are stored

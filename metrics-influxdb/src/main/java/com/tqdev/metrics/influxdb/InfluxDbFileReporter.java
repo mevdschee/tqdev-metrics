@@ -37,16 +37,36 @@ import java.util.zip.GZIPOutputStream;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
+// TODO: Auto-generated Javadoc
 /**
  * The InfluxDbFileReporter class reports values in the metric registry to
  * InfluxDB readable files.
  */
 public class InfluxDbFileReporter extends InfluxDbReporter {
 
+	/** The metric path. */
 	private final String metricPath;
+
+	/** The max file count. */
 	private final int maxFileCount;
+
+	/** The date format. */
 	private final String dateFormat;
 
+	/**
+	 * Instantiates a new influx db file reporter.
+	 *
+	 * @param metricPath
+	 *            the metric path
+	 * @param dateFormat
+	 *            the date format
+	 * @param maxFileCount
+	 *            the max file count
+	 * @param instanceName
+	 *            the instance name
+	 * @param registry
+	 *            the registry
+	 */
 	public InfluxDbFileReporter(String metricPath, String dateFormat, int maxFileCount, String instanceName,
 			MetricRegistry registry) {
 		super(instanceName, registry);
@@ -86,6 +106,14 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 		return false;
 	}
 
+	/**
+	 * Compress.
+	 *
+	 * @param filename
+	 *            the filename
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void compress(String filename) throws IOException {
 		File current = new File(filename);
 		File dir = new File(metricPath);
@@ -113,6 +141,14 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 		}
 	}
 
+	/**
+	 * Removes the.
+	 *
+	 * @param maxFileCount
+	 *            the max file count
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void remove(int maxFileCount) throws IOException {
 		File dir = new File(metricPath);
 		FilenameFilter gzipFileFilter = (f, s) -> s.endsWith(".gz");
@@ -132,6 +168,10 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 *
 	 * @param metricPath
 	 *            the metric path
+	 * @param dateFormat
+	 *            the date format
+	 * @param maxFileCount
+	 *            the max file count
 	 * @param instanceName
 	 *            the instance name
 	 * @param intervalInSeconds
