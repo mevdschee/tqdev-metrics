@@ -1,0 +1,9 @@
+include 'metrics-aspectj',
+        'metrics-core',
+        'metrics-influxdb',
+        'metrics-jetty',
+        'metrics-jmx',
+        'metrics-sigar',
+        'metrics-spring'
+
+rootProject.name = 'tqdev-metrics'

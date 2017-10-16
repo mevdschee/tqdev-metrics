@@ -1,0 +1,4 @@
+dependencies {
+  compile project(':metrics-core')
+  compile 'org.eclipse.jetty:jetty-server:9.4.7.v20170914'
+}
