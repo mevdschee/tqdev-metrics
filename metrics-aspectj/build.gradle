@@ -1,0 +1,4 @@
+dependencies {
+  compile project(':metrics-core')
+  compile 'org.aspectj:aspectjrt:1.8.9'
+}

@@ -1,0 +1,9 @@
+repositories {
+    maven {
+        url 'https://maven.repository.redhat.com/ga/'
+    }
+}
+dependencies {
+    compile project(":metrics-core")
+    compile 'org.hyperic:sigar:1.6.5.132-6'
+}
