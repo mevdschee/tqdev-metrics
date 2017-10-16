@@ -26,7 +26,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -154,7 +153,7 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter(reportUrl, instanceName, registry);
 
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(() -> reporter.report(),1, intervalInSeconds, TimeUnit.SECONDS);
+		exec.scheduleAtFixedRate(() -> reporter.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
 	}
 
 }
