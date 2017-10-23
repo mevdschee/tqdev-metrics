@@ -28,12 +28,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.server.AsyncContextState;
 import org.eclipse.jetty.server.HttpChannelState;
-import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.springframework.http.HttpMethod;
 
 import com.tqdev.metrics.core.Gauge;
 import com.tqdev.metrics.core.MetricRegistry;
@@ -48,18 +47,12 @@ public class InstrumentedHandler extends HandlerWrapper {
 	private final MetricRegistry registry;
 
 	/**
-	 * The content types for which the path is grouped, e.g: "json|xml|html|csv"
-	 */
-	public final String contentTypes;
-
-	/**
 	 * Instantiates a new instrumented handler.
 	 *
 	 * @param registry
 	 *            the registry
 	 */
-	public InstrumentedHandler(String contentTypes, MetricRegistry registry) {
-		this.contentTypes = contentTypes;
+	public InstrumentedHandler(MetricRegistry registry) {
 		this.registry = registry;
 	}
 
@@ -74,7 +67,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 
 		@Override
 		public void onStartAsync(AsyncEvent event) throws IOException {
-			startTime = System.currentTimeMillis();
+			startTime = System.currentTimeMillis() * 1000000;
 			event.getAsyncContext().addListener(this);
 		}
 
@@ -158,11 +151,11 @@ public class InstrumentedHandler extends HandlerWrapper {
 		if (state.isInitial()) {
 			// new request
 			registry.increment("jetty.Other.Gauges", "active-requests");
-			start = request.getTimeStamp();
+			start = request.getTimeStamp() * 1000000;
 			state.addListener(listener);
 		} else {
 			// resumed request
-			start = System.currentTimeMillis();
+			start = System.currentTimeMillis() * 1000000;
 			registry.decrement("jetty.Other.Gauges", "active-suspended");
 			if (state.getState() == HttpChannelState.State.DISPATCHED) {
 				registry.increment("jetty.Other.Gauges", "async-dispatches");
@@ -172,7 +165,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 		try {
 			super.handle(path, request, httpRequest, httpResponse);
 		} finally {
-			final long duration = System.currentTimeMillis() - start;
+			final long duration = System.currentTimeMillis() * 1000000 - start;
 
 			registry.decrement("jetty.Other.Gauges", "active-dispatches");
 			registry.increment("jetty.Aggregated.Invocations", "dispatches");
@@ -218,42 +211,6 @@ public class InstrumentedHandler extends HandlerWrapper {
 	}
 
 	/**
-	 * Get a grouping identifier for metrics based on path.
-	 *
-	 * @param requestURI
-	 *            the request URI
-	 * @param contentType
-	 *            the content type
-	 * @return the string
-	 */
-	private String getPathGroup(String requestURI, String contentType) {
-		if (!contentType.matches(".*" + contentTypes + ".*")) {
-			return "(other)";
-		}
-		String parts[] = requestURI.split("/");
-		for (int i = 0; i < parts.length; i++) {
-			if (parts[i].matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}")) {
-				parts[i] = "(uuid)";
-			} else if (parts[i].matches("[a-f0-9]{128}")) {
-				parts[i] = "(sha512)";
-			} else if (parts[i].matches("[a-f0-9]{64}")) {
-				parts[i] = "(sha256)";
-			} else if (parts[i].matches("[a-f0-9]{40}")) {
-				parts[i] = "(sha1)";
-			} else if (parts[i].matches("[a-f0-9]{32}")) {
-				parts[i] = "(md5)";
-			} else if (parts[i].matches("[^a-zA-Z]+") && parts[i].matches(".*[0-9].*")) {
-				parts[i] = "(number)";
-			}
-		}
-		String path = String.join("/", parts);
-		if (path == "") {
-			path = "/";
-		}
-		return path;
-	}
-
-	/**
 	 * Update response based metrics such as duration.
 	 *
 	 * @param request
@@ -265,7 +222,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 	 */
 	private void updateResponses(HttpServletRequest request, HttpServletResponse response, long start) {
 		registry.decrement("jetty.Other.Gauges", "active-requests");
-		final long duration = System.currentTimeMillis() - start;
+		final long duration = System.currentTimeMillis() * 1000000 - start;
 		registry.increment("jetty.Aggregated.Invocations", "requests");
 		registry.add("jetty.Aggregated.Durations", "requests", duration);
 		final String methodGroup = getMethodGroup(request.getMethod());
@@ -274,10 +231,5 @@ public class InstrumentedHandler extends HandlerWrapper {
 		final String statusGroup = getStatusGroup(response.getStatus());
 		registry.increment("jetty.Response.Invocations", statusGroup + "-responses");
 		registry.add("jetty.Response.Durations", statusGroup + "-responses", duration);
-		if (contentTypes != null) {
-			final String pathGroup = getPathGroup(request.getRequestURI(), response.getContentType());
-			registry.increment("jetty.Path.Invocations", pathGroup);
-			registry.add("jetty.Path.Durations", pathGroup, duration);
-		}
 	}
 }
