@@ -83,7 +83,7 @@ public class MeasureRequestPathFilter extends OncePerRequestFilter {
 			}
 		}
 		String path = String.join("/", parts);
-		if (path == "") {
+		if (path.isEmpty()) {
 			path = "/";
 		}
 		return path;
@@ -102,6 +102,5 @@ public class MeasureRequestPathFilter extends OncePerRequestFilter {
 			registry.increment("spring.Path.Invocations", pathGroup);
 			registry.add("spring.Path.Durations", pathGroup, duration);
 		}
-
 	}
 }

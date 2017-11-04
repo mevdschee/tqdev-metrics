@@ -185,30 +185,14 @@ public class JmxReporter implements DynamicMBean {
 		return PSOMBInfo;
 	}
 
-	/**
-	 * Start with the default domain (the package name of this class).
-	 */
-	public static void start() {
-		start("com.tqdev.metrics");
-	}
+	public static void start(String domain, MetricRegistry metricRegistry) {
 
-	/**
-	 * Start with a specific domain. Note that for each metric the first part of
-	 * the type (before the first dot) is added to the domain, while the second
-	 * part is used as the MBean ObjectName. The key of the metric is
-	 * represented as an MBean Attribute.
-	 *
-	 * @param domain
-	 *            the domain on which the metrics are reported.
-	 */
-	public static void start(String domain) {
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-		MetricRegistry registry = MetricRegistry.getInstance();
 
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 		exec.scheduleAtFixedRate((Runnable) () -> {
 			try {
-				for (String type : registry.getTypes()) {
+				for (String type : metricRegistry.getTypes()) {
 					String parts[] = type.split("\\.", 2);
 					ObjectName name;
 					if (parts.length < 2) {
@@ -217,7 +201,7 @@ public class JmxReporter implements DynamicMBean {
 						name = new ObjectName(domain + "." + parts[0] + ":type=" + parts[1]);
 					}
 					if (!mbs.isRegistered(name)) {
-						mbs.registerMBean(new JmxReporter(type, registry), name);
+						mbs.registerMBean(new JmxReporter(type, metricRegistry), name);
 					}
 				}
 			} catch (Exception e) {

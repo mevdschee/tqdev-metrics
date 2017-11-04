@@ -32,7 +32,7 @@ public class MetricRegistry {
 	 * The values in the metric registry have a type and a key and are of type
 	 * LongAdder or Gauge.
 	 */
-	private volatile ConcurrentHashMap<String, ConcurrentHashMap<String, Object>> values;
+	protected volatile ConcurrentHashMap<String, ConcurrentHashMap<String, Object>> values;
 
 	/**
 	 * Instantiates a new metric registry.

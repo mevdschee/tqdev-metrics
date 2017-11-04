@@ -74,13 +74,17 @@ public class MvcDurationInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
+		final long duration = System.nanoTime() - (Long) request.getAttribute("startTime");
+		final String name;
 
-		long duration = System.nanoTime() - (Long) request.getAttribute("startTime");
-		Method method = ((HandlerMethod) handler).getMethod();
-		String name = method.getDeclaringClass().getSimpleName() + "." + method.getName();
+		if (handler instanceof HandlerMethod) {
+			final Method method = ((HandlerMethod) handler).getMethod();
+			name = method.getDeclaringClass().getSimpleName() + "." + method.getName();
+		} else {
+			name = "(other)";
+		}
 
 		registry.add("spring.Handler.Durations", name, duration);
 		registry.increment("spring.Handler.Invocations", name);
-
 	}
 }
