@@ -22,11 +22,8 @@ package com.tqdev.metrics.jmx;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -89,14 +86,14 @@ public class JmxReporter implements DynamicMBean {
 	@Override
 	public Object getAttribute(String type) throws AttributeNotFoundException, MBeanException, ReflectionException {
 		if (registry.hasType(type)) {
-			LinkedHashMap<String, Long> items = new LinkedHashMap<>();
+			System.out.println("requested: " + type);
+			Map<String, Long> items = new HashMap<String, Long>();
 			for (String key : registry.getKeys(type)) {
 				items.put(key, registry.get(type, key));
 			}
-			LinkedHashMap<String, Long> sortedItems = sortByComparator(items);
 			CompositeDataSupport result = null;
 			try {
-				result = new CompositeDataSupport(getCompositeType(type), sortedItems);
+				result = new CompositeDataSupport(getCompositeType(type), items);
 			} catch (OpenDataException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -104,27 +101,6 @@ public class JmxReporter implements DynamicMBean {
 			return result;
 		}
 		throw new AttributeNotFoundException("Cannot find attribute: " + type);
-	}
-
-	private static LinkedHashMap<String, Long> sortByComparator(LinkedHashMap<String, Long> unsortMap) {
-
-		LinkedList<Entry<String, Long>> list = new LinkedList<>(unsortMap.entrySet());
-
-		// Sorting the list based on values
-		Collections.sort(list, new Comparator<Entry<String, Long>>() {
-			@Override
-			public int compare(Entry<String, Long> o1, Entry<String, Long> o2) {
-				return o2.getValue().compareTo(o1.getValue());
-			}
-		});
-
-		// Maintaining insertion order with the help of LinkedList
-		LinkedHashMap<String, Long> sortedMap = new LinkedHashMap<>();
-		for (Entry<String, Long> entry : list) {
-			sortedMap.put(entry.getKey(), entry.getValue());
-		}
-
-		return sortedMap;
 	}
 
 	/*

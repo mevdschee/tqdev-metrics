@@ -150,6 +150,19 @@ public class MetricRegistry {
 	}
 
 	/**
+	 * Checks for existence of a metric for a given type.
+	 *
+	 * @param type
+	 *            the type
+	 * @return true, if successful
+	 * @throws NullPointerException
+	 *             the null pointer exception
+	 */
+	public boolean hasType(String type) throws NullPointerException {
+		return values.containsKey(type);
+	}
+
+	/**
 	 * Gets the value of a metric for a given type and key.
 	 *
 	 * @param type
