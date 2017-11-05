@@ -34,6 +34,7 @@ import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanNotificationInfo;
+import javax.management.MBeanOperationInfo;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -48,6 +49,8 @@ import javax.management.openmbean.OpenMBeanAttributeInfoSupport;
 import javax.management.openmbean.OpenMBeanConstructorInfoSupport;
 import javax.management.openmbean.OpenMBeanInfoSupport;
 import javax.management.openmbean.OpenMBeanOperationInfoSupport;
+import javax.management.openmbean.OpenMBeanParameterInfo;
+import javax.management.openmbean.OpenMBeanParameterInfoSupport;
 import javax.management.openmbean.OpenType;
 import javax.management.openmbean.SimpleType;
 
@@ -86,7 +89,6 @@ public class JmxReporter implements DynamicMBean {
 	@Override
 	public Object getAttribute(String type) throws AttributeNotFoundException, MBeanException, ReflectionException {
 		if (registry.hasType(type)) {
-			System.out.println("requested: " + type);
 			Map<String, Long> items = new HashMap<String, Long>();
 			for (String key : registry.getKeys(type)) {
 				items.put(key, registry.get(type, key));
@@ -165,9 +167,12 @@ public class JmxReporter implements DynamicMBean {
 	@Override
 	public Object invoke(String operationName, Object[] params, String[] signature)
 			throws MBeanException, ReflectionException {
-
-		throw new RuntimeOperationsException(new IllegalArgumentException("No operations defined for this OpenMBean"),
-				"No operations defined for this OpenMBean");
+		if (operationName.equals("reset")) {
+			registry.reset();
+			return null;
+		}
+		throw new RuntimeOperationsException(new IllegalArgumentException("Cannot find operation: " + operationName),
+				"Operations not defined for this OpenMBean");
 	}
 
 	/*
@@ -184,9 +189,13 @@ public class JmxReporter implements DynamicMBean {
 			attributes.add(new OpenMBeanAttributeInfoSupport(type, type, getCompositeType(type), true, false, false));
 		}
 
+		OpenMBeanParameterInfo[] params = new OpenMBeanParameterInfoSupport[0];
+		OpenMBeanOperationInfoSupport reset = new OpenMBeanOperationInfoSupport("reset", "Reset all Metrics", params,
+				SimpleType.VOID, MBeanOperationInfo.ACTION);
+
 		OpenMBeanInfoSupport PSOMBInfo = new OpenMBeanInfoSupport(this.getClass().getName(), "TQdev.com's Metrics",
-				attributes.toArray(new OpenMBeanAttributeInfoSupport[] {}), new OpenMBeanConstructorInfoSupport[0],
-				new OpenMBeanOperationInfoSupport[0], new MBeanNotificationInfo[0]);
+				attributes.toArray(new OpenMBeanAttributeInfoSupport[0]), new OpenMBeanConstructorInfoSupport[0],
+				new OpenMBeanOperationInfoSupport[] { reset }, new MBeanNotificationInfo[0]);
 
 		return PSOMBInfo;
 	}

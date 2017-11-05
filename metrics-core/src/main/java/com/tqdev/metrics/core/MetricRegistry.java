@@ -38,6 +38,13 @@ public class MetricRegistry {
 	 * Instantiates a new metric registry.
 	 */
 	public MetricRegistry() {
+		reset();
+	}
+
+	/**
+	 * Resets the metric registry.
+	 */
+	public void reset() {
 		values = new ConcurrentHashMap<>();
 	}
 
