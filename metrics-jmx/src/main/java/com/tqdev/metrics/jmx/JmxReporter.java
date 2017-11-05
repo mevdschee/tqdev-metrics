@@ -70,9 +70,6 @@ public class JmxReporter implements DynamicMBean {
 	/**
 	 * Instantiates a new JMX reporter.
 	 *
-	 * @param type
-	 *            the type of the metrics in the registry that this JMXReporter
-	 *            reports
 	 * @param registry
 	 *            the registry in which the metrics, that this JMXReporter
 	 *            reports, are stored
@@ -87,7 +84,13 @@ public class JmxReporter implements DynamicMBean {
 	 * @see javax.management.DynamicMBean#getAttribute(java.lang.String)
 	 */
 	@Override
-	public Object getAttribute(String type) throws AttributeNotFoundException, MBeanException, ReflectionException {
+	public Object getAttribute(String attributeName)
+			throws AttributeNotFoundException, MBeanException, ReflectionException {
+		if (attributeName == null) {
+			throw new RuntimeOperationsException(new IllegalArgumentException("attributeName cannot be null"),
+					"Cannot call getAttribute with null attribute name");
+		}
+		String type = attributeName;
 		if (registry.hasType(type)) {
 			Map<String, Long> items = new HashMap<String, Long>();
 			for (String key : registry.getKeys(type)) {
@@ -102,7 +105,7 @@ public class JmxReporter implements DynamicMBean {
 			}
 			return result;
 		}
-		throw new AttributeNotFoundException("Cannot find attribute: " + type);
+		throw new AttributeNotFoundException("Cannot find attribute: " + attributeName);
 	}
 
 	/*
@@ -172,7 +175,7 @@ public class JmxReporter implements DynamicMBean {
 			return null;
 		}
 		throw new RuntimeOperationsException(new IllegalArgumentException("Cannot find operation: " + operationName),
-				"Operations not defined for this OpenMBean");
+				"Operation not defined for this OpenMBean");
 	}
 
 	/*
