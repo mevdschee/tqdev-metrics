@@ -1,5 +1,10 @@
 package com.tqdev.metrics.spring.loaders;
 
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +19,13 @@ public class JmxReporterLoader {
 	 */
 	@Autowired
 	public JmxReporterLoader(MetricRegistry metricRegistry) {
-		JmxReporter.start("com.tqdev.metrics", metricRegistry);
+		try {
+			JmxReporter.start("com.tqdev.metrics", metricRegistry);
+		} catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException
+				| NotCompliantMBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

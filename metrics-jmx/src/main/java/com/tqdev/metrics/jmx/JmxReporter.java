@@ -22,26 +22,36 @@ package com.tqdev.metrics.jmx;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
 import javax.management.DynamicMBean;
+import javax.management.InstanceAlreadyExistsException;
 import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanNotificationInfo;
+import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.RuntimeOperationsException;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.OpenMBeanAttributeInfoSupport;
 import javax.management.openmbean.OpenMBeanConstructorInfoSupport;
 import javax.management.openmbean.OpenMBeanInfoSupport;
 import javax.management.openmbean.OpenMBeanOperationInfoSupport;
+import javax.management.openmbean.OpenType;
 import javax.management.openmbean.SimpleType;
 
 import com.tqdev.metrics.core.MetricRegistry;
@@ -50,11 +60,6 @@ import com.tqdev.metrics.core.MetricRegistry;
  * OpenMBean for accessing (a part of) the metric registry via JMX
  */
 public class JmxReporter implements DynamicMBean {
-
-	/**
-	 * The type of the metrics in the registry that this JMXReporter reports.
-	 */
-	private final String type;
 
 	/**
 	 * The registry in which the metrics, that this JMXReporter reports, are
@@ -72,8 +77,7 @@ public class JmxReporter implements DynamicMBean {
 	 *            the registry in which the metrics, that this JMXReporter
 	 *            reports, are stored
 	 */
-	public JmxReporter(String type, MetricRegistry registry) {
-		this.type = type;
+	public JmxReporter(MetricRegistry registry) {
 		this.registry = registry;
 	}
 
@@ -83,17 +87,44 @@ public class JmxReporter implements DynamicMBean {
 	 * @see javax.management.DynamicMBean#getAttribute(java.lang.String)
 	 */
 	@Override
-	public Object getAttribute(String attribute_name)
-			throws AttributeNotFoundException, MBeanException, ReflectionException {
+	public Object getAttribute(String type) throws AttributeNotFoundException, MBeanException, ReflectionException {
+		if (registry.hasType(type)) {
+			LinkedHashMap<String, Long> items = new LinkedHashMap<>();
+			for (String key : registry.getKeys(type)) {
+				items.put(key, registry.get(type, key));
+			}
+			LinkedHashMap<String, Long> sortedItems = sortByComparator(items);
+			CompositeDataSupport result = null;
+			try {
+				result = new CompositeDataSupport(getCompositeType(type), sortedItems);
+			} catch (OpenDataException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return result;
+		}
+		throw new AttributeNotFoundException("Cannot find attribute: " + type);
+	}
 
-		if (attribute_name == null) {
-			throw new RuntimeOperationsException(new IllegalArgumentException("Attribute name cannot be null"),
-					"Cannot call getAttributeInfo with null attribute name");
+	private static LinkedHashMap<String, Long> sortByComparator(LinkedHashMap<String, Long> unsortMap) {
+
+		LinkedList<Entry<String, Long>> list = new LinkedList<>(unsortMap.entrySet());
+
+		// Sorting the list based on values
+		Collections.sort(list, new Comparator<Entry<String, Long>>() {
+			@Override
+			public int compare(Entry<String, Long> o1, Entry<String, Long> o2) {
+				return o2.getValue().compareTo(o1.getValue());
+			}
+		});
+
+		// Maintaining insertion order with the help of LinkedList
+		LinkedHashMap<String, Long> sortedMap = new LinkedHashMap<>();
+		for (Entry<String, Long> entry : list) {
+			sortedMap.put(entry.getKey(), entry.getValue());
 		}
-		if (registry.has(type, attribute_name)) {
-			return registry.get(type, attribute_name);
-		}
-		throw new AttributeNotFoundException("Cannot find attribute: " + type + "." + attribute_name);
+
+		return sortedMap;
 	}
 
 	/*
@@ -173,40 +204,46 @@ public class JmxReporter implements DynamicMBean {
 
 		ArrayList<OpenMBeanAttributeInfoSupport> attributes = new ArrayList<>();
 
-		for (String key : registry.getKeys(type)) {
-			attributes.add(
-					new OpenMBeanAttributeInfoSupport(key, type + " of " + key, SimpleType.LONG, true, false, false));
+		for (String type : registry.getTypes()) {
+			attributes.add(new OpenMBeanAttributeInfoSupport(type, type, getCompositeType(type), true, false, false));
 		}
 
-		OpenMBeanInfoSupport PSOMBInfo = new OpenMBeanInfoSupport(this.getClass().getName(), type,
+		OpenMBeanInfoSupport PSOMBInfo = new OpenMBeanInfoSupport(this.getClass().getName(), "TQdev.com's Metrics",
 				attributes.toArray(new OpenMBeanAttributeInfoSupport[] {}), new OpenMBeanConstructorInfoSupport[0],
 				new OpenMBeanOperationInfoSupport[0], new MBeanNotificationInfo[0]);
 
 		return PSOMBInfo;
 	}
 
-	public static void start(String domain, MetricRegistry metricRegistry) {
+	@SuppressWarnings("rawtypes")
+	private CompositeType getCompositeType(String type) {
+		ArrayList<String> nameList = new ArrayList<>();
+		ArrayList<OpenType> typeList = new ArrayList<>();
 
+		for (String key : registry.getKeys(type)) {
+			nameList.add(key);
+			typeList.add(SimpleType.LONG);
+		}
+
+		String[] nameArray = nameList.toArray(new String[nameList.size()]);
+		OpenType[] typeArray = typeList.toArray(new OpenType[typeList.size()]);
+
+		CompositeType compositeType = null;
+		try {
+			compositeType = new CompositeType(type, type, nameArray, nameArray, typeArray);
+		} catch (OpenDataException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return compositeType;
+	}
+
+	public static void start(String domain, MetricRegistry metricRegistry) throws MalformedObjectNameException,
+			InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-
-		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate((Runnable) () -> {
-			try {
-				for (String type : metricRegistry.getTypes()) {
-					String parts[] = type.split("\\.", 2);
-					ObjectName name;
-					if (parts.length < 2) {
-						name = new ObjectName(domain + ":type=" + type);
-					} else {
-						name = new ObjectName(domain + "." + parts[0] + ":type=" + parts[1]);
-					}
-					if (!mbs.isRegistered(name)) {
-						mbs.registerMBean(new JmxReporter(type, metricRegistry), name);
-					}
-				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}, 1, 5, TimeUnit.SECONDS);
+		ObjectName name = new ObjectName(domain + ":type=Metrics");
+		if (!mbs.isRegistered(name)) {
+			mbs.registerMBean(new JmxReporter(metricRegistry), name);
+		}
 	}
 }
