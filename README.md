@@ -34,4 +34,4 @@ If you are using Spring you can add a "ComponentScan" annotation to your applica
 	    }
     }
 
-This is all you have to change in your code to get started (apart from loading the dependencies).
+This is all you have to change in your code to get started (apart from adding the dependencies to your maven or gradle config).
