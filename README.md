@@ -24,7 +24,7 @@ In InfluxDB you can then use the "`non_negative_derivative`" function to graph t
 ### Getting started
 
 If you are using Spring you can add a "ComponentScan" annotation to your application to add 
-"com.tqdev.metrics.spring.loaders" as a scanned package.
+"com.tqdev.metrics.spring.loaders" as a scanned package, as you can see here:
 
     @SpringBootApplication
     @ComponentScan({ "org.springframework.samples.petclinic", "com.tqdev.metrics.spring.loaders" })
@@ -34,4 +34,6 @@ If you are using Spring you can add a "ComponentScan" annotation to your applica
 	    }
     }
 
-This is all you have to change in your code to get started (apart from adding the dependencies to your maven or gradle config).
+This is all you have to change in your code to get started (apart from adding the dependencies to your
+maven or gradle config). After application has started you may connect to it using "jconsole" and see
+the collected metrics via JMX under "com.tqdev.metrics".
