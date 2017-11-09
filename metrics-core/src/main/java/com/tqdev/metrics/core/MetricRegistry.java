@@ -22,7 +22,7 @@ package com.tqdev.metrics.core;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
-
+import static java.util.Collections.emptySet;
 /**
  * The Class MetricRegistry provides access to all metrics that are tracked.
  */
@@ -153,7 +153,7 @@ public class MetricRegistry {
 	public Iterable<String> getKeys(String type) {
 		ConcurrentHashMap<String, Object> map = values.get(type);
 		if (map == null) {
-			map = new ConcurrentHashMap<String, Object>();
+			return emptySet();
 		}
 		return map.keySet();
 	}
@@ -170,7 +170,7 @@ public class MetricRegistry {
 	public boolean has(String type, String key) {
 		ConcurrentHashMap<String, Object> map = values.get(type);
 		if (map == null) {
-			map = new ConcurrentHashMap<String, Object>();
+			return false;
 		}
 		return map.containsKey(key);
 	}
