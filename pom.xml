@@ -60,6 +60,8 @@
         <maven-gpg.version>1.6</maven-gpg.version>
         <nexus-staging-maven.version>1.6.8</nexus-staging-maven.version>
         <aspectj-maven.version>1.10</aspectj-maven.version>
+        <junit.version>4.12</junit.version>
+        <assertj.version>3.8.0</assertj.version>
     </properties>
 
     <distributionManagement>
