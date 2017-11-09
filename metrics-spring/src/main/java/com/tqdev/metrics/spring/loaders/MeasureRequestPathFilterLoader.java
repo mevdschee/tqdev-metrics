@@ -14,7 +14,7 @@ public class MeasureRequestPathFilterLoader extends MeasureRequestPathFilter {
 
 	@Autowired
 	public MeasureRequestPathFilterLoader(MetricRegistry metricRegistry) {
-		super(metricRegistry, "json|xml|html|csv");
+		super(metricRegistry, "application/json|text/html|text/xml");
 	}
 
 }
