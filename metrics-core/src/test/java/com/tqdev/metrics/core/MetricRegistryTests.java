@@ -104,7 +104,7 @@ public class MetricRegistryTests {
 	public void shouldNotHaveValueWhenReset() {
 		registry.increment("type", "key");
 		registry.reset();
-		assertThat(registry.get("type", "key")).isNull();
+		assertThat(registry.get("type", "key")).isEqualTo(0);
 	}
 
 	@Test

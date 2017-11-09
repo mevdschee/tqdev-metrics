@@ -195,7 +195,7 @@ public class MetricRegistry {
 	 *            the key
 	 * @return the long
 	 */
-	public Long get(String type, String key) {
+	public long get(String type, String key) {
 		ConcurrentHashMap<String, Object> map = values.get(type);
 		if (map == null) {
 			map = new ConcurrentHashMap<String, Object>();
@@ -206,7 +206,7 @@ public class MetricRegistry {
 		} else if (o instanceof Gauge) {
 			return ((Gauge) o).measure();
 		} else {
-			return null;
+			return 0;
 		}
 	}
 
