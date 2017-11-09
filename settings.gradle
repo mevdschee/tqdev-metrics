@@ -3,6 +3,7 @@ include 'metrics-aspectj',
         'metrics-influxdb',
         'metrics-jetty',
         'metrics-jmx',
+        'metrics-jdbc',
         'metrics-sigar',
         'metrics-spring'
 
