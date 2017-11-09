@@ -104,13 +104,7 @@ public class MetricRegistryTests {
 	public void shouldNotHaveValueWhenReset() {
 		registry.increment("type", "key");
 		registry.reset();
-		Throwable throwable = null;
-		try {
-			registry.get("type", "key");
-		} catch (Exception ex) {
-			throwable = ex;
-		}
-		assertThat(throwable).isNotNull().isInstanceOf(NullPointerException.class);
+		assertThat(registry.get("type", "key")).isNull();
 	}
 
 	@Test
@@ -178,47 +172,32 @@ public class MetricRegistryTests {
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenIncrementingGaugeNumber() {
+	public void shouldReturnFalseWhenIncrementingGaugeNumber() {
 		registry.set("type", "key", () -> 123);
-		Throwable throwable = null;
-		try {
-			registry.increment("type", "key");
-		} catch (Exception ex) {
-			throwable = ex;
-		}
-		assertThat(throwable).isNotNull()
-				.hasMessageEndingWith("cannot be cast to java.util.concurrent.atomic.LongAdder");
+		assertThat(registry.increment("type", "key")).isFalse();
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenDecrementingGaugeNumber() {
+	public void shouldReturnFalseWhenDecrementingGaugeNumber() {
 		registry.set("type", "key", () -> 123);
-		Throwable throwable = null;
-		try {
-			registry.decrement("type", "key");
-		} catch (Exception ex) {
-			throwable = ex;
-		}
-		assertThat(throwable).isNotNull()
-				.hasMessageEndingWith("cannot be cast to java.util.concurrent.atomic.LongAdder");
+		assertThat(registry.decrement("type", "key")).isFalse();
 	}
 
 	@Test
-	public void shouldThrowExceptionWhenAddingToGaugeNumber() {
+	public void shouldReturnFalseWhenAddingToGaugeNumber() {
 		registry.set("type", "key", () -> 123);
-		Throwable throwable = null;
-		try {
-			registry.add("type", "key", 123);
-		} catch (Exception ex) {
-			throwable = ex;
-		}
-		assertThat(throwable).isNotNull()
-				.hasMessageEndingWith("cannot be cast to java.util.concurrent.atomic.LongAdder");
+		assertThat(registry.add("type", "key", 123)).isFalse();
+	}
+
+	@Test
+	public void shouldBeOfTypeMetricRegistry() {
+		MetricRegistry metricRegistry = MetricRegistry.getInstance();
+		assertThat(metricRegistry).isExactlyInstanceOf(MetricRegistry.class);
 	}
 
 	@Test
 	public void shouldBeSameReferenceWhenGettingInstance() {
 		MetricRegistry metricRegistry = MetricRegistry.getInstance();
-		assertThat(metricRegistry == registry).isEqualTo(true);
+		assertThat(metricRegistry).isEqualTo(registry);
 	}
 }

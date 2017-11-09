@@ -56,9 +56,14 @@ public class MetricRegistry {
 	 * @param key
 	 *            the key
 	 */
-	public void increment(String type, String key) {
-		((LongAdder) values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
-				k -> new LongAdder())).increment();
+	public boolean increment(String type, String key) {
+		Object o = values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
+				k -> new LongAdder());
+		if (o instanceof LongAdder) {
+			((LongAdder) o).increment();
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -69,9 +74,14 @@ public class MetricRegistry {
 	 * @param key
 	 *            the key
 	 */
-	public void decrement(String type, String key) {
-		((LongAdder) values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
-				k -> new LongAdder())).decrement();
+	public boolean decrement(String type, String key) {
+		Object o = values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
+				k -> new LongAdder());
+		if (o instanceof LongAdder) {
+			((LongAdder) o).decrement();
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -84,9 +94,14 @@ public class MetricRegistry {
 	 * @param value
 	 *            the value
 	 */
-	public void add(String type, String key, long value) {
-		((LongAdder) values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
-				k -> new LongAdder())).add(value);
+	public boolean add(String type, String key, long value) {
+		Object o = values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
+				k -> new LongAdder());
+		if (o instanceof LongAdder) {
+			((LongAdder) o).add(value);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -134,11 +149,13 @@ public class MetricRegistry {
 	 * @param type
 	 *            the type
 	 * @return the keys
-	 * @throws NullPointerException
-	 *             the null pointer exception
 	 */
-	public Iterable<String> getKeys(String type) throws NullPointerException {
-		return values.get(type).keySet();
+	public Iterable<String> getKeys(String type) {
+		ConcurrentHashMap<String, Object> map = values.get(type);
+		if (map == null) {
+			map = new ConcurrentHashMap<String, Object>();
+		}
+		return map.keySet();
 	}
 
 	/**
@@ -149,11 +166,13 @@ public class MetricRegistry {
 	 * @param key
 	 *            the key
 	 * @return true, if successful
-	 * @throws NullPointerException
-	 *             the null pointer exception
 	 */
-	public boolean has(String type, String key) throws NullPointerException {
-		return values.get(type).containsKey(key);
+	public boolean has(String type, String key) {
+		ConcurrentHashMap<String, Object> map = values.get(type);
+		if (map == null) {
+			map = new ConcurrentHashMap<String, Object>();
+		}
+		return map.containsKey(key);
 	}
 
 	/**
@@ -162,10 +181,8 @@ public class MetricRegistry {
 	 * @param type
 	 *            the type
 	 * @return true, if successful
-	 * @throws NullPointerException
-	 *             the null pointer exception
 	 */
-	public boolean hasType(String type) throws NullPointerException {
+	public boolean hasType(String type) {
 		return values.containsKey(type);
 	}
 
@@ -177,17 +194,19 @@ public class MetricRegistry {
 	 * @param key
 	 *            the key
 	 * @return the long
-	 * @throws NullPointerException
-	 *             the null pointer exception
 	 */
-	public long get(String type, String key) throws NullPointerException {
-		Object o = values.get(type).get(key);
+	public Long get(String type, String key) {
+		ConcurrentHashMap<String, Object> map = values.get(type);
+		if (map == null) {
+			map = new ConcurrentHashMap<String, Object>();
+		}
+		Object o = map.get(key);
 		if (o instanceof LongAdder) {
 			return ((LongAdder) o).sum();
 		} else if (o instanceof Gauge) {
 			return ((Gauge) o).measure();
 		} else {
-			return -1;
+			return null;
 		}
 	}
 
