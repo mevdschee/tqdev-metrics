@@ -16,6 +16,8 @@ import com.tqdev.metrics.core.MetricRegistry;
 
 public class MeasureRequestPathFilterTestBase {
 
+	static int NS_IN_MS = 1000000;
+
 	final MetricRegistry registry = MetricRegistry.getInstance();
 	final MeasureRequestPathFilter filter = new MeasureRequestPathFilter(registry,
 			"application/json|text/html|text/xml");

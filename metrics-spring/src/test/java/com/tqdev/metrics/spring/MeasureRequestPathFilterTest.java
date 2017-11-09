@@ -7,8 +7,6 @@ import org.junit.Test;
 
 public class MeasureRequestPathFilterTest extends MeasureRequestPathFilterTestBase {
 
-	static int NS_IN_MS = 1000000;
-
 	@Before
 	public void initialize() {
 		registry.reset();
