@@ -4,10 +4,11 @@ This is a light-weight Java library to measure the behavior of critical componen
 
 ### Modules
 
-- **metrics-jetty**: Instrumentation of the Jetty thread pool and request handler to identify application bottlenecks by status code, method and path.
+- **metrics-jetty**: Instrumentation of the Jetty thread pool and request handler to identify application bottlenecks by status code and method.
 - **metrics-aspectj**: Instrumentation of any method using a simple annotation on the class or method using the power of AspectJ weaving.
 - **metrics-jmx**: Support for publishing the metrics from instrumented components via JMX.
 - **metrics-influxdb**: Support for publishing the metrics from instrumented components to InfluxDB.
+- **metrics-spring**: Instrumentation of Spring requests to identify application bottlenecks by handler name and path.
 
 ### Philosophy
 
@@ -19,3 +20,20 @@ It uses at max two long integers per metric: one for duration in nanoseconds and
 For on-demand measured values (Gauges) it also uses a long integer to unify the storage model.
 If you need historic values you should hook the metrics up to a time series database such as InfluxDB.
 In InfluxDB you can then use the "`non_negative_derivative`" function to graph the measures values.
+
+### Getting started
+
+If you are using Spring you can add a "ComponentScan" annotation to your application to add 
+"com.tqdev.metrics.spring.loaders" as a scanned package, as you can see here:
+
+    @SpringBootApplication
+    @ComponentScan({ "org.springframework.samples.petclinic", "com.tqdev.metrics.spring.loaders" })
+    public class PetClinicApplication {
+	    public static void main(String[] args) throws Exception {
+		    SpringApplication.run(PetClinicApplication.class, args);
+	    }
+    }
+
+This is all you have to change in your code to get started (apart from adding the dependencies to your
+maven or gradle config). After application has started you may connect to it using "jconsole" and see
+the collected metrics via JMX under "com.tqdev.metrics".
