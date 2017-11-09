@@ -78,7 +78,6 @@ public class MeasureRequestPathFilterTestBase {
 			try {
 				Thread.sleep(millisecondsToSleep);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -88,7 +87,7 @@ public class MeasureRequestPathFilterTestBase {
 	 * Gets the request.
 	 *
 	 * @param requestUri
-	 *            the request uri
+	 *            the request URI
 	 * @return the request
 	 */
 	protected HttpServletRequest getRequest(String requestUri) {
@@ -126,7 +125,6 @@ public class MeasureRequestPathFilterTestBase {
 			filter.doFilterInternal(getRequest(requestUri), getResponse(contentType),
 					new FilterChainMock(durationInMilliseconds));
 		} catch (ServletException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
