@@ -1,3 +1,23 @@
+/* Copyright (C) 2017 Maurits van der Schee
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package com.tqdev.metrics.spring;
 
 import static org.mockito.Mockito.mock;
@@ -14,26 +34,49 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
+/**
+ * The Class MeasureRequestPathFilterTestBase.
+ */
 public class MeasureRequestPathFilterTestBase {
 
+	/** Number of nanoseconds in a millisecond. */
 	static int NS_IN_MS = 1000000;
 
+	/** The registry. */
 	final MetricRegistry registry = MetricRegistry.getInstance();
+
+	/** The filter. */
 	final MeasureRequestPathFilter filter = new MeasureRequestPathFilter(registry,
 			"application/json|text/html|text/xml");
 
+	/**
+	 * The Class FilterChainMock.
+	 */
 	protected class FilterChainMock implements FilterChain {
 
-		private int millisToSleep;
+		/** The milliseconds to sleep. */
+		private int millisecondsToSleep;
 
-		public FilterChainMock(int millisToSleep) {
-			this.millisToSleep = millisToSleep;
+		/**
+		 * Instantiates a new filter chain mock.
+		 *
+		 * @param millisToSleep
+		 *            the milliseconds to sleep
+		 */
+		public FilterChainMock(int millisecondsToSleep) {
+			this.millisecondsToSleep = millisecondsToSleep;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see javax.servlet.FilterChain#doFilter(javax.servlet.ServletRequest,
+		 * javax.servlet.ServletResponse)
+		 */
 		@Override
 		public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
 			try {
-				Thread.sleep(millisToSleep);
+				Thread.sleep(millisecondsToSleep);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -41,22 +84,47 @@ public class MeasureRequestPathFilterTestBase {
 		}
 	}
 
+	/**
+	 * Gets the request.
+	 *
+	 * @param requestUri
+	 *            the request uri
+	 * @return the request
+	 */
 	protected HttpServletRequest getRequest(String requestUri) {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getRequestURI()).thenReturn(requestUri);
 		return request;
 	}
 
+	/**
+	 * Gets the response.
+	 *
+	 * @param contentType
+	 *            the content type
+	 * @return the response
+	 */
 	protected HttpServletResponse getResponse(String contentType) {
 		HttpServletResponse response = mock(HttpServletResponse.class);
 		when(response.getContentType()).thenReturn(contentType);
 		return response;
 	}
 
-	protected void request(String requestUri, String contentType, int durationInMillis) {
+	/**
+	 * Simulate a request with an URI and a content type for a specified
+	 * duration in milliseconds.
+	 *
+	 * @param requestUri
+	 *            the request URI
+	 * @param contentType
+	 *            the content type
+	 * @param durationInMillis
+	 *            the duration in milliseconds
+	 */
+	protected void request(String requestUri, String contentType, int durationInMilliseconds) {
 		try {
 			filter.doFilterInternal(getRequest(requestUri), getResponse(contentType),
-					new FilterChainMock(durationInMillis));
+					new FilterChainMock(durationInMilliseconds));
 		} catch (ServletException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
