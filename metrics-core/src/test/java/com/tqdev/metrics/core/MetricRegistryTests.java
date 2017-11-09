@@ -101,6 +101,19 @@ public class MetricRegistryTests {
 	}
 
 	@Test
+	public void shouldNotHaveValueWhenReset() {
+		registry.increment("type", "key");
+		registry.reset();
+		Throwable throwable = null;
+		try {
+			registry.get("type", "key");
+		} catch (Exception ex) {
+			throwable = ex;
+		}
+		assertThat(throwable).isNotNull().isInstanceOf(NullPointerException.class);
+	}
+
+	@Test
 	public void shouldHaveTypeAndKeyWhenSettingLong() {
 		registry.set("type", "key", 123);
 		assertThat(registry.getTypes().iterator().next()).isEqualTo("type");
