@@ -197,17 +197,15 @@ public class MetricRegistry {
 	 */
 	public long get(String type, String key) {
 		ConcurrentHashMap<String, Object> map = values.get(type);
-		if (map == null) {
-			map = new ConcurrentHashMap<String, Object>();
+		if (map != null) {
+			Object o = map.get(key);
+			if (o instanceof LongAdder) {
+				return ((LongAdder) o).sum();
+			} else if (o instanceof Gauge) {
+				return ((Gauge) o).measure();
+			}
 		}
-		Object o = map.get(key);
-		if (o instanceof LongAdder) {
-			return ((LongAdder) o).sum();
-		} else if (o instanceof Gauge) {
-			return ((Gauge) o).measure();
-		} else {
-			return 0;
-		}
+		return 0;
 	}
 
 	// singleton pattern
