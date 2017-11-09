@@ -11,7 +11,7 @@
 
     <artifactId>metrics-sigar</artifactId>
 
-    <name>TQdev.com's Metrics from Sigar system-level statistics</name>
+    <name>TQdev.com's Metrics for Sigar system statistics</name>
     <description>
         SIGAR is a cross-platform API for system-level metrics. 
     </description>
