@@ -35,24 +35,26 @@ import javax.servlet.http.HttpServletResponse;
 import com.tqdev.metrics.core.MetricRegistry;
 
 /**
- * The Class MeasureRequestPathFilterTestBase.
+ * The Class MeasureRequestPathFilterTestBase contains the engine to run the
+ * MeasureRequestPathFilter tests.
  */
-public class MeasureRequestPathFilterTestBase {
+abstract class MeasureRequestPathFilterTestBase {
 
 	/** Number of nanoseconds in a millisecond. */
-	static int NS_IN_MS = 1000000;
+	public static int NS_IN_MS = 1000000;
 
 	/** The registry. */
-	final MetricRegistry registry = MetricRegistry.getInstance();
+	protected final MetricRegistry registry = MetricRegistry.getInstance();
 
 	/** The filter. */
-	final MeasureRequestPathFilter filter = new MeasureRequestPathFilter(registry,
+	private final MeasureRequestPathFilter filter = new MeasureRequestPathFilter(registry,
 			"application/json|text/html|text/xml");
 
 	/**
-	 * The Class FilterChainMock.
+	 * The class mocks a FilterChain that takes a specified number of
+	 * milliseconds to execute.
 	 */
-	protected class FilterChainMock implements FilterChain {
+	private class FilterChainMock implements FilterChain {
 
 		/** The milliseconds to sleep. */
 		private int millisecondsToSleep;
@@ -60,7 +62,7 @@ public class MeasureRequestPathFilterTestBase {
 		/**
 		 * Instantiates a new filter chain mock.
 		 *
-		 * @param millisToSleep
+		 * @param millisecondsToSleep
 		 *            the milliseconds to sleep
 		 */
 		public FilterChainMock(int millisecondsToSleep) {
@@ -84,26 +86,26 @@ public class MeasureRequestPathFilterTestBase {
 	}
 
 	/**
-	 * Gets the request.
+	 * Gets a mocked request.
 	 *
 	 * @param requestUri
 	 *            the request URI
 	 * @return the request
 	 */
-	protected HttpServletRequest getRequest(String requestUri) {
+	private HttpServletRequest getRequest(String requestUri) {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		when(request.getRequestURI()).thenReturn(requestUri);
 		return request;
 	}
 
 	/**
-	 * Gets the response.
+	 * Gets a mocked response.
 	 *
 	 * @param contentType
 	 *            the content type
 	 * @return the response
 	 */
-	protected HttpServletResponse getResponse(String contentType) {
+	private HttpServletResponse getResponse(String contentType) {
 		HttpServletResponse response = mock(HttpServletResponse.class);
 		when(response.getContentType()).thenReturn(contentType);
 		return response;
