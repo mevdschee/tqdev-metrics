@@ -20,8 +20,6 @@
  */
 package com.tqdev.metrics.spring;
 
-import java.lang.reflect.Method;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,7 +37,7 @@ public class MvcDurationInterceptor extends HandlerInterceptorAdapter {
 	private final MetricRegistry registry;
 
 	/**
-	 * Instantiates a new mvc duration interceptor.
+	 * Instantiates a new MVC duration interceptor.
 	 *
 	 * @param registry
 	 *            the registry
@@ -63,6 +61,28 @@ public class MvcDurationInterceptor extends HandlerInterceptorAdapter {
 		return true;
 	}
 
+	/**
+	 * Gets the action name from the handler.
+	 *
+	 * @param handler
+	 *            the handler
+	 * @return the method name
+	 */
+	public String getActionName(HandlerMethod handler) {
+		return handler.getMethod().getName();
+	}
+
+	/**
+	 * Gets the controller name from the handler.
+	 *
+	 * @param handler
+	 *            the handler
+	 * @return the class name
+	 */
+	public String getControllerName(HandlerMethod handler) {
+		return handler.getMethod().getDeclaringClass().getSimpleName();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -72,14 +92,14 @@ public class MvcDurationInterceptor extends HandlerInterceptorAdapter {
 	 * java.lang.Exception)
 	 */
 	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
+			Exception ex) {
 		final long duration = registry.getTime() - (Long) request.getAttribute("startTime");
 		final String name;
 
 		if (handler instanceof HandlerMethod) {
-			final Method method = ((HandlerMethod) handler).getMethod();
-			name = method.getDeclaringClass().getSimpleName() + "." + method.getName();
+			HandlerMethod handlerMethod = (HandlerMethod) handler;
+			name = getControllerName(handlerMethod) + "." + getActionName(handlerMethod);
 		} else {
 			name = "(other)";
 		}
