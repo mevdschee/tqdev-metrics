@@ -16,11 +16,11 @@ abstract class InstrumentedSqlWrapper {
 	}
 
 	<C> C timedExecute(String sql, SqlHandler<C> f) throws SQLException {
-		long start = System.nanoTime();
+		long start = registry.getTime();
 		try {
 			return f.execute();
 		} finally {
-			long duration = System.nanoTime() - start;
+			long duration = registry.getTime() - start;
 			registry.increment("jdbc.Statement.Invocations", sql);
 			registry.add("jdbc.Statement.Durations", sql, duration);
 		}

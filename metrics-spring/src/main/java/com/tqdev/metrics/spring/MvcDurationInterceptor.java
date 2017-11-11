@@ -59,7 +59,7 @@ public class MvcDurationInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
-		request.setAttribute("startTime", System.nanoTime());
+		request.setAttribute("startTime", registry.getTime());
 		return true;
 	}
 
@@ -74,7 +74,7 @@ public class MvcDurationInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
-		final long duration = System.nanoTime() - (Long) request.getAttribute("startTime");
+		final long duration = registry.getTime() - (Long) request.getAttribute("startTime");
 		final String name;
 
 		if (handler instanceof HandlerMethod) {

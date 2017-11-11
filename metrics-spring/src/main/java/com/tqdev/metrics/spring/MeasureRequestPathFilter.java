@@ -93,9 +93,9 @@ public class MeasureRequestPathFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
-		final long startTime = System.nanoTime();
+		final long startTime = registry.getTime();
 		filterChain.doFilter(request, response);
-		final long duration = System.nanoTime() - startTime;
+		final long duration = registry.getTime() - startTime;
 
 		final String pathGroup = getPathGroup(request.getRequestURI(), response.getContentType());
 		if (pathGroup != null) {

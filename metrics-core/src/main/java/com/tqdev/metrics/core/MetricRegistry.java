@@ -20,9 +20,11 @@
  */
 package com.tqdev.metrics.core;
 
+import static java.util.Collections.emptySet;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
-import static java.util.Collections.emptySet;
+
 /**
  * The Class MetricRegistry provides access to all metrics that are tracked.
  */
@@ -206,6 +208,15 @@ public class MetricRegistry {
 			}
 		}
 		return 0;
+	}
+
+	/**
+	 * Gets the time.
+	 *
+	 * @return the time
+	 */
+	public long getTime() {
+		return System.nanoTime();
 	}
 
 	// singleton pattern

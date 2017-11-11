@@ -21,14 +21,13 @@
 package com.tqdev.metrics.spring;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,50 +39,12 @@ import com.tqdev.metrics.core.MetricRegistry;
  */
 abstract class MeasureRequestPathFilterTestBase {
 
-	/** Number of nanoseconds in a millisecond. */
-	public static int NS_IN_MS = 1000000;
-
 	/** The registry. */
-	protected final MetricRegistry registry = MetricRegistry.getInstance();
+	protected final MetricRegistry registry = spy(MetricRegistry.getInstance());
 
 	/** The filter. */
 	private final MeasureRequestPathFilter filter = new MeasureRequestPathFilter(registry,
 			"application/json|text/html|text/xml");
-
-	/**
-	 * The class mocks a FilterChain that takes a specified number of
-	 * milliseconds to execute.
-	 */
-	private class FilterChainMock implements FilterChain {
-
-		/** The milliseconds to sleep. */
-		private int millisecondsToSleep;
-
-		/**
-		 * Instantiates a new filter chain mock.
-		 *
-		 * @param millisecondsToSleep
-		 *            the milliseconds to sleep
-		 */
-		public FilterChainMock(int millisecondsToSleep) {
-			this.millisecondsToSleep = millisecondsToSleep;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see javax.servlet.FilterChain#doFilter(javax.servlet.ServletRequest,
-		 * javax.servlet.ServletResponse)
-		 */
-		@Override
-		public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
-			try {
-				Thread.sleep(millisecondsToSleep);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 	/**
 	 * Gets a mocked request.
@@ -113,19 +74,20 @@ abstract class MeasureRequestPathFilterTestBase {
 
 	/**
 	 * Simulate a request with an URI and a content type for a specified
-	 * duration in milliseconds.
+	 * duration in nanoseconds.
 	 *
 	 * @param requestUri
 	 *            the request URI
 	 * @param contentType
 	 *            the content type
-	 * @param durationInMillis
-	 *            the duration in milliseconds
+	 * @param durationInNanoseconds
+	 *            the duration in nanoseconds
 	 */
-	protected void request(String requestUri, String contentType, int durationInMilliseconds) {
+	protected void request(String requestUri, String contentType, long durationInNanoseconds) {
+		long now = 1510373758000000000L;
+		when(registry.getTime()).thenReturn(now, now + durationInNanoseconds);
 		try {
-			filter.doFilterInternal(getRequest(requestUri), getResponse(contentType),
-					new FilterChainMock(durationInMilliseconds));
+			filter.doFilterInternal(getRequest(requestUri), getResponse(contentType), mock(FilterChain.class));
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}
