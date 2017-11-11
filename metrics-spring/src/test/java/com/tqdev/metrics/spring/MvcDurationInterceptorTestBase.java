@@ -46,8 +46,8 @@ abstract class MvcDurationInterceptorTestBase {
 	/**
 	 * Gets a mocked request.
 	 *
-	 * @param requestUri
-	 *            the request URI
+	 * @param startTime
+	 *            the start time of the request
 	 * @return the request
 	 */
 	private HttpServletRequest getRequest(long startTime) {
@@ -57,13 +57,13 @@ abstract class MvcDurationInterceptorTestBase {
 	}
 
 	/**
-	 * Simulate a request with an URI and a content type for a specified
-	 * duration in nanoseconds.
+	 * Simulate a request on an action on a controller for a specified duration
+	 * in nanoseconds.
 	 *
-	 * @param requestUri
-	 *            the request URI
-	 * @param contentType
-	 *            the content type
+	 * @param controllerName
+	 *            the controller name
+	 * @param actionName
+	 *            the action name
 	 * @param durationInNanoseconds
 	 *            the duration in nanoseconds
 	 * @throws Exception
