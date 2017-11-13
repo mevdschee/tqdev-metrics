@@ -156,15 +156,15 @@ public class SystemMonitor {
 	public Map<String, String> getSystemInformation() {
 		OperatingSystemMXBean os = ManagementFactory.getOperatingSystemMXBean();
 		HashMap<String, String> map = new HashMap<>();
-		map.put("cpu_cores", String.valueOf(Runtime.getRuntime().availableProcessors()));
-		map.put("cpu_architecture", os.getArch());
-		map.put("os_name", os.getName());
-		map.put("os_version", os.getVersion());
+		map.put("cpuCores", String.valueOf(Runtime.getRuntime().availableProcessors()));
+		map.put("cpuArchitecture", os.getArch());
+		map.put("osName", os.getName());
+		map.put("osVersion", os.getVersion());
 		RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
-		map.put("rt_name", runtime.getName());
-		map.put("vm_name", runtime.getVmName());
-		map.put("vm_vendor", runtime.getVmVendor());
-		map.put("vm_version", runtime.getVmVersion());
+		map.put("rtName", runtime.getName());
+		map.put("vmName", runtime.getVmName());
+		map.put("vmVendor", runtime.getVmVendor());
+		map.put("vmVersion", runtime.getVmVersion());
 		return map;
 	}
 
