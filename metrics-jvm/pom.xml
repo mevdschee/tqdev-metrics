@@ -9,11 +9,11 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>metrics-sigar</artifactId>
+    <artifactId>metrics-jvm</artifactId>
 
-    <name>TQdev.com's Metrics for Sigar system statistics</name>
+    <name>TQdev.com's Metrics for JVM statistics</name>
     <description>
-        SIGAR is a cross-platform API for system-level metrics. 
+        Gets memory, disk and CPU statistics from the JVM.
     </description>
 
     <dependencies>
@@ -21,11 +21,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>metrics-core</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hyperic</groupId>
-            <artifactId>sigar</artifactId>
-            <version>${sigar.version}</version>
         </dependency>
     </dependencies>
 

@@ -4,6 +4,7 @@ include 'metrics-aspectj',
         'metrics-jetty',
         'metrics-jmx',
         'metrics-jdbc',
+        'metrics-jvm',
         'metrics-sigar',
         'metrics-spring'
 
