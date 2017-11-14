@@ -1,5 +1,5 @@
-![Build Status](https://travis-ci.org/cristinanegrean/tqdev-metrics.svg?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/cristinanegrean/tqdev-metrics/badge.svg?branch=master)](https://coveralls.io/github/cristinanegrean/tqdev-metrics?branch=master)
+![Build Status](https://travis-ci.org/mevdschee/tqdev-metrics.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/tqdev-metrics/tqdev-metrics/badge.svg?branch=master)](https://coveralls.io/github/tqdev-metrics/tqdev-metrics?branch=master)
 
 # TQdev.com's Metrics
 
