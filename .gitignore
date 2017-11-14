@@ -8,3 +8,5 @@ target/
 *.iws
 .idea/
 build/
+.DS_Store
+out/
