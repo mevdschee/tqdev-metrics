@@ -5,6 +5,7 @@ buildscript {
   dependencies {
     classpath 'ru.vyarus:gradle-java-lib-plugin:1.0.5'
     classpath 'ru.vyarus:gradle-github-info-plugin:1.1.0'
+    classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
   }
 }
 
@@ -40,6 +41,8 @@ subprojects {
   apply plugin: 'java'
   apply plugin: 'ru.vyarus.github-info'
   apply plugin: 'ru.vyarus.java-lib'
+  apply plugin: 'jacoco'
+  apply plugin: 'com.github.kt3k.coveralls'
 
   group = 'com.tqdev.metrics'
 
@@ -51,6 +54,33 @@ subprojects {
   targetCompatibility = 1.8
 
   configurations.compile.transitive = false
+
+  jacoco {
+    toolVersion = "0.7.9"
+  }
+
+  test {
+    jacoco {
+      append = false
+      destinationFile = file("$buildDir/jacoco.exec")
+    }
+  }
+
+  jacocoTestReport {
+    reports {
+      xml.enabled true
+    }
+  }
+
+  build.dependsOn jacocoTestReport
+
+  coveralls {
+    jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+  }
+
+  tasks.coveralls {
+    onlyIf { System.env.'CI' }
+  }
 
   github {
     user 'mevdschee'
