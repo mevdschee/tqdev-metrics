@@ -3,13 +3,15 @@ package com.tqdev.metrics.jdbc;
 import com.tqdev.metrics.core.MetricRegistry;
 
 import javax.sql.DataSource;
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
-public class InstrumentedDataSource implements DataSource {
+public class InstrumentedDataSource implements DataSource, Closeable {
     private DataSource wrapped;
     private MetricRegistry registry;
 
@@ -73,5 +75,12 @@ public class InstrumentedDataSource implements DataSource {
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return wrapped.isWrapperFor(iface);
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (wrapped instanceof Closeable) {
+            ((Closeable) wrapped).close();
+        }
     }
 }
