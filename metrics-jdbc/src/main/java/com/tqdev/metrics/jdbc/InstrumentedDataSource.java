@@ -6,6 +6,8 @@ import javax.sql.DataSource;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -81,6 +83,13 @@ public class InstrumentedDataSource implements DataSource, Closeable {
     public void close() throws IOException {
         if (wrapped instanceof Closeable) {
             ((Closeable) wrapped).close();
+        } else {
+            try {
+                Method close = wrapped.getClass().getMethod("close");
+                close.invoke(wrapped);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                // Ignore, no parameterless close method defined
+            }
         }
     }
 }
