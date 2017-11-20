@@ -33,7 +33,7 @@ import com.tqdev.metrics.core.MetricRegistry;
 @Aspect
 public class MeasureAspect {
 
-	/** The registry. */
+	/** The metric registry. */
 	private final MetricRegistry registry = MetricRegistry.getInstance();
 
 	/**

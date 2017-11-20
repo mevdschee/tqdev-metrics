@@ -24,10 +24,7 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
 	@Override
 	public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
 		if (bean instanceof DataSource) {
-			DataSource dataSourceBean = (DataSource) bean;
-			InstrumentedDataSource instrumentedDatasource = new InstrumentedDataSource(dataSourceBean, metricRegistry);
-			instrumentedDatasource.setMetricsEnabled(true);
-			return instrumentedDatasource;
+			return new InstrumentedDataSource((DataSource) bean, metricRegistry);
 		}
 		return bean;
 	}

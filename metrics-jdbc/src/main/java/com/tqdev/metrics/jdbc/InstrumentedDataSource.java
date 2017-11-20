@@ -1,3 +1,23 @@
+/* Copyright (C) 2017 Maurits van der Schee
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package com.tqdev.metrics.jdbc;
 
 import java.io.Closeable;
@@ -14,80 +34,134 @@ import javax.sql.DataSource;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
+/**
+ * The Class InstrumentedDataSource.
+ */
 public class InstrumentedDataSource implements DataSource, Closeable {
-	private DataSource wrapped;
+
+	/** The wrapped data source. */
+	private DataSource dataSource;
+
+	/** The metric registry. */
 	private MetricRegistry registry;
 
-	private volatile boolean metricsEnabled = false;
-
+	/**
+	 * Instantiates a new instrumented data source.
+	 *
+	 * @param wrapped
+	 *            the wrapped
+	 * @param registry
+	 *            the registry
+	 */
 	public InstrumentedDataSource(DataSource wrapped, MetricRegistry registry) {
-		this.wrapped = wrapped;
+		this.dataSource = wrapped;
 		this.registry = registry;
 	}
 
-	public void setMetricsEnabled(boolean enabled) {
-		metricsEnabled = enabled;
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.sql.DataSource#getConnection()
+	 */
 	@Override
 	public Connection getConnection() throws SQLException {
-		if (!metricsEnabled) {
-			return wrapped.getConnection();
-		}
-		return new InstrumentedConnection(wrapped.getConnection(), registry);
+		return new InstrumentedConnection(dataSource.getConnection(), registry);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.sql.DataSource#getConnection(java.lang.String,
+	 * java.lang.String)
+	 */
 	@Override
 	public Connection getConnection(String username, String password) throws SQLException {
-		if (!metricsEnabled) {
-			return wrapped.getConnection();
-		}
-		return new InstrumentedConnection(wrapped.getConnection(username, password), registry);
+		return new InstrumentedConnection(dataSource.getConnection(username, password), registry);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.sql.CommonDataSource#getLogWriter()
+	 */
 	@Override
 	public PrintWriter getLogWriter() throws SQLException {
-		return wrapped.getLogWriter();
+		return dataSource.getLogWriter();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.sql.CommonDataSource#setLogWriter(java.io.PrintWriter)
+	 */
 	@Override
 	public void setLogWriter(PrintWriter out) throws SQLException {
-		wrapped.setLogWriter(out);
+		dataSource.setLogWriter(out);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.sql.CommonDataSource#setLoginTimeout(int)
+	 */
 	@Override
 	public void setLoginTimeout(int seconds) throws SQLException {
-		wrapped.setLoginTimeout(seconds);
+		dataSource.setLoginTimeout(seconds);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.sql.CommonDataSource#getLoginTimeout()
+	 */
 	@Override
 	public int getLoginTimeout() throws SQLException {
-		return wrapped.getLoginTimeout();
+		return dataSource.getLoginTimeout();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.sql.CommonDataSource#getParentLogger()
+	 */
 	@Override
 	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-		return wrapped.getParentLogger();
+		return dataSource.getParentLogger();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.sql.Wrapper#unwrap(java.lang.Class)
+	 */
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
-		return wrapped.unwrap(iface);
+		return dataSource.unwrap(iface);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
+	 */
 	@Override
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		return wrapped.isWrapperFor(iface);
+		return dataSource.isWrapperFor(iface);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.io.Closeable#close()
+	 */
 	@Override
 	public void close() throws IOException {
-		if (wrapped instanceof Closeable) {
-			((Closeable) wrapped).close();
+		if (dataSource instanceof Closeable) {
+			((Closeable) dataSource).close();
 		} else {
 			try {
-				Method close = wrapped.getClass().getMethod("close");
-				close.invoke(wrapped);
+				Method close = dataSource.getClass().getMethod("close");
+				close.invoke(dataSource);
 			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 				// Ignore, no parameterless close method defined
 			}
