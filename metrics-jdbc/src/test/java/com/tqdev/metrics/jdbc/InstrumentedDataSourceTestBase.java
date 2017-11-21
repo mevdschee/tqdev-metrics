@@ -46,7 +46,7 @@ public class InstrumentedDataSourceTestBase {
 	protected final InstrumentedDataSource dataSource;
 
     /** The current time . */
-	private long now = 1510373758000000000L;
+    protected long now = 1510373758000000000L;
 
 	/**
 	 * Instantiates a new instrumented data source.
