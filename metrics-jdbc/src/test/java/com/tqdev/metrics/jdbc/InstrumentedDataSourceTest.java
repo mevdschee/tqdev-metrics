@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * The Class InstrumentedDataSourceTest.
+ * The Class tests the InstrumentedDataSource.
  */
 public class InstrumentedDataSourceTest extends InstrumentedDataSourceTestBase {
 
@@ -43,6 +43,12 @@ public class InstrumentedDataSourceTest extends InstrumentedDataSourceTestBase {
 		registry.reset();
 	}
 
+	/**
+	 * Should measure prepared statement.
+	 *
+	 * @throws SQLException
+	 *             the SQL exception
+	 */
 	@Test
 	public void shouldMeasurePreparedStatement() throws SQLException {
 		PreparedStatement statements[] = { dataSource.getConnection().prepareStatement("select"),
@@ -61,6 +67,12 @@ public class InstrumentedDataSourceTest extends InstrumentedDataSourceTestBase {
 		assertThat(registry.get("jdbc.Statement.Durations", "select")).isEqualTo(123456789L * 4 * statements.length);
 	}
 
+	/**
+	 * Should measure callable statement.
+	 *
+	 * @throws SQLException
+	 *             the SQL exception
+	 */
 	@Test
 	public void shouldMeasureCallableStatement() throws SQLException {
 		CallableStatement statements[] = { dataSource.getConnection().prepareCall("select"),
@@ -76,6 +88,12 @@ public class InstrumentedDataSourceTest extends InstrumentedDataSourceTestBase {
 		assertThat(registry.get("jdbc.Statement.Durations", "select")).isEqualTo(123456789L * 4 * statements.length);
 	}
 
+	/**
+	 * Should measure statement.
+	 *
+	 * @throws SQLException
+	 *             the SQL exception
+	 */
 	@Test
 	public void shouldMeasureStatement() throws SQLException {
 		Statement statements[] = { dataSource.getConnection().createStatement(),
