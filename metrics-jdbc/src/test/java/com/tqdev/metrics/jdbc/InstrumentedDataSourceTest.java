@@ -56,12 +56,9 @@ public class InstrumentedDataSourceTest extends InstrumentedDataSourceTestBase {
 			statement.executeQuery();
 			statement.executeUpdate();
 			statement.executeLargeUpdate();
-			statement.addBatch();
-			statement.executeBatch();
-			statement.executeLargeBatch();
 		}
-		assertThat(registry.get("jdbc.Statement.Invocations", "select")).isEqualTo(1L * 6 * statements.length);
-		assertThat(registry.get("jdbc.Statement.Durations", "select")).isEqualTo(123456789L * 6 * statements.length);
+		assertThat(registry.get("jdbc.Statement.Invocations", "select")).isEqualTo(1L * 4 * statements.length);
+		assertThat(registry.get("jdbc.Statement.Durations", "select")).isEqualTo(123456789L * 4 * statements.length);
 	}
 
 	@Test
@@ -74,12 +71,9 @@ public class InstrumentedDataSourceTest extends InstrumentedDataSourceTestBase {
 			statement.executeQuery();
 			statement.executeUpdate();
 			statement.executeLargeUpdate();
-			statement.addBatch();
-			statement.executeBatch();
-			statement.executeLargeBatch();
 		}
-		assertThat(registry.get("jdbc.Statement.Invocations", "select")).isEqualTo(1L * 6 * statements.length);
-		assertThat(registry.get("jdbc.Statement.Durations", "select")).isEqualTo(123456789L * 6 * statements.length);
+		assertThat(registry.get("jdbc.Statement.Invocations", "select")).isEqualTo(1L * 4 * statements.length);
+		assertThat(registry.get("jdbc.Statement.Durations", "select")).isEqualTo(123456789L * 4 * statements.length);
 	}
 
 	@Test
