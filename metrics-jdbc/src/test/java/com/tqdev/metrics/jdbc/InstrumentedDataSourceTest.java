@@ -21,9 +21,9 @@
 package com.tqdev.metrics.jdbc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,44 +34,82 @@ import org.junit.Test;
 public class InstrumentedDataSourceTest extends InstrumentedDataSourceTestBase {
 
 	/**
-	 * Initialize.
+	 * Initialize by resetting the metric registry.
 	 */
 	@Before
 	public void initialize() {
 		registry.reset();
 	}
 
-	/**
-	 * Should measure select single user once with prepared statement.
-	 *
-	 * @throws SQLException
-	 *             the SQL exception
-	 */
 	@Test
-	public void shouldMeasureSelectSingleUserOnceWithPreparedStatement() throws SQLException {
-		String sql = "select * from users where id = ?";
-		PreparedStatement statement = dataSource.getConnection().prepareStatement(sql);
-		statement.setInt(1, 1);
-		assertThat(statement.executeQuery()).isNotNull();
-		assertThat(registry.get("jdbc.Statement.Invocations", sql)).isEqualTo(1);
-		assertThat(registry.get("jdbc.Statement.Durations", sql)).isEqualTo(123456789);
+	public void shouldMeasureQueryWithPreparedStatement() throws SQLException {
+		dataSource.getConnection().prepareStatement("select").executeQuery();
+		assertThat(registry.get("jdbc.Statement.Invocations", "select")).isEqualTo(1);
+		assertThat(registry.get("jdbc.Statement.Durations", "select")).isEqualTo(123456789);
 	}
 
-	/**
-	 * Should measure select single user twice with prepared statement.
-	 *
-	 * @throws SQLException
-	 *             the SQL exception
-	 */
 	@Test
-	public void shouldMeasureSelectSingleUserTwiceWithPreparedStatement() throws SQLException {
-		String sql = "select * from users where id = ?";
-		PreparedStatement statement = dataSource.getConnection().prepareStatement(sql);
-		statement.setInt(1, 1);
-		assertThat(statement.executeQuery()).isNotNull();
-		assertThat(statement.executeQuery()).isNotNull();
-		assertThat(registry.get("jdbc.Statement.Invocations", sql)).isEqualTo(2);
-		assertThat(registry.get("jdbc.Statement.Durations", sql)).isEqualTo(246913578);
+	public void shouldMeasureQueryTwiceWithPreparedStatement() throws SQLException {
+		PreparedStatement statement = dataSource.getConnection().prepareStatement("select");
+		statement.executeQuery();
+        statement.executeQuery();
+        assertThat(registry.get("jdbc.Statement.Invocations", "select")).isEqualTo(2);
+		assertThat(registry.get("jdbc.Statement.Durations", "select")).isEqualTo(246913578);
 	}
 
+    @Test
+    public void shouldMeasureUpdateWithPreparedStatement() throws SQLException {
+        dataSource.getConnection().prepareStatement("update").executeUpdate();
+        assertThat(registry.get("jdbc.Statement.Invocations", "update")).isEqualTo(1);
+        assertThat(registry.get("jdbc.Statement.Durations", "update")).isEqualTo(123456789);
+    }
+
+    @Test
+    public void shouldMeasureExecuteWithPreparedStatement() throws SQLException {
+        dataSource.getConnection().prepareStatement("delete").execute();
+        assertThat(registry.get("jdbc.Statement.Invocations", "delete")).isEqualTo(1);
+        assertThat(registry.get("jdbc.Statement.Durations", "delete")).isEqualTo(123456789);
+    }
+
+    @Test
+    public void shouldMeasureQueryWithStatement() throws SQLException {
+        dataSource.getConnection().createStatement().executeQuery("select");
+        assertThat(registry.get("jdbc.Statement.Invocations", "select")).isEqualTo(1);
+        assertThat(registry.get("jdbc.Statement.Durations", "select")).isEqualTo(123456789);
+    }
+
+    @Test
+    public void shouldMeasureUpdateWithStatement() throws SQLException {
+        dataSource.getConnection().createStatement().executeUpdate("update");
+        assertThat(registry.get("jdbc.Statement.Invocations", "update")).isEqualTo(1);
+        assertThat(registry.get("jdbc.Statement.Durations", "update")).isEqualTo(123456789);
+    }
+
+    @Test
+    public void shouldMeasureExecuteWithStatement() throws SQLException {
+        dataSource.getConnection().createStatement().execute("delete");
+        assertThat(registry.get("jdbc.Statement.Invocations", "delete")).isEqualTo(1);
+        assertThat(registry.get("jdbc.Statement.Durations", "delete")).isEqualTo(123456789);
+    }
+
+    @Test
+    public void shouldMeasureQueryWithCallableStatement() throws SQLException {
+        dataSource.getConnection().prepareCall("call").executeQuery();
+        assertThat(registry.get("jdbc.Statement.Invocations", "call")).isEqualTo(1);
+        assertThat(registry.get("jdbc.Statement.Durations", "call")).isEqualTo(123456789);
+    }
+
+    @Test
+    public void shouldMeasureUpdateWithCallableStatement() throws SQLException {
+        dataSource.getConnection().prepareCall("call").executeUpdate();
+        assertThat(registry.get("jdbc.Statement.Invocations", "call")).isEqualTo(1);
+        assertThat(registry.get("jdbc.Statement.Durations", "call")).isEqualTo(123456789);
+    }
+
+    @Test
+    public void shouldMeasureExecuteWithCallableStatement() throws SQLException {
+        dataSource.getConnection().prepareCall("call").execute();
+        assertThat(registry.get("jdbc.Statement.Invocations", "call")).isEqualTo(1);
+        assertThat(registry.get("jdbc.Statement.Durations", "call")).isEqualTo(123456789);
+    }
 }
