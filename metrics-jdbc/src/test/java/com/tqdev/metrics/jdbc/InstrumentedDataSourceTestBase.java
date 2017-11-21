@@ -20,11 +20,6 @@
  */
 package com.tqdev.metrics.jdbc;
 
-import java.sql.SQLException;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -45,8 +40,8 @@ public class InstrumentedDataSourceTestBase {
 	/** The data source. */
 	protected final InstrumentedDataSource dataSource;
 
-    /** The current time . */
-    protected long now = 1510373758000000000L;
+	/** The current time . */
+	protected long now = 1510373758000000000L;
 
 	/**
 	 * Instantiates a new instrumented data source.
