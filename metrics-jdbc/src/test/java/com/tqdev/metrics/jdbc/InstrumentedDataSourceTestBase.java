@@ -53,8 +53,7 @@ public class InstrumentedDataSourceTestBase {
 	 */
 	public InstrumentedDataSourceTestBase() {
 		when(registry.getTime()).thenAnswer(i -> now += 123456789);
-		DataSource mockedDataSource = mock(DataSource.class, RETURNS_DEEP_STUBS);
-		dataSource = new InstrumentedDataSource(mockedDataSource, registry);
+		dataSource = new InstrumentedDataSource(mock(DataSource.class, RETURNS_DEEP_STUBS), registry);
 	}
 
 }
