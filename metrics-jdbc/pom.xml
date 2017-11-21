@@ -11,9 +11,9 @@
 
     <artifactId>metrics-jdbc</artifactId>
 
-    <name>TQdev.com's Metrics reporting via JMX</name>
+    <name>TQdev.com's Metrics for JDBC databases</name>
     <description>
-        Support for publishing the metrics from instrumented components via JMX.
+        Instrumentation of statement execution in JDBC connected databases.
     </description>
 
     <dependencies>
