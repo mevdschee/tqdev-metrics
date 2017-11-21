@@ -55,12 +55,6 @@ public class InstrumentedDataSourceTestBase {
 		when(registry.getTime()).thenAnswer(i -> now += 123456789);
 		DataSource mockedDataSource = mock(DataSource.class, RETURNS_DEEP_STUBS);
 		dataSource = new InstrumentedDataSource(mockedDataSource, registry);
-		try {
-			when(mockedDataSource.getConnection().prepareStatement(anyString()).execute()).thenReturn(true);
-			when(mockedDataSource.getConnection().prepareStatement(anyString()).execute()).thenReturn(true);
-		} catch (SQLException e) {
-			//ignore
-		}
 	}
 
 }
