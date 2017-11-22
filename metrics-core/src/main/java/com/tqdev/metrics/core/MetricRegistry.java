@@ -51,6 +51,15 @@ public class MetricRegistry {
 	}
 
 	/**
+	 * Resets the metric registry's counters.
+	 */
+	public void resetCounters() {
+		for (String type : values.keySet()) {
+			values.put(type, new ConcurrentHashMap<String, Object>());
+		}
+	}
+
+	/**
 	 * Increment a metric for a given type and key.
 	 *
 	 * @param type

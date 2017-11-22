@@ -170,8 +170,8 @@ public class JmxReporter implements DynamicMBean {
 	@Override
 	public Object invoke(String operationName, Object[] params, String[] signature)
 			throws MBeanException, ReflectionException {
-		if (operationName.equals("reset")) {
-			registry.reset();
+		if (operationName.equals("resetCounters")) {
+			registry.resetCounters();
 			return null;
 		}
 		throw new RuntimeOperationsException(new IllegalArgumentException("Cannot find operation: " + operationName),
@@ -193,8 +193,8 @@ public class JmxReporter implements DynamicMBean {
 		}
 
 		OpenMBeanParameterInfo[] params = new OpenMBeanParameterInfoSupport[0];
-		OpenMBeanOperationInfoSupport reset = new OpenMBeanOperationInfoSupport("reset", "Reset all Metrics", params,
-				SimpleType.VOID, MBeanOperationInfo.ACTION);
+		OpenMBeanOperationInfoSupport reset = new OpenMBeanOperationInfoSupport("resetCounters", "Reset all Metrics",
+				params, SimpleType.VOID, MBeanOperationInfo.ACTION);
 
 		OpenMBeanInfoSupport PSOMBInfo = new OpenMBeanInfoSupport(this.getClass().getName(), "TQdev.com's Metrics",
 				attributes.toArray(new OpenMBeanAttributeInfoSupport[0]), new OpenMBeanConstructorInfoSupport[0],
