@@ -39,7 +39,7 @@ public class InstrumentedStatement extends InstrumentedSqlWrapper implements Sta
 	private Statement statement;
 
 	/** The batch statements. */
-	private List<String> batchStatements = new LinkedList<>();
+	protected List<String> batchStatements = new LinkedList<>();
 
 	/**
 	 * Instantiates a new instrumented statement.

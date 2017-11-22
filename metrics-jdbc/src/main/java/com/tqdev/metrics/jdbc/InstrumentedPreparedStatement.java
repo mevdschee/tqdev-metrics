@@ -327,6 +327,7 @@ public class InstrumentedPreparedStatement extends InstrumentedStatement impleme
 	@Override
 	public void addBatch() throws SQLException {
 		preparedStatement.addBatch();
+		this.batchStatements.add(sql);
 	}
 
 	/*
