@@ -4,7 +4,7 @@
 
     <groupId>com.tqdev.metrics</groupId>
     <artifactId>metrics-parent</artifactId>
-    <version>0.9.10</version>
+    <version>0.9.11</version>
     <packaging>pom</packaging>
 
     <name>TQdev.com's Metrics aggregator</name>
@@ -47,6 +47,7 @@
         <module>metrics-influxdb</module>
         <module>metrics-sigar</module>
         <module>metrics-spring</module>
+        <module>metrics-spring-security</module>
     </modules>
 
     <properties>
@@ -67,6 +68,7 @@
         <assertj.version>3.8.0</assertj.version>
         <mockito.version>1.10.19</mockito.version>
         <spring.version>5.0.1.RELEASE</spring.version>
+        <spring-security.version>4.2.3.RELEASE</spring-security.version>
         <servlet-api.version>4.0.0</servlet-api.version>
         <sigar.version>1.6.5.132-6</sigar.version>
     </properties>

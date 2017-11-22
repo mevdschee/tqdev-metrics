@@ -6,6 +6,7 @@ include 'metrics-aspectj',
         'metrics-jdbc',
         'metrics-jvm',
         'metrics-sigar',
-        'metrics-spring'
+        'metrics-spring',
+        'metrics-spring-security'
 
 rootProject.name = 'tqdev-metrics'
