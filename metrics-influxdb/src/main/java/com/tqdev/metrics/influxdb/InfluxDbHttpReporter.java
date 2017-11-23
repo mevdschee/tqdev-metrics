@@ -38,15 +38,32 @@ import com.tqdev.metrics.core.MetricRegistry;
  */
 public class InfluxDbHttpReporter extends InfluxDbReporter {
 
-	/** The report uri. */
-	private final URI reportUri;
+	/** The report URL. */
+	private final String reportUrl;
 
 	/**
-	 * Gets the valid uri.
+	 * Instantiates a new InfluxDB HTTP reporter.
 	 *
 	 * @param reportUrl
-	 *            the report url
-	 * @return the valid uri
+	 *            the report URL
+	 * @param instanceName
+	 *            the instance name
+	 * @param registry
+	 *            the registry
+	 * @throws URISyntaxException
+	 *             the URI syntax exception
+	 */
+	public InfluxDbHttpReporter(String reportUrl, String instanceName, MetricRegistry registry) {
+		super(instanceName, registry);
+		this.reportUrl = reportUrl;
+	}
+
+	/**
+	 * Gets the valid URI.
+	 *
+	 * @param reportUrl
+	 *            the report URL
+	 * @return the valid URI
 	 * @throws URISyntaxException
 	 *             the URI syntax exception
 	 */
@@ -86,24 +103,6 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	}
 
 	/**
-	 * Instantiates a new InfluxDB HTTP reporter.
-	 *
-	 * @param reportUrl
-	 *            the report url
-	 * @param instanceName
-	 *            the instance name
-	 * @param registry
-	 *            the registry
-	 * @throws URISyntaxException
-	 *             the URI syntax exception
-	 */
-	public InfluxDbHttpReporter(String reportUrl, String instanceName, MetricRegistry registry)
-			throws URISyntaxException {
-		super(instanceName, registry);
-		this.reportUri = getValidUri(reportUrl);
-	}
-
-	/**
 	 * Report.
 	 *
 	 * @return true, if successful
@@ -111,7 +110,7 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	public boolean report() {
 		HttpURLConnection con = null;
 		try {
-			con = (HttpURLConnection) reportUri.toURL().openConnection();
+			con = (HttpURLConnection) getValidUri(reportUrl).toURL().openConnection();
 			con.setRequestMethod("POST");
 			con.setConnectTimeout(Long.valueOf(TimeUnit.SECONDS.toMillis(2)).intValue());
 			con.setReadTimeout(Long.valueOf(TimeUnit.SECONDS.toMillis(2)).intValue());
@@ -122,13 +121,17 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 			this.write(con.getOutputStream());
 			return true;
 		} catch (IOException e) {
+			// TODO: log
 			// on server disconnects, return false
+		} catch (URISyntaxException e) {
+			// TODO: log
+			// on invalid URI
 		} finally {
 			// cleanup connection streams
 			if (con != null) {
 				try {
 					con.getInputStream().close();
-				} catch (Exception ignore) {
+				} catch (IOException ignore) {
 					// ignore when connection cannot be closed
 				}
 			}

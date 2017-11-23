@@ -37,7 +37,6 @@ import java.util.zip.GZIPOutputStream;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
-// TODO: Auto-generated Javadoc
 /**
  * The InfluxDbFileReporter class reports values in the metric registry to
  * InfluxDB readable files.
@@ -54,7 +53,7 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	private final String dateFormat;
 
 	/**
-	 * Instantiates a new influx db file reporter.
+	 * Instantiates a new InfluxDB file reporter.
 	 *
 	 * @param metricPath
 	 *            the metric path
@@ -83,16 +82,16 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	public boolean report() {
 		DateFormat formatter = new SimpleDateFormat(dateFormat);
 		String filename = metricPath + "/" + formatter.format(new Date(System.currentTimeMillis())) + ".txt";
-		try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename, true), 8192)) {
+		try {
+			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename, true), 8192);
 			write(out);
 			compress(filename);
 			remove(maxFileCount);
-			return true;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO: log
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	/**

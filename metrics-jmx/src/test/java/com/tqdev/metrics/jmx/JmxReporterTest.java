@@ -25,7 +25,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 
-import javax.management.*;
+import javax.management.Attribute;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
+import javax.management.InvalidAttributeValueException;
+import javax.management.MBeanException;
+import javax.management.MBeanInfo;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.OpenDataException;
@@ -36,9 +48,8 @@ import org.junit.Test;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class JmxReporterTest.
+ * The Class JmxReporterTest tests the JmxReporter.
  */
 public class JmxReporterTest {
 
@@ -246,9 +257,11 @@ public class JmxReporterTest {
 	 * @throws MBeanRegistrationException
 	 *             the MBean registration exception
 	 * @throws InstanceNotFoundException
-	 *             the instance not found exception	 */
+	 *             the instance not found exception
+	 */
 	@Test
-	public void shouldRegisterInMBeanServer() throws MalformedObjectNameException, InstanceAlreadyExistsException, NotCompliantMBeanException, MBeanRegistrationException, InstanceNotFoundException {
+	public void shouldRegisterInMBeanServer() throws MalformedObjectNameException, InstanceAlreadyExistsException,
+			NotCompliantMBeanException, MBeanRegistrationException, InstanceNotFoundException {
 		reporter.register("com.tqdev.metrics");
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 		ObjectName name = new ObjectName("com.tqdev.metrics:type=Metrics");
