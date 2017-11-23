@@ -30,24 +30,30 @@ abstract class InfluxDbReporter {
 	/**
 	 * The instanceName used to identify the source of the metrics in InfluxDB.
 	 */
-	private final String instanceName;
+	protected final String instanceName;
+
+	/** The interval in seconds. */
+	protected final int intervalInSeconds;
 
 	/**
-	 * The registry in which the metrics, that this JMXReporter reports, are stored.
+	 * The registry in which the metrics, that this JMXReporter reports, are
+	 * stored.
 	 */
-	private final MetricRegistry registry;
+	protected final MetricRegistry registry;
 
 	/**
 	 * Instantiates a new JMX reporter.
 	 *
 	 * @param instanceName
-	 *            the name of the JVM instance or machine that generates the metrics
+	 *            the name of the JVM instance or machine that generates the
+	 *            metrics
 	 * @param registry
-	 *            the registry in which the metrics, that this JMXReporter reports,
-	 *            are stored
+	 *            the registry in which the metrics, that this JMXReporter
+	 *            reports, are stored
 	 */
-	public InfluxDbReporter(String instanceName, MetricRegistry registry) {
+	public InfluxDbReporter(String instanceName, int intervalInSeconds, MetricRegistry registry) {
 		this.instanceName = instanceName;
+		this.intervalInSeconds = intervalInSeconds;
 		this.registry = registry;
 	}
 

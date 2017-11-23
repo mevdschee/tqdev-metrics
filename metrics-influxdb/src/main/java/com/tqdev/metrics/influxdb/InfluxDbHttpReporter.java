@@ -39,7 +39,7 @@ import com.tqdev.metrics.core.MetricRegistry;
 public class InfluxDbHttpReporter extends InfluxDbReporter {
 
 	/** The report URL. */
-	private final String reportUrl;
+	protected final String reportUrl;
 
 	/**
 	 * Instantiates a new InfluxDB HTTP reporter.
@@ -53,8 +53,8 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	 * @throws URISyntaxException
 	 *             the URI syntax exception
 	 */
-	public InfluxDbHttpReporter(String reportUrl, String instanceName, MetricRegistry registry) {
-		super(instanceName, registry);
+	public InfluxDbHttpReporter(String reportUrl, String instanceName, int intervalInSeconds, MetricRegistry registry) {
+		super(instanceName, intervalInSeconds, registry);
 		this.reportUrl = reportUrl;
 	}
 
@@ -145,7 +145,7 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	 * @param intervalInSeconds
 	 *            the interval in seconds
 	 */
-	public void run(int intervalInSeconds) {
+	public void run() {
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 		exec.scheduleAtFixedRate(() -> this.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
 	}

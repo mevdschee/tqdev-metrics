@@ -33,7 +33,7 @@ public class InfluxDbFileReporterTest {
 	protected final MetricRegistry registry = MetricRegistry.getInstance();
 
 	/** The reporter. */
-	private final InfluxDbFileReporter reporter = new InfluxDbFileReporter(null, null, 0, null, registry);
+	private final InfluxDbFileReporter reporter = new InfluxDbFileReporter(null, null, 0, null, 10, registry);
 
 	/**
 	 * Initialize.
