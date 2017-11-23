@@ -4,7 +4,7 @@
 
     <groupId>com.tqdev.metrics</groupId>
     <artifactId>metrics-parent</artifactId>
-    <version>0.9.11</version>
+    <version>0.9.12</version>
     <packaging>pom</packaging>
 
     <name>TQdev.com's Metrics aggregator</name>
@@ -46,8 +46,9 @@
         <module>metrics-jvm</module>
         <module>metrics-influxdb</module>
         <module>metrics-sigar</module>
-        <module>metrics-spring</module>
+        <module>metrics-spring-webmvc</module>
         <module>metrics-spring-security</module>
+        <module>metrics-spring-loaders</module>
     </modules>
 
     <properties>
