@@ -92,9 +92,21 @@ public class InfluxDbFileReporterTest {
 	}
 
 	@Test
+	public void shouldAppendFile() throws IOException {
+		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758\n";
+		Files.write(tempPath.resolve("20171111.txt"), line.getBytes(), StandardOpenOption.CREATE_NEW);
+		registry.add("jdbc.Statement.Duration", "select", 123);
+		boolean success = reporter.report();
+		String content = String.join("\n", Files.readAllLines(tempPath.resolve("20171111.txt")));
+		assertThat(success).isTrue();
+		assertThat(content).isEqualTo(line
+				+ "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758");
+	}
+
+	@Test
 	public void shouldCompressFile() throws IOException {
 		registry.add("jdbc.Statement.Duration", "select", 123);
-		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758";
+		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758\n";
 		Files.write(tempPath.resolve("20171110.txt"), line.getBytes(), StandardOpenOption.CREATE_NEW);
 		boolean success = reporter.report();
 		FilenameFilter gzipFileFilter = (f, s) -> s.endsWith(".gz");
@@ -111,7 +123,7 @@ public class InfluxDbFileReporterTest {
 	@Test
 	public void shouldRotateFiles() throws IOException {
 		registry.add("jdbc.Statement.Duration", "select", 123);
-		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758";
+		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758\n";
 		ByteArrayOutputStream obj = new ByteArrayOutputStream();
 		GZIPOutputStream gzip = new GZIPOutputStream(obj);
 		gzip.write(line.getBytes());
