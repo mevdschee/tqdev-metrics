@@ -26,8 +26,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.tqdev.metrics.core.MetricRegistry;
@@ -53,8 +51,8 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	 * @throws URISyntaxException
 	 *             the URI syntax exception
 	 */
-	public InfluxDbHttpReporter(String reportUrl, String instanceName, int intervalInSeconds, MetricRegistry registry) {
-		super(instanceName, intervalInSeconds, registry);
+	public InfluxDbHttpReporter(String reportUrl, String instanceName, MetricRegistry registry) {
+		super(instanceName, registry);
 		this.reportUrl = reportUrl;
 	}
 
@@ -107,6 +105,7 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	 *
 	 * @return true, if successful
 	 */
+	@Override
 	public boolean report() {
 		HttpURLConnection con = null;
 		try {
@@ -137,17 +136,6 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Run.
-	 *
-	 * @param intervalInSeconds
-	 *            the interval in seconds
-	 */
-	public void run() {
-		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(() -> this.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
 	}
 
 }

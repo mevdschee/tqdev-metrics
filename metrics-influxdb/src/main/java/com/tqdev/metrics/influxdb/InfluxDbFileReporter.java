@@ -30,9 +30,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPOutputStream;
 
 import com.tqdev.metrics.core.MetricRegistry;
@@ -69,8 +66,8 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 *            the interval in seconds
 	 */
 	public InfluxDbFileReporter(String metricPath, String dateFormat, int maxFileCount, String instanceName,
-			int intervalInSeconds, MetricRegistry registry) {
-		super(instanceName, intervalInSeconds, registry);
+			MetricRegistry registry) {
+		super(instanceName, registry);
 		this.metricPath = metricPath;
 		this.dateFormat = dateFormat;
 		this.maxFileCount = maxFileCount;
@@ -81,11 +78,13 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 *
 	 * @return true, if successful
 	 */
+	@Override
 	public boolean report() {
 		DateFormat formatter = new SimpleDateFormat(dateFormat);
-		String filename = metricPath + "/" + formatter.format(new Date(System.currentTimeMillis())) + ".txt";
+		String filename = metricPath + "/" + formatter.format(new Date(registry.getTime() / 1000000)) + ".txt";
 		try {
-			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename, true), 8192);
+			FileOutputStream fos = new FileOutputStream(filename, true);
+			BufferedOutputStream out = new BufferedOutputStream(fos, 8192);
 			write(out);
 			compress(filename);
 			remove(maxFileCount);
@@ -150,14 +149,6 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 		} else {
 			throw new IOException("Directory not listable: " + metricPath);
 		}
-	}
-
-	/**
-	 * Run.
-	 */
-	public void run(int intervalInSeconds) {
-		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(() -> this.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
 	}
 
 }

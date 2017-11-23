@@ -22,6 +22,9 @@ package com.tqdev.metrics.influxdb;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
@@ -31,9 +34,6 @@ abstract class InfluxDbReporter {
 	 * The instanceName used to identify the source of the metrics in InfluxDB.
 	 */
 	protected final String instanceName;
-
-	/** The interval in seconds. */
-	protected final int intervalInSeconds;
 
 	/**
 	 * The registry in which the metrics, that this JMXReporter reports, are
@@ -51,9 +51,8 @@ abstract class InfluxDbReporter {
 	 *            the registry in which the metrics, that this JMXReporter
 	 *            reports, are stored
 	 */
-	public InfluxDbReporter(String instanceName, int intervalInSeconds, MetricRegistry registry) {
+	public InfluxDbReporter(String instanceName, MetricRegistry registry) {
 		this.instanceName = instanceName;
-		this.intervalInSeconds = intervalInSeconds;
 		this.registry = registry;
 	}
 
@@ -66,7 +65,7 @@ abstract class InfluxDbReporter {
 	public void write(OutputStream out) {
 		PrintWriter w = new PrintWriter(out);
 		String instanceStr = instanceName.replaceAll("[, =]", "\\$1");
-		String time = String.valueOf(System.currentTimeMillis() / 1000);
+		String time = String.valueOf(registry.getTime() / 1000000000);
 		for (String type : registry.getTypes()) {
 			String typeStr = type.replaceAll("[, ]", "\\$1");
 			for (String key : registry.getKeys(type)) {
@@ -93,4 +92,16 @@ abstract class InfluxDbReporter {
 		w.close();
 	}
 
+	public abstract boolean report();
+
+	/**
+	 * Run.
+	 *
+	 * @param intervalInSeconds
+	 *            the interval in seconds
+	 */
+	public void run(int intervalInSeconds) {
+		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+		exec.scheduleAtFixedRate(() -> this.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
+	}
 }

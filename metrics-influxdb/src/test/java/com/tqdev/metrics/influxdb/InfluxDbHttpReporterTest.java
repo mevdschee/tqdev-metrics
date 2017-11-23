@@ -33,7 +33,8 @@ public class InfluxDbHttpReporterTest {
 	protected final MetricRegistry registry = MetricRegistry.getInstance();
 
 	/** The reporter. */
-	private final InfluxDbHttpReporter reporter = new InfluxDbHttpReporter(null, null, 10, registry);
+	private final InfluxDbHttpReporter reporter = new InfluxDbHttpReporter("http://localhost:8086/write?db=collectd",
+			"localhost", registry);
 
 	/**
 	 * Initialize.
