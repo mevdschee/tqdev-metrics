@@ -38,9 +38,8 @@ public class MeasureAspect {
 
 	/**
 	 * Measure the total duration and invocation count of public functions of a
-	 * class using the "MeasuredClass" annotation. This method should not be
-	 * invoked manually. It should be automatically invoked using AspectJ
-	 * weaving.
+	 * class using the "MeasuredClass" annotation. This method should not be invoked
+	 * manually. It should be automatically invoked using AspectJ weaving.
 	 *
 	 * @param joinPoint
 	 *            the public function of the class on which the measurement is
@@ -49,8 +48,8 @@ public class MeasureAspect {
 	 *            the annotation of the class
 	 * @return the return value of the public function that is measured
 	 * @throws Throwable
-	 *             any exception that may be thrown by the public function that
-	 *             is measured
+	 *             any exception that may be thrown by the public function that is
+	 *             measured
 	 */
 	/*
 	 * Advice for the public methods in a class, where the class is marked with
@@ -72,8 +71,8 @@ public class MeasureAspect {
 	}
 
 	/**
-	 * Measure the total duration and invocation count of a public function
-	 * using the "MeasuredMethod" annotation.
+	 * Measure the total duration and invocation count of a public function using
+	 * the "MeasuredMethod" annotation.
 	 *
 	 * @param joinPoint
 	 *            the public function (the method) on which the measurement is
@@ -82,12 +81,12 @@ public class MeasureAspect {
 	 *            the annotation of the method
 	 * @return the return value of the public function that is measured
 	 * @throws Throwable
-	 *             any exception that may be thrown by the public function that
-	 *             is measured
+	 *             any exception that may be thrown by the public function that is
+	 *             measured
 	 */
 	/*
-	 * Advice for the public methods in a class, where the methods are marked
-	 * with Annotation "MeasuredMethod"
+	 * Advice for the public methods in a class, where the methods are marked with
+	 * Annotation "MeasuredMethod"
 	 */
 	@Around("execution(public * *(..)) && @annotation(annotation)")
 	public Object MeasuredMethod(final ProceedingJoinPoint joinPoint, final MeasuredMethod annotation)
