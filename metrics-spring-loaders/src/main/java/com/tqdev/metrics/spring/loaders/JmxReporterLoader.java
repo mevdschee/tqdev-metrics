@@ -19,8 +19,9 @@ public class JmxReporterLoader {
 	 */
 	@Autowired
 	public JmxReporterLoader(MetricRegistry metricRegistry) {
+		JmxReporter reporter = new JmxReporter(metricRegistry);
 		try {
-			JmxReporter.start("com.tqdev.metrics", metricRegistry);
+			reporter.register("com.tqdev.metrics");
 		} catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException
 				| NotCompliantMBeanException e) {
 			// TODO Auto-generated catch block

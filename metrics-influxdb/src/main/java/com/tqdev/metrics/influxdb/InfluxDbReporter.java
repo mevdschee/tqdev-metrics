@@ -25,7 +25,7 @@ import java.io.PrintWriter;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
-public class InfluxDbReporter {
+abstract class InfluxDbReporter {
 
 	/**
 	 * The instanceName used to identify the source of the metrics in InfluxDB.
@@ -33,8 +33,7 @@ public class InfluxDbReporter {
 	private final String instanceName;
 
 	/**
-	 * The registry in which the metrics, that this JMXReporter reports, are
-	 * stored.
+	 * The registry in which the metrics, that this JMXReporter reports, are stored.
 	 */
 	private final MetricRegistry registry;
 
@@ -42,11 +41,10 @@ public class InfluxDbReporter {
 	 * Instantiates a new JMX reporter.
 	 *
 	 * @param instanceName
-	 *            the name of the JVM instance or machine that generates the
-	 *            metrics
+	 *            the name of the JVM instance or machine that generates the metrics
 	 * @param registry
-	 *            the registry in which the metrics, that this JMXReporter
-	 *            reports, are stored
+	 *            the registry in which the metrics, that this JMXReporter reports,
+	 *            are stored
 	 */
 	public InfluxDbReporter(String instanceName, MetricRegistry registry) {
 		this.instanceName = instanceName;

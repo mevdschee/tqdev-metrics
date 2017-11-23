@@ -83,7 +83,7 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	public boolean report() {
 		DateFormat formatter = new SimpleDateFormat(dateFormat);
 		String filename = metricPath + "/" + formatter.format(new Date(System.currentTimeMillis())) + ".txt";
-		try(BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename, true), 8192)) {
+		try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename, true), 8192)) {
 			write(out);
 			compress(filename);
 			remove(maxFileCount);
@@ -112,7 +112,7 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 			for (File file : directoryListing) {
 				if (file.getCanonicalPath() != current.getCanonicalPath()) {
 					try (FileOutputStream fos = new FileOutputStream(file.getPath() + ".gz");
-						GZIPOutputStream gzos = new GZIPOutputStream(fos)) {
+							GZIPOutputStream gzos = new GZIPOutputStream(fos)) {
 						byte[] buffer = new byte[8192];
 						int length;
 						try (FileInputStream fis = new FileInputStream(file.getPath())) {
@@ -152,27 +152,14 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	}
 
 	/**
-	 * Start.
+	 * Run.
 	 *
-	 * @param metricPath
-	 *            the metric path
-	 * @param dateFormat
-	 *            the date format
-	 * @param maxFileCount
-	 *            the max file count
-	 * @param instanceName
-	 *            the instance name
 	 * @param intervalInSeconds
 	 *            the interval in seconds
 	 */
-	public static void start(String metricPath, String dateFormat, int maxFileCount, String instanceName,
-			int intervalInSeconds) {
-		MetricRegistry registry = MetricRegistry.getInstance();
-		InfluxDbFileReporter reporter = new InfluxDbFileReporter(metricPath, dateFormat, maxFileCount, instanceName,
-				registry);
-
+	public void run(int intervalInSeconds) {
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(() -> reporter.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
+		exec.scheduleAtFixedRate(() -> this.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
 	}
 
 }

@@ -22,14 +22,10 @@ package com.tqdev.metrics.jmx;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 
-import javax.management.Attribute;
-import javax.management.AttributeNotFoundException;
-import javax.management.InvalidAttributeValueException;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.ReflectionException;
+import javax.management.*;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.OpenDataException;
@@ -69,7 +65,7 @@ public class JmxReporterTest {
 	 *            the key
 	 * @return the long
 	 * @throws MBeanException
-	 *             the m bean exception
+	 *             the MBean exception
 	 * @throws AttributeNotFoundException
 	 *             the attribute not found exception
 	 * @throws ReflectionException
@@ -93,7 +89,7 @@ public class JmxReporterTest {
 	 * @throws AttributeNotFoundException
 	 *             the attribute not found exception
 	 * @throws MBeanException
-	 *             the m bean exception
+	 *             the MBean exception
 	 * @throws ReflectionException
 	 *             the reflection exception
 	 * @throws InvalidAttributeValueException
@@ -121,7 +117,7 @@ public class JmxReporterTest {
 	 * Should throw exception on unknown type.
 	 *
 	 * @throws MBeanException
-	 *             the m bean exception
+	 *             the MBean exception
 	 * @throws AttributeNotFoundException
 	 *             the attribute not found exception
 	 * @throws ReflectionException
@@ -142,7 +138,7 @@ public class JmxReporterTest {
 	 * Should throw exception on unknown key.
 	 *
 	 * @throws MBeanException
-	 *             the m bean exception
+	 *             the MBean exception
 	 * @throws AttributeNotFoundException
 	 *             the attribute not found exception
 	 * @throws ReflectionException
@@ -164,7 +160,7 @@ public class JmxReporterTest {
 	 * Should throw exception when writing to key.
 	 *
 	 * @throws MBeanException
-	 *             the m bean exception
+	 *             the MBean exception
 	 * @throws AttributeNotFoundException
 	 *             the attribute not found exception
 	 * @throws ReflectionException
@@ -186,7 +182,7 @@ public class JmxReporterTest {
 	 * Should report written values.
 	 *
 	 * @throws MBeanException
-	 *             the m bean exception
+	 *             the MBean exception
 	 * @throws AttributeNotFoundException
 	 *             the attribute not found exception
 	 * @throws ReflectionException
@@ -228,7 +224,7 @@ public class JmxReporterTest {
 	 * @throws ReflectionException
 	 *             the reflection exception
 	 * @throws MBeanException
-	 *             the m bean exception
+	 *             the MBean exception
 	 */
 	@Test
 	public void shouldResetWhenInvokingResetOperation() throws ReflectionException, MBeanException {
@@ -236,6 +232,29 @@ public class JmxReporterTest {
 		assertThat(registry.has("jdbc.Statement.Invocations", "select")).isTrue();
 		reporter.invoke("resetCounters", new Object[] {}, new String[] {});
 		assertThat(registry.has("jdbc.Statement.Invocations", "select")).isFalse();
+	}
+
+	/**
+	 * Should register in MBean server.
+	 *
+	 * @throws MalformedObjectNameException
+	 *             the malformed object name exception
+	 * @throws InstanceAlreadyExistsException
+	 *             the instance already exists exception
+	 * @throws NotCompliantMBeanException
+	 *             the not compliant MBean exception
+	 * @throws MBeanRegistrationException
+	 *             the MBean registration exception
+	 * @throws InstanceNotFoundException
+	 *             the instance not found exception	 */
+	@Test
+	public void shouldRegisterInMBeanServer() throws MalformedObjectNameException, InstanceAlreadyExistsException, NotCompliantMBeanException, MBeanRegistrationException, InstanceNotFoundException {
+		reporter.register("com.tqdev.metrics");
+		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+		ObjectName name = new ObjectName("com.tqdev.metrics:type=Metrics");
+		assertThat(mbs.isRegistered(name)).isTrue();
+		mbs.unregisterMBean(name);
+		assertThat(mbs.isRegistered(name)).isFalse();
 	}
 
 }

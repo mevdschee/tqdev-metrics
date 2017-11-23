@@ -137,23 +137,14 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	}
 
 	/**
-	 * Start.
+	 * Run.
 	 *
-	 * @param reportUrl
-	 *            the report url
-	 * @param instanceName
-	 *            the instance name
 	 * @param intervalInSeconds
 	 *            the interval in seconds
-	 * @throws URISyntaxException
-	 *             the URI syntax exception
 	 */
-	public static void start(String reportUrl, String instanceName, int intervalInSeconds) throws URISyntaxException {
-		MetricRegistry registry = MetricRegistry.getInstance();
-		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter(reportUrl, instanceName, registry);
-
+	public void run(int intervalInSeconds) {
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(() -> reporter.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
+		exec.scheduleAtFixedRate(() -> this.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
 	}
 
 }
