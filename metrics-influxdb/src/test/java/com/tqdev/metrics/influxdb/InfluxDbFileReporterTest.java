@@ -24,15 +24,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.zip.GZIPOutputStream;
 
 import org.junit.After;
 import org.junit.Before;
@@ -64,21 +61,23 @@ public class InfluxDbFileReporterTest {
 		when(registry.getTime()).thenReturn(1510373758000000000L);
 		registry.reset();
 		tempPath = Files.createTempDirectory(null);
-		tempPath.toFile().deleteOnExit();
 		reporter = new InfluxDbFileReporter(tempPath.toString(), "yyyyMMdd", 2, "localhost", registry);
 	}
 
 	/**
 	 * Cleanup.
+	 * 
+	 * @throws IOException
 	 */
 	@After
-	public void cleanup() {
+	public void cleanup() throws IOException {
 		File[] directoryListing = tempPath.toFile().listFiles();
 		if (directoryListing != null) {
 			for (int i = 0; i < directoryListing.length; i++) {
 				directoryListing[i].delete();
 			}
 		}
+		Files.delete(tempPath);
 	}
 
 	@Test
@@ -99,8 +98,9 @@ public class InfluxDbFileReporterTest {
 		boolean success = reporter.report();
 		String content = String.join("\n", Files.readAllLines(tempPath.resolve("20171111.txt")));
 		assertThat(success).isTrue();
-		assertThat(content).isEqualTo(line
-				+ "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758");
+		assertThat(content).isEqualTo(
+				"jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758\n"
+						+ "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758");
 	}
 
 	@Test
@@ -109,10 +109,8 @@ public class InfluxDbFileReporterTest {
 		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758\n";
 		Files.write(tempPath.resolve("20171110.txt"), line.getBytes(), StandardOpenOption.CREATE_NEW);
 		boolean success = reporter.report();
-		FilenameFilter gzipFileFilter = (f, s) -> s.endsWith(".gz");
-		File[] gzipFiles = tempPath.toFile().listFiles(gzipFileFilter);
-		FilenameFilter textFileFilter = (f, s) -> s.endsWith(".txt");
-		File[] textFiles = tempPath.toFile().listFiles(textFileFilter);
+		File[] gzipFiles = tempPath.toFile().listFiles((f, s) -> s.endsWith(".gz"));
+		File[] textFiles = tempPath.toFile().listFiles((f, s) -> s.endsWith(".txt"));
 		assertThat(success).isTrue();
 		assertThat(gzipFiles.length).isEqualTo(1);
 		assertThat(gzipFiles[0].getName()).isEqualTo("20171110.txt.gz");
@@ -124,21 +122,13 @@ public class InfluxDbFileReporterTest {
 	public void shouldRotateFiles() throws IOException {
 		registry.add("jdbc.Statement.Duration", "select", 123);
 		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758\n";
-		ByteArrayOutputStream obj = new ByteArrayOutputStream();
-		GZIPOutputStream gzip = new GZIPOutputStream(obj);
-		gzip.write(line.getBytes());
-		gzip.flush();
-		gzip.close();
-		byte[] compressed = obj.toByteArray();
-		Files.write(tempPath.resolve("20171108.txt.gz"), compressed, StandardOpenOption.CREATE_NEW);
-		Files.write(tempPath.resolve("20171109.txt.gz"), compressed, StandardOpenOption.CREATE_NEW);
+		Files.createFile(tempPath.resolve("20171108.txt.gz"));
+		Files.createFile(tempPath.resolve("20171109.txt.gz"));
 		Files.write(tempPath.resolve("20171110.txt"), line.getBytes(), StandardOpenOption.CREATE_NEW);
 		boolean success = reporter.report();
-		FilenameFilter gzipFileFilter = (f, s) -> s.endsWith(".gz");
-		File[] gzipFiles = tempPath.toFile().listFiles(gzipFileFilter);
+		File[] gzipFiles = tempPath.toFile().listFiles((f, s) -> s.endsWith(".gz"));
 		Arrays.sort(gzipFiles);
-		FilenameFilter textFileFilter = (f, s) -> s.endsWith(".txt");
-		File[] textFiles = tempPath.toFile().listFiles(textFileFilter);
+		File[] textFiles = tempPath.toFile().listFiles((f, s) -> s.endsWith(".txt"));
 		assertThat(success).isTrue();
 		assertThat(gzipFiles.length).isEqualTo(2);
 		assertThat(gzipFiles[0].getName()).isEqualTo("20171109.txt.gz");
