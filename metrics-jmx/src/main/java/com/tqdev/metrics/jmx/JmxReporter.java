@@ -233,7 +233,7 @@ public class JmxReporter implements DynamicMBean {
 	 *
 	 * @param domain
 	 *            the domain
-	 * @param domain
+	 * @param description
 	 *            the description
 	 * @throws MalformedObjectNameException
 	 *             the malformed object name exception
