@@ -65,7 +65,7 @@ abstract class InfluxDbReporter {
 	public void write(OutputStream out) {
 		PrintWriter w = new PrintWriter(out);
 		String instanceStr = instanceName.replaceAll("[, =]", "\\$1");
-		String time = String.valueOf(registry.getTime() / 1000000000);
+		String time = String.valueOf((registry.getTime() / 1000000000) * 1000000000);
 		for (String type : registry.getTypes()) {
 			String typeStr = type.replaceAll("[, ]", "\\$1");
 			for (String key : registry.getKeys(type)) {

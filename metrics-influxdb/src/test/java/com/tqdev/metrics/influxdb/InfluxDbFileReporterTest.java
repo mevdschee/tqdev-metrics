@@ -58,7 +58,7 @@ public class InfluxDbFileReporterTest {
 	 */
 	@Before
 	public void initialize() throws IOException {
-		when(registry.getTime()).thenReturn(1510373758000000000L);
+		when(registry.getTime()).thenReturn(1510373758123456789L);
 		registry.reset();
 		tempPath = Files.createTempDirectory(null);
 		reporter = new InfluxDbFileReporter(tempPath.toString(), "yyyyMMdd", 2, "localhost", registry);
@@ -87,26 +87,26 @@ public class InfluxDbFileReporterTest {
 		String content = String.join("\n", Files.readAllLines(tempPath.resolve("20171111.txt")));
 		assertThat(success).isTrue();
 		assertThat(content).isEqualTo(
-				"jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758");
+				"jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000");
 	}
 
 	@Test
 	public void shouldAppendFile() throws IOException {
-		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758\n";
+		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000\n";
 		Files.write(tempPath.resolve("20171111.txt"), line.getBytes(), StandardOpenOption.CREATE_NEW);
 		registry.add("jdbc.Statement.Duration", "select", 123);
 		boolean success = reporter.report();
 		String content = String.join("\n", Files.readAllLines(tempPath.resolve("20171111.txt")));
 		assertThat(success).isTrue();
 		assertThat(content).isEqualTo(
-				"jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758\n"
-						+ "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758");
+				"jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000\n"
+						+ "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000");
 	}
 
 	@Test
 	public void shouldCompressFile() throws IOException {
 		registry.add("jdbc.Statement.Duration", "select", 123);
-		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758\n";
+		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000\n";
 		Files.write(tempPath.resolve("20171110.txt"), line.getBytes(), StandardOpenOption.CREATE_NEW);
 		boolean success = reporter.report();
 		File[] gzipFiles = tempPath.toFile().listFiles((f, s) -> s.endsWith(".gz"));
@@ -121,7 +121,7 @@ public class InfluxDbFileReporterTest {
 	@Test
 	public void shouldRotateFiles() throws IOException {
 		registry.add("jdbc.Statement.Duration", "select", 123);
-		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758\n";
+		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000\n";
 		Files.createFile(tempPath.resolve("20171108.txt.gz"));
 		Files.createFile(tempPath.resolve("20171109.txt.gz"));
 		Files.write(tempPath.resolve("20171110.txt"), line.getBytes(), StandardOpenOption.CREATE_NEW);

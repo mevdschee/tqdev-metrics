@@ -20,13 +20,12 @@
  */
 package com.tqdev.metrics.influxdb;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPOutputStream;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
@@ -39,6 +38,9 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	/** The report URL. */
 	protected final String reportUrl;
 
+	/** Enabled compression */
+	protected final boolean compression;
+
 	/**
 	 * Instantiates a new InfluxDB HTTP reporter.
 	 *
@@ -46,58 +48,15 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	 *            the report URL
 	 * @param instanceName
 	 *            the instance name
+	 * @param compression
+	 *            enables compression
 	 * @param registry
 	 *            the registry
-	 * @throws URISyntaxException
-	 *             the URI syntax exception
 	 */
-	public InfluxDbHttpReporter(String reportUrl, String instanceName, MetricRegistry registry) {
+	public InfluxDbHttpReporter(String reportUrl, String instanceName, boolean compression, MetricRegistry registry) {
 		super(instanceName, registry);
 		this.reportUrl = reportUrl;
-	}
-
-	/**
-	 * Gets the valid URI.
-	 *
-	 * @param reportUrl
-	 *            the report URL
-	 * @return the valid URI
-	 * @throws URISyntaxException
-	 *             the URI syntax exception
-	 */
-	private URI getValidUri(String reportUrl) throws URISyntaxException {
-		URI url = new URI(reportUrl);
-		String query = url.getQuery();
-
-		Map<String, String> parameters = new HashMap<String, String>();
-		String[] pairs = query.split("&");
-		for (String pair : pairs) {
-			int idx = pair.indexOf("=");
-			// An '=' sign can be omitted in URL query params
-			if (idx > 0) {
-				String key = pair.substring(0, idx);
-				String value = pair.substring(idx + 1);
-				parameters.put(key, value);
-			} else {
-				parameters.put(pair, "");
-			}
-		}
-		parameters.put("precision", "s");
-		StringBuilder newQuery = new StringBuilder();
-		boolean first = true;
-		for (String key : parameters.keySet()) {
-			String value = parameters.get(key);
-			if (!first) {
-				newQuery.append("&");
-			}
-			first = false;
-			newQuery.append(key);
-			if (!"".equals(value)) {
-				newQuery.append('=').append(value);
-			}
-		}
-		return new URI(url.getScheme(), url.getAuthority(), url.getPath(), newQuery.toString(), url.getFragment());
-
+		this.compression = compression;
 	}
 
 	/**
@@ -109,7 +68,7 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	public boolean report() {
 		HttpURLConnection con = null;
 		try {
-			con = (HttpURLConnection) getValidUri(reportUrl).toURL().openConnection();
+			con = (HttpURLConnection) new URL(reportUrl).openConnection();
 			con.setRequestMethod("POST");
 			con.setConnectTimeout(Long.valueOf(TimeUnit.SECONDS.toMillis(2)).intValue());
 			con.setReadTimeout(Long.valueOf(TimeUnit.SECONDS.toMillis(2)).intValue());
@@ -117,14 +76,24 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 			// Send post request
 			con.setDoOutput(true);
 
-			this.write(con.getOutputStream());
-			return true;
+			if (compression == true) {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				GZIPOutputStream gzos = new GZIPOutputStream(baos);
+				this.write(gzos);
+				byte[] bytes = baos.toByteArray();
+				con.setRequestProperty("Content-Encoding", "gzip");
+				con.setRequestProperty("Content-Length", Long.toString(bytes.length));
+				con.getOutputStream().write(bytes);
+			} else {
+				this.write(con.getOutputStream());
+			}
+
+			if (con.getResponseCode() == 200) {
+				return true;
+			}
 		} catch (IOException e) {
 			// TODO: log
 			// on server disconnects, return false
-		} catch (URISyntaxException e) {
-			// TODO: log
-			// on invalid URI
 		} finally {
 			// cleanup connection streams
 			if (con != null) {
