@@ -62,16 +62,19 @@ import com.tqdev.metrics.core.MetricRegistry;
 public class JmxReporter implements DynamicMBean {
 
 	/**
-	 * The registry in which the metrics, that this JMXReporter reports, are stored.
+	 * The registry in which the metrics, that this JMXReporter reports, are
+	 * stored.
 	 */
 	private final MetricRegistry registry;
+
+	private String description = "";
 
 	/**
 	 * Instantiates a new JMX reporter.
 	 *
 	 * @param registry
-	 *            the registry in which the metrics, that this JMXReporter reports,
-	 *            are stored
+	 *            the registry in which the metrics, that this JMXReporter
+	 *            reports, are stored
 	 */
 	public JmxReporter(MetricRegistry registry) {
 		this.registry = registry;
@@ -110,7 +113,8 @@ public class JmxReporter implements DynamicMBean {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see javax.management.DynamicMBean#setAttribute(javax.management.Attribute)
+	 * @see
+	 * javax.management.DynamicMBean#setAttribute(javax.management.Attribute)
 	 */
 	@Override
 	public void setAttribute(Attribute attribute)
@@ -194,7 +198,7 @@ public class JmxReporter implements DynamicMBean {
 		OpenMBeanOperationInfoSupport reset = new OpenMBeanOperationInfoSupport("resetCounters", "Reset all Metrics",
 				params, SimpleType.VOID, MBeanOperationInfo.ACTION);
 
-		OpenMBeanInfoSupport PSOMBInfo = new OpenMBeanInfoSupport(this.getClass().getName(), "TQdev.com's Metrics",
+		OpenMBeanInfoSupport PSOMBInfo = new OpenMBeanInfoSupport(this.getClass().getName(), description,
 				attributes.toArray(new OpenMBeanAttributeInfoSupport[0]), new OpenMBeanConstructorInfoSupport[0],
 				new OpenMBeanOperationInfoSupport[] { reset }, new MBeanNotificationInfo[0]);
 
@@ -229,6 +233,8 @@ public class JmxReporter implements DynamicMBean {
 	 *
 	 * @param domain
 	 *            the domain
+	 * @param domain
+	 *            the description
 	 * @throws MalformedObjectNameException
 	 *             the malformed object name exception
 	 * @throws InstanceAlreadyExistsException
@@ -238,8 +244,9 @@ public class JmxReporter implements DynamicMBean {
 	 * @throws NotCompliantMBeanException
 	 *             the not compliant M bean exception
 	 */
-	public void register(String domain) throws MalformedObjectNameException, InstanceAlreadyExistsException,
-			MBeanRegistrationException, NotCompliantMBeanException {
+	public void register(String domain, String description) throws MalformedObjectNameException,
+			InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
+		this.description = description;
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 		ObjectName name = new ObjectName(domain + ":type=Metrics");
 		if (!mbs.isRegistered(name)) {

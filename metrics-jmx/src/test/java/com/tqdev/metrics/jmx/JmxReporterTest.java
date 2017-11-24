@@ -29,6 +29,7 @@ import javax.management.Attribute;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
+import javax.management.IntrospectionException;
 import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
@@ -214,7 +215,7 @@ public class JmxReporterTest {
 	public void shouldReportGlobalInformation() {
 		MBeanInfo info = reporter.getMBeanInfo();
 		assertThat(info.getClassName()).isEqualTo("com.tqdev.metrics.jmx.JmxReporter");
-		assertThat(info.getDescription()).isEqualTo("TQdev.com's Metrics");
+		assertThat(info.getDescription()).isEqualTo("");
 	}
 
 	/**
@@ -258,14 +259,20 @@ public class JmxReporterTest {
 	 *             the MBean registration exception
 	 * @throws InstanceNotFoundException
 	 *             the instance not found exception
+	 * @throws IntrospectionException
+	 *             the introspection exception
+	 * @throws ReflectionException
+	 *             the reflection exception
 	 */
 	@Test
-	public void shouldRegisterInMBeanServer() throws MalformedObjectNameException, InstanceAlreadyExistsException,
-			NotCompliantMBeanException, MBeanRegistrationException, InstanceNotFoundException {
-		reporter.register("com.tqdev.metrics");
+	public void shouldRegisterInMBeanServer()
+			throws MalformedObjectNameException, InstanceAlreadyExistsException, NotCompliantMBeanException,
+			MBeanRegistrationException, InstanceNotFoundException, IntrospectionException, ReflectionException {
+		reporter.register("com.tqdev.metrics", "TQdev.com's Metrics");
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 		ObjectName name = new ObjectName("com.tqdev.metrics:type=Metrics");
 		assertThat(mbs.isRegistered(name)).isTrue();
+		assertThat(mbs.getMBeanInfo(name).getDescription()).isEqualTo("TQdev.com's Metrics");
 		mbs.unregisterMBean(name);
 		assertThat(mbs.isRegistered(name)).isFalse();
 	}
