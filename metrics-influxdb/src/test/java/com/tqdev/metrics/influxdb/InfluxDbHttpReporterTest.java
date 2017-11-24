@@ -139,6 +139,7 @@ public class InfluxDbHttpReporterTest {
 		registry.add("jdbc.Statement.Duration", "select", 123);
 		String request;
 		String content;
+		HashMap<String, String> headers = new HashMap<>();
 		try (ServerSocket server = new ServerSocket(8086)) {
 			(new Thread(() -> {
 				reporter.report();
@@ -146,7 +147,7 @@ public class InfluxDbHttpReporterTest {
 			try (Socket connection = server.accept()) {
 				BufferedReader head = getHttpHeaderReader(connection.getInputStream());
 				request = head.readLine();
-				HashMap<String, String> headers = readHeaders(head);
+				headers = readHeaders(head);
 				boolean compression = headers.getOrDefault("Content-Encoding", "").equals("gzip");
 				BufferedReader body = getHttpBodyReader(connection.getInputStream(), compression);
 				content = body.readLine();
@@ -184,7 +185,7 @@ public class InfluxDbHttpReporterTest {
 			}
 		}
 		assertThat(request).isEqualTo("POST /write?db=collectd HTTP/1.1");
-		assertThat(headers.get("Content-Encoding")).isEqualTo("gzip");
+		assertThat(headers.getOrDefault("Content-Encoding", "")).isEqualTo("gzip");
 		assertThat(content).isEqualTo(
 				"jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000");
 	}
