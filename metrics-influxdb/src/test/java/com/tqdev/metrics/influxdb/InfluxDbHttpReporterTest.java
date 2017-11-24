@@ -57,46 +57,6 @@ public class InfluxDbHttpReporterTest {
 	}
 
 	/**
-	 * Should post data.
-	 *
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	@Test
-	public void shouldPostData() throws IOException {
-		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter("http://localhost:8086/write?db=collectd", "localhost",
-				false, registry);
-		registry.add("jdbc.Statement.Duration", "select", 123);
-		ServerSocket server = new ServerSocket(8086);
-		(new Thread(() -> {
-			reporter.report();
-		})).start();
-		Socket con = server.accept();
-		String request;
-		String content;
-		String line;
-		HashMap<String, String> headers = new HashMap<>();
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-			request = br.readLine();
-			while ((line = br.readLine()) != null) {
-				if (line.trim().equals(""))
-					break;
-				String[] split = line.split(": ", 2);
-				headers.put(split[0], split[1]);
-			}
-			content = br.readLine();
-			con.getInputStream().close();
-		} finally {
-			con.close();
-		}
-		server.close();
-		assertThat(request).isEqualTo("POST /write?db=collectd HTTP/1.1");
-		assertThat(content).isEqualTo(
-				"jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000");
-	}
-
-	/**
 	 * Gets the HTTP header reader.
 	 *
 	 * @param inputStream
@@ -130,16 +90,21 @@ public class InfluxDbHttpReporterTest {
 	}
 
 	/**
-	 * Gets the GZIP buffered reader.
+	 * Gets the HTTP body reader.
 	 *
 	 * @param inputStream
 	 *            the input stream
-	 * @return the GZIP buffered reader
+	 * @param compression
+	 *            input stream has compression
+	 * @return the HTTP body reader
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private BufferedReader getGzipBufferedReader(InputStream inputStream) throws IOException {
-		return new BufferedReader(new InputStreamReader(new GZIPInputStream(inputStream)));
+	private BufferedReader getHttpBodyReader(InputStream inputStream, boolean compression) throws IOException {
+		if (compression) {
+			return new BufferedReader(new InputStreamReader(new GZIPInputStream(inputStream)));
+		}
+		return new BufferedReader(new InputStreamReader(inputStream));
 	}
 
 	/**
@@ -159,6 +124,36 @@ public class InfluxDbHttpReporterTest {
 			headers.put(parts[0], parts[1]);
 		}
 		return headers;
+	}
+
+	/**
+	 * Should post data.
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void shouldPostData() throws IOException {
+		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter("http://localhost:8086/write?db=collectd", "localhost",
+				false, registry);
+		registry.add("jdbc.Statement.Duration", "select", 123);
+		String request;
+		String content;
+		try (ServerSocket server = new ServerSocket(8086)) {
+			(new Thread(() -> {
+				reporter.report();
+			})).start();
+			try (Socket connection = server.accept()) {
+				BufferedReader head = getHttpHeaderReader(connection.getInputStream());
+				request = head.readLine();
+				readHeaders(head);
+				BufferedReader body = getHttpBodyReader(connection.getInputStream(), false);
+				content = body.readLine();
+			}
+		}
+		assertThat(request).isEqualTo("POST /write?db=collectd HTTP/1.1");
+		assertThat(content).isEqualTo(
+				"jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000");
 	}
 
 	/**
@@ -183,7 +178,7 @@ public class InfluxDbHttpReporterTest {
 				BufferedReader head = getHttpHeaderReader(connection.getInputStream());
 				request = head.readLine();
 				headers = readHeaders(head);
-				BufferedReader body = getGzipBufferedReader(connection.getInputStream());
+				BufferedReader body = getHttpBodyReader(connection.getInputStream(), true);
 				content = body.readLine();
 			}
 		}
