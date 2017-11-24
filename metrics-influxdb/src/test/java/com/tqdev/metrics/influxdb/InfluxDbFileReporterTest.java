@@ -53,8 +53,9 @@ public class InfluxDbFileReporterTest {
 
 	/**
 	 * Initialize.
-	 * 
+	 *
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Before
 	public void initialize() throws IOException {
@@ -66,8 +67,9 @@ public class InfluxDbFileReporterTest {
 
 	/**
 	 * Cleanup.
-	 * 
+	 *
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@After
 	public void cleanup() throws IOException {
@@ -80,6 +82,12 @@ public class InfluxDbFileReporterTest {
 		Files.delete(tempPath);
 	}
 
+	/**
+	 * Should create file.
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void shouldCreateFile() throws IOException {
 		registry.add("jdbc.Statement.Duration", "select", 123);
@@ -90,6 +98,12 @@ public class InfluxDbFileReporterTest {
 				"jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000");
 	}
 
+	/**
+	 * Should append file.
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void shouldAppendFile() throws IOException {
 		String line = "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000\n";
@@ -103,6 +117,12 @@ public class InfluxDbFileReporterTest {
 						+ "jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000");
 	}
 
+	/**
+	 * Should compress file.
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void shouldCompressFile() throws IOException {
 		registry.add("jdbc.Statement.Duration", "select", 123);
@@ -118,6 +138,12 @@ public class InfluxDbFileReporterTest {
 		assertThat(textFiles[0].getName()).isEqualTo("20171111.txt");
 	}
 
+	/**
+	 * Should rotate files.
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
 	public void shouldRotateFiles() throws IOException {
 		registry.add("jdbc.Statement.Duration", "select", 123);
