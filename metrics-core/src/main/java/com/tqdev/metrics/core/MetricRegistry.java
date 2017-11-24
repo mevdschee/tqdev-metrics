@@ -37,6 +37,11 @@ public class MetricRegistry {
 	protected volatile ConcurrentHashMap<String, ConcurrentHashMap<String, Object>> values;
 
 	/**
+	 * Metrics enabled status.
+	 */
+	protected boolean enabled = true;
+
+	/**
 	 * Instantiates a new metric registry.
 	 */
 	public MetricRegistry() {
@@ -60,12 +65,32 @@ public class MetricRegistry {
 	}
 
 	/**
+	 * Checks if metrics are enabled.
+	 *
+	 * @return true, if metrics are enabled
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * Sets the metrics enabled status.
+	 *
+	 * @param enabled
+	 *            the new metrics enabled status
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	/**
 	 * Increment a metric for a given type and key.
 	 *
 	 * @param type
 	 *            the type
 	 * @param key
 	 *            the key
+	 * @return true, if successful
 	 */
 	public boolean increment(String type, String key) {
 		Object o = values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
@@ -84,6 +109,7 @@ public class MetricRegistry {
 	 *            the type
 	 * @param key
 	 *            the key
+	 * @return true, if successful
 	 */
 	public boolean decrement(String type, String key) {
 		Object o = values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,
@@ -104,6 +130,7 @@ public class MetricRegistry {
 	 *            the key
 	 * @param value
 	 *            the value
+	 * @return true, if successful
 	 */
 	public boolean add(String type, String key, long value) {
 		Object o = values.computeIfAbsent(type, t -> new ConcurrentHashMap<>()).computeIfAbsent(key,

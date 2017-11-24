@@ -62,8 +62,7 @@ import com.tqdev.metrics.core.MetricRegistry;
 public class JmxReporter implements DynamicMBean {
 
 	/**
-	 * The registry in which the metrics, that this JMXReporter reports, are
-	 * stored.
+	 * The registry in which the metrics, that this JMXReporter reports, are stored.
 	 */
 	private final MetricRegistry registry;
 
@@ -73,8 +72,8 @@ public class JmxReporter implements DynamicMBean {
 	 * Instantiates a new JMX reporter.
 	 *
 	 * @param registry
-	 *            the registry in which the metrics, that this JMXReporter
-	 *            reports, are stored
+	 *            the registry in which the metrics, that this JMXReporter reports,
+	 *            are stored
 	 */
 	public JmxReporter(MetricRegistry registry) {
 		this.registry = registry;
@@ -91,6 +90,8 @@ public class JmxReporter implements DynamicMBean {
 		if (attributeName == null) {
 			throw new RuntimeOperationsException(new IllegalArgumentException("attributeName cannot be null"),
 					"Cannot call getAttribute with null attribute name");
+		} else if (attributeName.equals("enabled")) {
+			return registry.isEnabled();
 		}
 		String type = attributeName;
 		if (registry.hasType(type)) {
@@ -113,14 +114,16 @@ public class JmxReporter implements DynamicMBean {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * javax.management.DynamicMBean#setAttribute(javax.management.Attribute)
+	 * @see javax.management.DynamicMBean#setAttribute(javax.management.Attribute)
 	 */
 	@Override
 	public void setAttribute(Attribute attribute)
 			throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {
-
-		throw new AttributeNotFoundException("No attribute can be set in this MBean");
+		if (attribute.getName().equals("enabled")) {
+			registry.setEnabled((boolean) attribute.getValue());
+		} else {
+			throw new AttributeNotFoundException("No writable attribute has been found");
+		}
 	}
 
 	/*
@@ -190,6 +193,7 @@ public class JmxReporter implements DynamicMBean {
 
 		ArrayList<OpenMBeanAttributeInfoSupport> attributes = new ArrayList<>();
 
+		attributes.add(new OpenMBeanAttributeInfoSupport("enabled", "enabled", SimpleType.BOOLEAN, true, true, true));
 		for (String type : registry.getTypes()) {
 			attributes.add(new OpenMBeanAttributeInfoSupport(type, type, getCompositeType(type), true, false, false));
 		}
