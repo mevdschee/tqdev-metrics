@@ -78,6 +78,12 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 */
 	@Override
 	public boolean report() {
+		File dir = new File(metricPath);
+		if (!dir.exists()) {
+			if (!dir.mkdir()) {
+				return false;
+			}
+		}
 		DateFormat formatter = new SimpleDateFormat(dateFormat);
 		String filename = metricPath + "/" + formatter.format(new Date(registry.getTime() / 1000000)) + ".txt";
 		try {

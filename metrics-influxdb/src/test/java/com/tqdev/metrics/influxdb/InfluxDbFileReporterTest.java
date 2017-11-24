@@ -83,6 +83,23 @@ public class InfluxDbFileReporterTest {
 	}
 
 	/**
+	 * Should create directory.
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void shouldCreateDirectory() throws IOException {
+		boolean deleted = tempPath.toFile().delete();
+		registry.add("jdbc.Statement.Duration", "select", 123);
+		boolean success = reporter.report();
+		boolean exists = tempPath.toFile().exists();
+		assertThat(deleted).isTrue();
+		assertThat(success).isTrue();
+		assertThat(exists).isTrue();
+	}
+
+	/**
 	 * Should create file.
 	 *
 	 * @throws IOException
