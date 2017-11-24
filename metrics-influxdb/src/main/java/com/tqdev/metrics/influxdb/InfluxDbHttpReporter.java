@@ -66,6 +66,9 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	 */
 	@Override
 	public boolean report() {
+		if (!registry.isEnabled()) {
+			return true;
+		}
 		HttpURLConnection con = null;
 		try {
 			con = (HttpURLConnection) new URL(reportUrl).openConnection();

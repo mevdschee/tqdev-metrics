@@ -21,14 +21,17 @@
 package com.tqdev.metrics.spring.security;
 
 import java.io.IOException;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import com.tqdev.metrics.core.MetricRegistry;
 
 public class MeasureUserActivityFilter extends OncePerRequestFilter {
@@ -53,10 +56,10 @@ public class MeasureUserActivityFilter extends OncePerRequestFilter {
 	private String getUsername() {
 		final SecurityContext context = SecurityContextHolder.getContext();
 		if (context != null) {
-		final Authentication authentication = context.getAuthentication();
+			final Authentication authentication = context.getAuthentication();
 			if (authentication != null) {
 				final String username = authentication.getName();
-				if (username!=null) {
+				if (username != null) {
 					return username;
 				}
 			}
@@ -67,7 +70,10 @@ public class MeasureUserActivityFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-
+		if (!registry.isEnabled()) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 		final long startTime = registry.getTime();
 		filterChain.doFilter(request, response);
 		final long duration = registry.getTime() - startTime;

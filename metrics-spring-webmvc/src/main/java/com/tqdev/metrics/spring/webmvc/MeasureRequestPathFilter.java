@@ -92,6 +92,10 @@ public class MeasureRequestPathFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
+		if (!registry.isEnabled()) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
 		final long startTime = registry.getTime();
 		filterChain.doFilter(request, response);

@@ -78,6 +78,9 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 */
 	@Override
 	public boolean report() {
+		if (!registry.isEnabled()) {
+			return true;
+		}
 		File dir = new File(metricPath);
 		if (!dir.exists()) {
 			if (!dir.mkdir()) {

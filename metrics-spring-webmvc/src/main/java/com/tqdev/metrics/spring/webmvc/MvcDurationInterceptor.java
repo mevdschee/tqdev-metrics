@@ -56,7 +56,9 @@ public class MvcDurationInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-
+		if (!registry.isEnabled()) {
+			return true;
+		}
 		request.setAttribute("startTime", registry.getTime());
 		return true;
 	}
@@ -94,6 +96,10 @@ public class MvcDurationInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
+		if (!registry.isEnabled()) {
+			return;
+		}
+
 		final long duration = registry.getTime() - (Long) request.getAttribute("startTime");
 		final String name;
 

@@ -125,15 +125,17 @@ public class InstrumentedHandler extends HandlerWrapper {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * org.eclipse.jetty.server.handler.HandlerWrapper#handle(java.lang.String,
+	 * @see org.eclipse.jetty.server.handler.HandlerWrapper#handle(java.lang.String,
 	 * org.eclipse.jetty.server.Request, javax.servlet.http.HttpServletRequest,
 	 * javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	public void handle(String path, Request request, HttpServletRequest httpRequest, HttpServletResponse httpResponse)
 			throws IOException, ServletException {
-
+		if (!registry.isEnabled()) {
+			super.handle(path, request, httpRequest, httpResponse);
+			return;
+		}
 		final long start;
 		final HttpChannelState state = request.getHttpChannelState();
 		if (state.isInitial()) {

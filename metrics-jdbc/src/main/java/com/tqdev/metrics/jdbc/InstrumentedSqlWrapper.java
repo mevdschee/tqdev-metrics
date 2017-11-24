@@ -74,6 +74,9 @@ abstract class InstrumentedSqlWrapper {
 	 *             the SQL exception
 	 */
 	<C> C timedExecute(String sql, SqlHandler<C> f) throws SQLException {
+		if (!registry.isEnabled()) {
+			return f.execute();
+		}
 		long start = registry.getTime();
 		try {
 			return f.execute();
