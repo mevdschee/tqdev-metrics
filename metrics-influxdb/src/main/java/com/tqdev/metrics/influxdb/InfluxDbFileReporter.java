@@ -62,8 +62,6 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	 *            the instance name
 	 * @param registry
 	 *            the registry
-	 * @param intervalInSeconds
-	 *            the interval in seconds
 	 */
 	public InfluxDbFileReporter(String metricPath, String dateFormat, int maxFileCount, String instanceName,
 			MetricRegistry registry) {
