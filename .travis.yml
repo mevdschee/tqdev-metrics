@@ -1,4 +1,5 @@
-sudo: required
 language: java
+
 jdk: oraclejdk8
-script: ./gradlew clean build coveralls
+
+after_success: ./gradlew jacocoTestReport coveralls
