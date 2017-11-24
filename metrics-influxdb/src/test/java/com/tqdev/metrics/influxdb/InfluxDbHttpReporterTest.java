@@ -146,8 +146,9 @@ public class InfluxDbHttpReporterTest {
 			try (Socket connection = server.accept()) {
 				BufferedReader head = getHttpHeaderReader(connection.getInputStream());
 				request = head.readLine();
-				readHeaders(head);
-				BufferedReader body = getHttpBodyReader(connection.getInputStream(), false);
+				HashMap<String, String> headers = readHeaders(head);
+				boolean compression = headers.get("Content-Encoding").equals("gzip");
+				BufferedReader body = getHttpBodyReader(connection.getInputStream(), compression);
 				content = body.readLine();
 			}
 		}
