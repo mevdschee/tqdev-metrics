@@ -157,13 +157,13 @@ public class InfluxDbHttpReporterTest {
 	}
 
 	/**
-	 * Should post data compressed.
+	 * Should post data with compression.
 	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void shouldPostDataCompressed() throws IOException {
+	public void shouldPostDataWithCompression() throws IOException {
 		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter("http://localhost:8086/write?db=collectd", "localhost",
 				true, registry);
 		registry.add("jdbc.Statement.Duration", "select", 123);
