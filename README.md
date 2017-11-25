@@ -5,15 +5,23 @@
 
 This is a light-weight Java library to measure the behavior of critical components in a production environment.
 
+### Requirements
+
+- Java 8
+
 ### Modules
 
-- **metrics-aspectj**: Instrumentation of any method using a simple annotation on the class or method using the power of AspectJ weaving.
-- **metrics-jdbc**: Instrumentation of statement execution in JDBC connected databases.
-- **metrics-jetty**: Instrumentation of the Jetty thread pool and request handler to identify application bottlenecks by status code and method.
-- **metrics-jmx**: Support for publishing the metrics from instrumented components via JMX.
-- **metrics-jvm**: A module for getting memory, disk and CPU statistics from the JVM.
-- **metrics-influxdb**: Support for publishing the metrics from instrumented components to InfluxDB.
-- **metrics-spring**: Instrumentation of Spring requests to identify application bottlenecks by handler name and path.
+- **metrics-aspectj**: Instrumentation of any method using AspectJ
+- **metrics-core**: You will always need this module to store the metrics
+- **metrics-influxdb**: Expose metrics in InfluxDB format
+- **metrics-jdbc**: Instrumentation of JDBC statements
+- **metrics-jetty**: Instrumentation of Jetty webserver
+- **metrics-jmx**: Expose metrics via JMX
+- **metrics-jvm**: Instrumentation of JVM properties
+- **metrics-sigar**: _not implemented yet_
+- **metrics-spring-loaders**: Scan this package to load all modules
+- **metrics-spring-security**: Instrumentation of Spring requests by username
+- **metrics-spring-webmvc**: Instrumentation of Spring requests by handler name
 
 ### Philosophy
 
