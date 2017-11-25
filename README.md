@@ -12,16 +12,16 @@ This is a light-weight Java library to measure the behavior of critical componen
 ### Modules
 
 - **metrics-aspectj**: Instrumentation of any method using AspectJ
-- **metrics-core**: You will always need this module to store the metrics
+- **metrics-core**: Stores metrics (you always need this module)
 - **metrics-influxdb**: Expose metrics in InfluxDB format
-- **metrics-jdbc**: Instrumentation of JDBC statements
-- **metrics-jetty**: Instrumentation of Jetty webserver
-- **metrics-jmx**: Expose metrics via JMX
-- **metrics-jvm**: Instrumentation of JVM properties
+- **metrics-jdbc**: Instrumentation of SQL statements
+- **metrics-jetty**: Instrumentation of HTTP requests
+- **metrics-jmx**: Expose metrics via a JMX connection
+- **metrics-jvm**: Instrumentation of JVM system properties
 - **metrics-sigar**: _not implemented yet_
 - **metrics-spring-loaders**: Scan this package to load all modules
-- **metrics-spring-security**: Instrumentation of Spring requests by username
-- **metrics-spring-webmvc**: Instrumentation of Spring requests by handler name
+- **metrics-spring-security**: Instrumentation of authenticated requests
+- **metrics-spring-webmvc**: Instrumentation of Spring requests
 
 ### Philosophy
 
