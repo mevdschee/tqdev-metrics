@@ -1,4 +1,8 @@
 dependencies {
   compile project(':metrics-core')
   compile 'org.eclipse.jetty:jetty-server:9.4.7.v20170914'
+  testCompile 'org.eclipse.jetty:jetty-client:9.4.7.v20170914'
+  testCompile 'junit:junit:4.12'
+  testCompile 'org.assertj:assertj-core:3.8.0'
+  testCompile 'org.mockito:mockito-all:1.10.19'
 }

@@ -67,7 +67,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 
 		@Override
 		public void onStartAsync(AsyncEvent event) throws IOException {
-			startTime = System.currentTimeMillis() * 1000000;
+			startTime = registry.getTime();
 			event.getAsyncContext().addListener(this);
 		}
 
@@ -100,15 +100,14 @@ public class InstrumentedHandler extends HandlerWrapper {
 		registry.set("jetty.Response.Invocations", "other-responses", 0);
 		registry.set("jetty.Response.Durations", "other-responses", 0);
 		for (HttpMethod method : HttpMethod.values()) {
-			registry.set("jetty.Request.Invocations", method.asString().toLowerCase() + "-requests", 0);
-			registry.set("jetty.Request.Durations", method.asString().toLowerCase() + "-requests", 0);
+			String name = method.asString().toLowerCase();
+			registry.set("jetty.Request.Invocations", name + "-requests", 0);
+			registry.set("jetty.Request.Durations", name + "-requests", 0);
 		}
 		registry.set("jetty.Request.Invocations", "other-requests", 0);
 		registry.set("jetty.Request.Durations", "other-requests", 0);
 		registry.set("jetty.Aggregated.Invocations", "requests", 0);
 		registry.set("jetty.Aggregated.Durations", "requests", 0);
-		registry.set("jetty.Aggregated.Invocations", "dispatches", 0);
-		registry.set("jetty.Aggregated.Durations", "dispatches", 0);
 
 		registry.set("jetty.Thread.Gauges", "threads", (Gauge) () -> getServer().getThreadPool().getThreads());
 		registry.set("jetty.Thread.Gauges", "idle-threads", (Gauge) () -> getServer().getThreadPool().getIdleThreads());
@@ -125,7 +124,8 @@ public class InstrumentedHandler extends HandlerWrapper {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.eclipse.jetty.server.handler.HandlerWrapper#handle(java.lang.String,
+	 * @see
+	 * org.eclipse.jetty.server.handler.HandlerWrapper#handle(java.lang.String,
 	 * org.eclipse.jetty.server.Request, javax.servlet.http.HttpServletRequest,
 	 * javax.servlet.http.HttpServletResponse)
 	 */
@@ -136,27 +136,16 @@ public class InstrumentedHandler extends HandlerWrapper {
 			super.handle(path, request, httpRequest, httpResponse);
 			return;
 		}
-		final long start;
 		final HttpChannelState state = request.getHttpChannelState();
 		if (state.isInitial()) {
-			// new request
-			start = request.getTimeStamp() * 1000000;
 			state.addListener(listener);
-		} else {
-			// resumed request
-			start = System.currentTimeMillis() * 1000000;
 		}
-
+		final long startTime = registry.getTime();
 		try {
 			super.handle(path, request, httpRequest, httpResponse);
 		} finally {
-			final long duration = System.currentTimeMillis() * 1000000 - start;
-
-			registry.increment("jetty.Aggregated.Invocations", "dispatches");
-			registry.add("jetty.Aggregated.Durations", "dispatches", duration);
-
 			if (!state.isSuspended() && state.isInitial()) {
-				updateResponses(httpRequest, httpResponse, start);
+				updateResponses(httpRequest, httpResponse, startTime);
 			}
 			// else onCompletion will handle it.
 		}
@@ -199,11 +188,11 @@ public class InstrumentedHandler extends HandlerWrapper {
 	 *            the request
 	 * @param response
 	 *            the response
-	 * @param start
-	 *            the start
+	 * @param startTime
+	 *            the start time
 	 */
-	private void updateResponses(HttpServletRequest request, HttpServletResponse response, long start) {
-		final long duration = System.currentTimeMillis() * 1000000 - start;
+	private void updateResponses(HttpServletRequest request, HttpServletResponse response, long startTime) {
+		final long duration = registry.getTime() - startTime;
 		registry.increment("jetty.Aggregated.Invocations", "requests");
 		registry.add("jetty.Aggregated.Durations", "requests", duration);
 		final String methodGroup = getMethodGroup(request.getMethod());
