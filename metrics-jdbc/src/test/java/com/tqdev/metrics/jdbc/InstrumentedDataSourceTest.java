@@ -39,7 +39,7 @@ public class InstrumentedDataSourceTest extends InstrumentedDataSourceTestBase {
 	 * Initialize by resetting the metric registry.
 	 */
 	@Before
-	public void initialize() {
+	public void setUp() {
 		registry.reset();
 	}
 

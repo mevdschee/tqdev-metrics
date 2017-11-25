@@ -58,7 +58,7 @@ public class InfluxDbFileReporterTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Before
-	public void initialize() throws IOException {
+	public void setUp() throws IOException {
 		when(registry.getTime()).thenReturn(1510373758123456789L);
 		registry.reset();
 		tempPath = Files.createTempDirectory(null);
@@ -72,7 +72,7 @@ public class InfluxDbFileReporterTest {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@After
-	public void cleanup() throws IOException {
+	public void tearDown() throws IOException {
 		File[] directoryListing = tempPath.toFile().listFiles();
 		if (directoryListing != null) {
 			for (int i = 0; i < directoryListing.length; i++) {

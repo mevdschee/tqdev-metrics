@@ -64,7 +64,7 @@ public class JmxReporterTest {
 	 * Initialize.
 	 */
 	@Before
-	public void initialize() {
+	public void setUp() {
 		registry.reset();
 	}
 

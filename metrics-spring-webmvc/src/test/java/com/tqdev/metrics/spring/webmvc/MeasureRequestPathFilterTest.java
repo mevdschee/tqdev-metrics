@@ -37,7 +37,7 @@ public class MeasureRequestPathFilterTest extends MeasureRequestPathFilterTestBa
 	 * Initialize.
 	 */
 	@Before
-	public void initialize() {
+	public void setUp() {
 		registry.reset();
 	}
 

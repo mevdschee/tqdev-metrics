@@ -37,7 +37,7 @@ public class MvcDurationInterceptorTest extends MvcDurationInterceptorTestBase {
 	 * Initialize.
 	 */
 	@Before
-	public void initialize() {
+	public void setUp() {
 		registry.reset();
 	}
 

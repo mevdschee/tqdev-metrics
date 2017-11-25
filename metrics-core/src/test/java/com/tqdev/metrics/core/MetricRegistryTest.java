@@ -10,7 +10,7 @@ public class MetricRegistryTest {
 	final MetricRegistry registry = MetricRegistry.getInstance();
 
 	@Before
-	public void initialize() {
+	public void setUp() {
 		registry.reset();
 	}
 
