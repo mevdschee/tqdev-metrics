@@ -209,6 +209,25 @@ public class JmxReporterTest {
 	}
 
 	/**
+	 * Should report written values with utf 8 characters.
+	 *
+	 * @throws MBeanException
+	 *             the MBean exception
+	 * @throws AttributeNotFoundException
+	 *             the attribute not found exception
+	 * @throws ReflectionException
+	 *             the reflection exception
+	 */
+	@Test
+	public void shouldReportWrittenValuesWithUtf8Characters()
+			throws MBeanException, AttributeNotFoundException, ReflectionException {
+		registry.increment("spring.Username.Invocations", "Александр");
+		registry.add("spring.Username.Durations", "Александр", 123456789);
+		assertThat(readJmx("spring.Username.Invocations", "Александр")).isEqualTo(1);
+		assertThat(readJmx("spring.Username.Durations", "Александр")).isEqualTo(123456789);
+	}
+
+	/**
 	 * Should report global information.
 	 */
 	@Test
