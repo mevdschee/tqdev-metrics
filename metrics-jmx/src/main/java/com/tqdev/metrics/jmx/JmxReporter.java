@@ -62,18 +62,22 @@ import com.tqdev.metrics.core.MetricRegistry;
 public class JmxReporter implements DynamicMBean {
 
 	/**
-	 * The registry in which the metrics, that this JMXReporter reports, are stored.
+	 * The registry in which the metrics, that this JMXReporter reports, are
+	 * stored.
 	 */
 	private final MetricRegistry registry;
 
+	/**
+	 * The description of the JMX Reporter as seen in JConsole or VisualVM.
+	 */
 	private String description = "";
 
 	/**
 	 * Instantiates a new JMX reporter.
 	 *
 	 * @param registry
-	 *            the registry in which the metrics, that this JMXReporter reports,
-	 *            are stored
+	 *            the registry in which the metrics, that this JMXReporter
+	 *            reports, are stored
 	 */
 	public JmxReporter(MetricRegistry registry) {
 		this.registry = registry;
@@ -114,7 +118,8 @@ public class JmxReporter implements DynamicMBean {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see javax.management.DynamicMBean#setAttribute(javax.management.Attribute)
+	 * @see
+	 * javax.management.DynamicMBean#setAttribute(javax.management.Attribute)
 	 */
 	@Override
 	public void setAttribute(Attribute attribute)
