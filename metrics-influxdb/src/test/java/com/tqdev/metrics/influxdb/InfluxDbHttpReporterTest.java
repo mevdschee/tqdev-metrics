@@ -102,9 +102,9 @@ public class InfluxDbHttpReporterTest {
 	 */
 	private BufferedReader getHttpBodyReader(InputStream inputStream, boolean compression) throws IOException {
 		if (compression) {
-			return new BufferedReader(new InputStreamReader(new GZIPInputStream(inputStream)));
+			return new BufferedReader(new InputStreamReader(new GZIPInputStream(inputStream), "UTF-8"));
 		}
-		return new BufferedReader(new InputStreamReader(inputStream));
+		return new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 	}
 
 	/**
