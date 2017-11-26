@@ -38,9 +38,6 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	/** The report URL. */
 	protected final String reportUrl;
 
-	/** Enabled compression */
-	protected final boolean compression;
-
 	/**
 	 * Instantiates a new InfluxDB HTTP reporter.
 	 *
@@ -48,15 +45,12 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	 *            the report URL
 	 * @param instanceName
 	 *            the instance name
-	 * @param compression
-	 *            enables compression
 	 * @param registry
 	 *            the registry
 	 */
-	public InfluxDbHttpReporter(String reportUrl, String instanceName, boolean compression, MetricRegistry registry) {
+	public InfluxDbHttpReporter(String reportUrl, String instanceName, MetricRegistry registry) {
 		super(instanceName, registry);
 		this.reportUrl = reportUrl;
-		this.compression = compression;
 	}
 
 	/**
@@ -79,17 +73,13 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 			// Send post request
 			con.setDoOutput(true);
 
-			if (compression == true) {
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				GZIPOutputStream gzos = new GZIPOutputStream(baos);
-				this.write(gzos);
-				byte[] bytes = baos.toByteArray();
-				con.setRequestProperty("Content-Encoding", "gzip");
-				con.setRequestProperty("Content-Length", Long.toString(bytes.length));
-				con.getOutputStream().write(bytes);
-			} else {
-				this.write(con.getOutputStream());
-			}
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			GZIPOutputStream gzos = new GZIPOutputStream(baos);
+			this.write(gzos);
+			byte[] bytes = baos.toByteArray();
+			con.setRequestProperty("Content-Encoding", "gzip");
+			con.setRequestProperty("Content-Length", Long.toString(bytes.length));
+			con.getOutputStream().write(bytes);
 
 			if (con.getResponseCode() == 200) {
 				return true;
@@ -102,6 +92,7 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 			if (con != null) {
 				try {
 					con.getInputStream().close();
+					con.getOutputStream().close();
 				} catch (IOException ignore) {
 					// ignore when connection cannot be closed
 				}
