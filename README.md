@@ -5,15 +5,41 @@
 
 This is a light-weight Java library to measure the behavior of critical components in a production environment.
 
-### Modules
+### Requirements
 
-- **metrics-aspectj**: Instrumentation of any method using a simple annotation on the class or method using the power of AspectJ weaving.
-- **metrics-jdbc**: Instrumentation of statement execution in JDBC connected databases.
-- **metrics-jetty**: Instrumentation of the Jetty thread pool and request handler to identify application bottlenecks by status code and method.
-- **metrics-jmx**: Support for publishing the metrics from instrumented components via JMX.
-- **metrics-jvm**: A module for getting memory, disk and CPU statistics from the JVM.
-- **metrics-influxdb**: Support for publishing the metrics from instrumented components to InfluxDB.
-- **metrics-spring**: Instrumentation of Spring requests to identify application bottlenecks by handler name and path.
+- Java 8
+
+### Counter Modules
+
+| Module Name             | Instruments     | Aggregates on              |
+| ----------------------- | --------------- | -------------------------- |
+| metrics-aspectj         | Java methods    | Method name                |
+| metrics-jdbc            | SQL queries     | Prepared statement         |
+| metrics-jetty           | HTTP requests   | HTTP verb, Response status |
+| metrics-spring-security | Spring requests | Authenticated username     |
+| metrics-spring-webmvc   | Spring requests | Request path, Handler name |
+
+### Gauge Modules
+
+| Module Name             | Instruments           |
+| ----------------------- | --------------------- |
+| metrics-jetty           | Threads               |
+| metrics-jvm             | JVM system properties |
+| metrics-sigar           | _not implemented yet_ |
+
+### Export Modules
+
+| Module Name             | Protocol       | On                            |
+| ----------------------- | -------------- | ----------------------------- |
+| metrics-influxdb        | InfluxDB line  | Disk (rotated), HTTP endpoint |
+| metrics-jmx             | JMX            | JMX connection                |
+
+### Other modules
+
+| Module Name             | Purpose                                                    |
+| ----------------------- | ---------------------------------------------------------- |
+| metrics-core            | Stores metrics (you always need this module)               |
+| metrics-spring-loaders  | Use component scanning on this package to load all modules |
 
 ### Philosophy
 
