@@ -100,11 +100,8 @@ public class InfluxDbHttpReporterTest {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private BufferedReader getHttpBodyReader(InputStream inputStream, boolean compression) throws IOException {
-		if (compression) {
-			return new BufferedReader(new InputStreamReader(new GZIPInputStream(inputStream), "UTF-8"));
-		}
-		return new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+	private BufferedReader getHttpBodyReader(InputStream inputStream) throws IOException {
+		return new BufferedReader(new InputStreamReader(new GZIPInputStream(inputStream), "UTF-8"));
 	}
 
 	/**
@@ -131,9 +128,10 @@ public class InfluxDbHttpReporterTest {
 	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @throws InterruptedException
 	 */
 	@Test
-	public void shouldPostData() throws IOException {
+	public void shouldPostData() throws IOException, InterruptedException {
 		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter("http://localhost:8086/write?db=collectd", "localhost",
 				registry);
 		registry.add("jdbc.Statement.Duration", "select", 123);
@@ -141,19 +139,21 @@ public class InfluxDbHttpReporterTest {
 		String content;
 		HashMap<String, String> headers = new HashMap<>();
 		try (ServerSocket server = new ServerSocket(8086)) {
-			(new Thread(() -> {
+			Thread report = new Thread(() -> {
 				reporter.report();
-			})).start();
+			});
+			report.start();
 			try (Socket connection = server.accept()) {
 				BufferedReader head = getHttpHeaderReader(connection.getInputStream());
 				request = head.readLine();
 				headers = readHeaders(head);
-				boolean compression = headers.getOrDefault("Content-Encoding", "").equals("gzip");
-				BufferedReader body = getHttpBodyReader(connection.getInputStream(), compression);
+				BufferedReader body = getHttpBodyReader(connection.getInputStream());
 				content = body.readLine();
 			}
+			report.join();
 		}
 		assertThat(request).isEqualTo("POST /write?db=collectd HTTP/1.1");
+		assertThat(headers.get("Content-Encoding")).isEqualTo("gzip");
 		assertThat(content).isEqualTo(
 				"jdbc,host=localhost,instance=Statement,type=Duration,type_instance=select value=123i 1510373758000000000");
 	}
@@ -163,9 +163,10 @@ public class InfluxDbHttpReporterTest {
 	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @throws InterruptedException
 	 */
 	@Test
-	public void shouldPostDataWithUtf8Characters() throws IOException {
+	public void shouldPostDataWithUtf8Characters() throws IOException, InterruptedException {
 		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter("http://localhost:8086/write?db=collectd", "localhost",
 				registry);
 		registry.add("spring.Username.Duration", "Александр", 123);
@@ -173,19 +174,21 @@ public class InfluxDbHttpReporterTest {
 		String content;
 		HashMap<String, String> headers = new HashMap<>();
 		try (ServerSocket server = new ServerSocket(8086)) {
-			(new Thread(() -> {
+			Thread report = new Thread(() -> {
 				reporter.report();
-			})).start();
+			});
+			report.start();
 			try (Socket connection = server.accept()) {
 				BufferedReader head = getHttpHeaderReader(connection.getInputStream());
 				request = head.readLine();
 				headers = readHeaders(head);
-				BufferedReader body = getHttpBodyReader(connection.getInputStream(),
-						headers.getOrDefault("Content-Encoding", "").equals("gzip"));
+				BufferedReader body = getHttpBodyReader(connection.getInputStream());
 				content = body.readLine();
 			}
+			report.join();
 		}
 		assertThat(request).isEqualTo("POST /write?db=collectd HTTP/1.1");
+		assertThat(headers.get("Content-Encoding")).isEqualTo("gzip");
 		assertThat(content).isEqualTo(
 				"spring,host=localhost,instance=Username,type=Duration,type_instance=Александр value=123i 1510373758000000000");
 	}
