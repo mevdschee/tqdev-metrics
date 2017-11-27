@@ -52,8 +52,8 @@ public class InfluxDbHttpReporterTest {
 	 */
 	@Before
 	public void setUp() {
-		when(registry.getMillis()).thenReturn(1510373758123L);
 		registry = spy(new MetricRegistry());
+		when(registry.getMillis()).thenReturn(1510373758123L);
 	}
 
 	/**

@@ -32,8 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
+
 import com.tqdev.metrics.core.MetricRegistry;
-import com.tqdev.metrics.spring.webmvc.MeasureRequestPathFilter;
 
 /**
  * The Class MeasureRequestPathFilterTestBase contains the engine to run the
@@ -52,9 +52,8 @@ abstract class MeasureRequestPathFilterTestBase {
 	 */
 	@Before
 	public void setUp() {
-		registry = spy(MetricRegistry.getInstance());
-		filter = new MeasureRequestPathFilter(registry,
-				"application/json|text/html|text/xml");
+		registry = spy(new MetricRegistry());
+		filter = new MeasureRequestPathFilter(registry, "application/json|text/html|text/xml");
 	}
 
 	/**

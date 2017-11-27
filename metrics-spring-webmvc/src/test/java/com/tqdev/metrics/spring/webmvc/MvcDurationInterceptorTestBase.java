@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.springframework.web.method.HandlerMethod;
 
 import com.tqdev.metrics.core.MetricRegistry;
-import com.tqdev.metrics.spring.webmvc.MvcDurationInterceptor;
 
 /**
  * The Class MeasureRequestPathFilterTestBase contains the engine to run the
@@ -50,7 +49,7 @@ abstract class MvcDurationInterceptorTestBase {
 	 */
 	@Before
 	public void setUp() {
-		registry = spy(MetricRegistry.getInstance());
+		registry = spy(new MetricRegistry());
 		interceptor = spy(new MvcDurationInterceptor(registry));
 	}
 

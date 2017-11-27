@@ -21,11 +21,8 @@
 package com.tqdev.metrics.spring.webmvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
 
-import org.junit.Before;
 import org.junit.Test;
-import com.tqdev.metrics.core.MetricRegistry;
 
 /**
  * The Class MeasureRequestPathFilterTest.

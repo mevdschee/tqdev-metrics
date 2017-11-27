@@ -59,10 +59,10 @@ public class InfluxDbFileReporterTest {
 	 */
 	@Before
 	public void setUp() throws IOException {
-		when(registry.getMillis()).thenReturn(1510373758123L);
 		registry = spy(new MetricRegistry());
 		tempPath = Files.createTempDirectory(null);
 		reporter = new InfluxDbFileReporter(tempPath.toString(), "yyyyMMdd", 2, "localhost", registry);
+		when(registry.getMillis()).thenReturn(1510373758123L);
 	}
 
 	/**
