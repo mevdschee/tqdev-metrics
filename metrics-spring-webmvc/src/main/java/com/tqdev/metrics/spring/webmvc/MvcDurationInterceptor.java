@@ -59,7 +59,7 @@ public class MvcDurationInterceptor extends HandlerInterceptorAdapter {
 		if (!registry.isEnabled()) {
 			return true;
 		}
-		request.setAttribute("startTime", registry.getTime());
+		request.setAttribute("startTime", registry.getNanos());
 		return true;
 	}
 
@@ -100,7 +100,7 @@ public class MvcDurationInterceptor extends HandlerInterceptorAdapter {
 			return;
 		}
 
-		final long duration = registry.getTime() - (Long) request.getAttribute("startTime");
+		final long duration = registry.getNanos() - (Long) request.getAttribute("startTime");
 		final String name;
 
 		if (handler instanceof HandlerMethod) {

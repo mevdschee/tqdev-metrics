@@ -33,7 +33,7 @@ public class InstrumentedHandlerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		when(registry.getTime()).thenAnswer(i -> now += 123456789);
+		when(registry.getNanos()).thenAnswer(i -> now += 123456789);
 		ServerConnector connector = new ServerConnector(server);
 		InstrumentedHandler handler = new InstrumentedHandler(registry);
 		handler.setHandler(new HelloWorldHandler());

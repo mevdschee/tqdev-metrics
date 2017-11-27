@@ -86,7 +86,7 @@ abstract class MeasureRequestPathFilterTestBase {
 	 */
 	protected void request(String requestUri, String contentType, long durationInNanoseconds) {
 		long now = 1510373758000000000L;
-		when(registry.getTime()).thenReturn(now, now + durationInNanoseconds);
+		when(registry.getNanos()).thenReturn(now, now + durationInNanoseconds);
 		try {
 			filter.doFilterInternal(getRequest(requestUri), getResponse(contentType), mock(FilterChain.class));
 		} catch (ServletException | IOException e) {

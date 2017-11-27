@@ -47,7 +47,7 @@ public class InstrumentedDataSourceTestBase {
 	 * Instantiates a new instrumented data source.
 	 */
 	public InstrumentedDataSourceTestBase() {
-		when(registry.getTime()).thenAnswer(i -> now += 123456789);
+		when(registry.getNanos()).thenAnswer(i -> now += 123456789);
 		dataSource = new InstrumentedDataSource(mock(DataSource.class, RETURNS_DEEP_STUBS), registry);
 	}
 

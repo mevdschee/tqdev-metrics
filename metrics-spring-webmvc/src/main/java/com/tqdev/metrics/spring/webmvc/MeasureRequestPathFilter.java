@@ -97,9 +97,9 @@ public class MeasureRequestPathFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		final long startTime = registry.getTime();
+		final long startTime = registry.getNanos();
 		filterChain.doFilter(request, response);
-		final long duration = registry.getTime() - startTime;
+		final long duration = registry.getNanos() - startTime;
 
 		final String pathGroup = getPathGroup(request.getRequestURI(), response.getContentType());
 		if (pathGroup != null) {

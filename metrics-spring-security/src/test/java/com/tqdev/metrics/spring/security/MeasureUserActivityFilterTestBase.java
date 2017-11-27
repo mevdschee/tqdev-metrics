@@ -63,7 +63,7 @@ abstract class MeasureUserActivityFilterTestBase {
 	 */
 	protected void request(String username, long durationInNanoseconds) {
 		long now = 1510373758000000000L;
-		when(registry.getTime()).thenReturn(now, now + durationInNanoseconds);
+		when(registry.getNanos()).thenReturn(now, now + durationInNanoseconds);
 
 		if (username != null) {
 			User user = new User(username, "", new ArrayList<GrantedAuthority>());

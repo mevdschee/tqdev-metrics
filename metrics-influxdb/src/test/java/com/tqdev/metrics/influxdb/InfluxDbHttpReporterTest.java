@@ -52,7 +52,7 @@ public class InfluxDbHttpReporterTest {
 	 */
 	@Before
 	public void setUp() {
-		when(registry.getTime()).thenReturn(1510373758123456789L);
+		when(registry.getMillis()).thenReturn(1510373758123L);
 		registry.reset();
 	}
 

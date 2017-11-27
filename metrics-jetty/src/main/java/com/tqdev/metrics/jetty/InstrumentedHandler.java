@@ -67,7 +67,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 
 		@Override
 		public void onStartAsync(AsyncEvent event) throws IOException {
-			startTime = registry.getTime();
+			startTime = registry.getNanos();
 			event.getAsyncContext().addListener(this);
 		}
 
@@ -140,7 +140,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 		if (state.isInitial()) {
 			state.addListener(listener);
 		}
-		final long startTime = registry.getTime();
+		final long startTime = registry.getNanos();
 		try {
 			super.handle(path, request, httpRequest, httpResponse);
 		} finally {
@@ -192,7 +192,7 @@ public class InstrumentedHandler extends HandlerWrapper {
 	 *            the start time
 	 */
 	private void updateResponses(HttpServletRequest request, HttpServletResponse response, long startTime) {
-		final long duration = registry.getTime() - startTime;
+		final long duration = registry.getNanos() - startTime;
 		registry.increment("jetty.Aggregated.Invocations", "requests");
 		registry.add("jetty.Aggregated.Durations", "requests", duration);
 		final String methodGroup = getMethodGroup(request.getMethod());

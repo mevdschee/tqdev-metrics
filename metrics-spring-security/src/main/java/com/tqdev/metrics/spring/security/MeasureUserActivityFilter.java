@@ -74,9 +74,9 @@ public class MeasureUserActivityFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 			return;
 		}
-		final long startTime = registry.getTime();
+		final long startTime = registry.getNanos();
 		filterChain.doFilter(request, response);
-		final long duration = registry.getTime() - startTime;
+		final long duration = registry.getNanos() - startTime;
 
 		final String username = getUsername();
 		registry.increment("spring.Username.Invocations", username);

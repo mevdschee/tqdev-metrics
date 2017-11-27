@@ -77,11 +77,11 @@ abstract class InstrumentedSqlWrapper {
 		if (!registry.isEnabled()) {
 			return f.execute();
 		}
-		long start = registry.getTime();
+		long start = registry.getNanos();
 		try {
 			return f.execute();
 		} finally {
-			long duration = registry.getTime() - start;
+			long duration = registry.getNanos() - start;
 			registry.increment("jdbc.Statement.Invocations", sql);
 			registry.add("jdbc.Statement.Durations", sql, duration);
 		}

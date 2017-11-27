@@ -36,8 +36,7 @@ abstract class InfluxDbReporter {
 	protected final String instanceName;
 
 	/**
-	 * The registry in which the metrics, that this JMXReporter reports, are
-	 * stored.
+	 * The registry in which the metrics, that this JMXReporter reports, are stored.
 	 */
 	protected final MetricRegistry registry;
 
@@ -45,11 +44,10 @@ abstract class InfluxDbReporter {
 	 * Instantiates a new JMX reporter.
 	 *
 	 * @param instanceName
-	 *            the name of the JVM instance or machine that generates the
-	 *            metrics
+	 *            the name of the JVM instance or machine that generates the metrics
 	 * @param registry
-	 *            the registry in which the metrics, that this JMXReporter
-	 *            reports, are stored
+	 *            the registry in which the metrics, that this JMXReporter reports,
+	 *            are stored
 	 */
 	public InfluxDbReporter(String instanceName, MetricRegistry registry) {
 		this.instanceName = instanceName;
@@ -65,7 +63,7 @@ abstract class InfluxDbReporter {
 	public void write(OutputStream out) {
 		PrintWriter w = new PrintWriter(out);
 		String instanceStr = instanceName.replaceAll("[, =]", "\\$1");
-		String time = String.valueOf((registry.getTime() / 1000000000) * 1000000000);
+		String time = String.valueOf((registry.getMillis() / 1000) * 1000000000);
 		for (String type : registry.getTypes()) {
 			String typeStr = type.replaceAll("[, ]", "\\$1");
 			for (String key : registry.getKeys(type)) {

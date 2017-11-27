@@ -57,9 +57,9 @@ public class MeasureAspect {
 	 */
 	@Around("execution(!@MeasuredMethod public * *(..)) && @within(annotation)")
 	public Object MeasuredClass(final ProceedingJoinPoint joinPoint, final MeasuredClass annotation) throws Throwable {
-		long start = registry.getTime();
+		long start = registry.getNanos();
 		Object result = joinPoint.proceed();
-		long duration = registry.getTime() - start;
+		long duration = registry.getNanos() - start;
 		String signature = joinPoint.getSignature().toShortString();
 		String category = annotation.category();
 		if (category.length() == 0) {
@@ -91,9 +91,9 @@ public class MeasureAspect {
 	@Around("execution(public * *(..)) && @annotation(annotation)")
 	public Object MeasuredMethod(final ProceedingJoinPoint joinPoint, final MeasuredMethod annotation)
 			throws Throwable {
-		long start = registry.getTime();
+		long start = registry.getNanos();
 		Object result = joinPoint.proceed();
-		long duration = registry.getTime() - start;
+		long duration = registry.getNanos() - start;
 		String category = annotation.category();
 		if (category.length() == 0) {
 			category = "Uncategorized";

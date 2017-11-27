@@ -88,7 +88,7 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 			}
 		}
 		DateFormat formatter = new SimpleDateFormat(dateFormat);
-		String filename = metricPath + "/" + formatter.format(new Date(registry.getTime() / 1000000)) + ".txt";
+		String filename = metricPath + "/" + formatter.format(new Date(registry.getMillis())) + ".txt";
 		try {
 			FileOutputStream fos = new FileOutputStream(filename, true);
 			BufferedOutputStream out = new BufferedOutputStream(fos, 8192);

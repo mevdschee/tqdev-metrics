@@ -251,8 +251,17 @@ public class MetricRegistry {
 	 *
 	 * @return the time
 	 */
-	public long getTime() {
+	public long getNanos() {
 		return System.nanoTime();
+	}
+
+	/**
+	 * Gets the time.
+	 *
+	 * @return the time
+	 */
+	public long getMillis() {
+		return System.currentTimeMillis();
 	}
 
 	// singleton pattern
