@@ -245,7 +245,7 @@ public class JmxReporterTest {
 	public void shouldReportInformationOnResetOperation() {
 		MBeanInfo info = reporter.getMBeanInfo();
 		assertThat(info.getOperations().length).isEqualTo(1);
-		assertThat(info.getOperations()[0].getName()).isEqualTo("resetCounters");
+		assertThat(info.getOperations()[0].getName()).isEqualTo("reset");
 		assertThat(info.getOperations()[0].getReturnType()).isEqualTo("java.lang.Void");
 		assertThat(info.getOperations()[0].getSignature().length).isEqualTo(0);
 	}
@@ -262,7 +262,7 @@ public class JmxReporterTest {
 	public void shouldResetWhenInvokingResetOperation() throws ReflectionException, MBeanException {
 		registry.increment("jdbc.Statement.Invocations", "select");
 		assertThat(registry.has("jdbc.Statement.Invocations", "select")).isTrue();
-		reporter.invoke("resetCounters", new Object[] {}, new String[] {});
+		reporter.invoke("reset", new Object[] {}, new String[] {});
 		assertThat(registry.has("jdbc.Statement.Invocations", "select")).isFalse();
 	}
 

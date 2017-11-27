@@ -96,14 +96,14 @@ public class MetricRegistryTest {
 	@Test
 	public void shouldStillHaveTypesWhenReset() {
 		registry.increment("type", "key");
-		registry.resetCounters();
+		registry.reset();
 		assertThat(registry.getTypes().iterator().next()).isEqualTo("type");
 	}
 
 	@Test
 	public void shouldHaveTypeButNotKeyWhenResettingCounters() {
 		registry.increment("type", "key");
-		registry.resetCounters();
+		registry.reset();
 		assertThat(registry.getTypes().iterator().next()).isEqualTo("type");
 		assertThat(registry.getKeys("type").iterator().hasNext()).isEqualTo(false);
 	}
@@ -111,7 +111,7 @@ public class MetricRegistryTest {
 	@Test
 	public void shouldNotHaveValueWhenReset() {
 		registry.increment("type", "key");
-		registry.resetCounters();
+		registry.reset();
 		assertThat(registry.get("type", "key")).isEqualTo(0);
 	}
 
