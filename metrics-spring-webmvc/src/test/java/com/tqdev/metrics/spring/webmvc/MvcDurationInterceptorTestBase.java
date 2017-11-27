@@ -80,8 +80,8 @@ abstract class MvcDurationInterceptorTestBase {
 	 */
 	protected void request(String controllerName, String actionName, long durationInNanoseconds) {
 		long now = 1510373758000000000L;
-		HttpServletRequest request = getRequest(now);
 		when(registry.getNanos()).thenReturn(now + durationInNanoseconds);
+		HttpServletRequest request = getRequest(now);
 		HandlerMethod handlerMethod = mock(HandlerMethod.class);
 		doReturn(controllerName).when(interceptor).getControllerName(handlerMethod);
 		doReturn(actionName).when(interceptor).getActionName(handlerMethod);

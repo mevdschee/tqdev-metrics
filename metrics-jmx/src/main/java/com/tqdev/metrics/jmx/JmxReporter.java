@@ -70,7 +70,7 @@ public class JmxReporter implements DynamicMBean {
 	/**
 	 * The description of the JMX Reporter as seen in JConsole or VisualVM.
 	 */
-	private String description = "";
+	private String description;
 
 	/**
 	 * Instantiates a new JMX reporter.
@@ -81,6 +81,7 @@ public class JmxReporter implements DynamicMBean {
 	 */
 	public JmxReporter(MetricRegistry registry) {
 		this.registry = registry;
+		description = "";
 	}
 
 	/*
@@ -180,8 +181,8 @@ public class JmxReporter implements DynamicMBean {
 	@Override
 	public Object invoke(String operationName, Object[] params, String[] signature)
 			throws MBeanException, ReflectionException {
-		if (operationName.equals("resetCounters")) {
-			registry.resetCounters();
+		if (operationName.equals("reset")) {
+			registry.reset();
 			return null;
 		}
 		throw new RuntimeOperationsException(new IllegalArgumentException("Cannot find operation: " + operationName),
@@ -204,8 +205,8 @@ public class JmxReporter implements DynamicMBean {
 		}
 
 		OpenMBeanParameterInfo[] params = new OpenMBeanParameterInfoSupport[0];
-		OpenMBeanOperationInfoSupport reset = new OpenMBeanOperationInfoSupport("resetCounters", "Reset all Metrics",
-				params, SimpleType.VOID, MBeanOperationInfo.ACTION);
+		OpenMBeanOperationInfoSupport reset = new OpenMBeanOperationInfoSupport("reset", "Reset all Metrics", params,
+				SimpleType.VOID, MBeanOperationInfo.ACTION);
 
 		OpenMBeanInfoSupport PSOMBInfo = new OpenMBeanInfoSupport(this.getClass().getName(), description,
 				attributes.toArray(new OpenMBeanAttributeInfoSupport[0]), new OpenMBeanConstructorInfoSupport[0],

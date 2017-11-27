@@ -40,19 +40,28 @@ public class MetricRegistry {
 	/**
 	 * Metrics enabled status.
 	 */
-	protected boolean enabled = true;
+	protected boolean enabled;
 
 	/**
 	 * Instantiates a new metric registry.
 	 */
 	public MetricRegistry() {
 		values = new ConcurrentHashMap<>();
+		enabled = true;
+	}
+
+	/**
+	 * Instantiates a new metric registry.
+	 */
+	public MetricRegistry(boolean enabled) {
+		values = new ConcurrentHashMap<>();
+		this.enabled = enabled;
 	}
 
 	/**
 	 * Resets the metric registry.
 	 */
-	public void resetCounters() {
+	public void reset() {
 		for (Map.Entry<String, ConcurrentHashMap<String, Object>> entry : values.entrySet()) {
 			entry.getValue().clear();
 		}
@@ -241,7 +250,8 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Gets the elapsed time in nanoseconds (from an arbitrary point in time, probably JVM start).
+	 * Gets the elapsed time in nanoseconds (from an arbitrary point in time,
+	 * probably JVM start).
 	 *
 	 * @return the time
 	 */
@@ -250,7 +260,8 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Gets the current (wall clock) time in milliseconds (milliseconds elapsed since epoch).
+	 * Gets the current (wall clock) time in milliseconds (milliseconds elapsed
+	 * since epoch).
 	 *
 	 * @return the time
 	 */

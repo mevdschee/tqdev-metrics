@@ -15,6 +15,9 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 public class HelloWorldHandler extends AbstractHandler {
+
+	// TODO: Javadoc
+
 	@Override
 	public void handle(String path, Request request, final HttpServletRequest servletRequest,
 			final HttpServletResponse servletResponse) throws IOException, ServletException {
@@ -60,4 +63,5 @@ public class HelloWorldHandler extends AbstractHandler {
 			break;
 		}
 	}
+
 }

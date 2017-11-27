@@ -53,13 +53,12 @@ abstract class MeasureUserActivityFilterTestBase {
 	/** The filter. */
 	private MeasureUserActivityFilter filter;
 
-
 	/**
 	 * Initialize.
 	 */
 	@Before
 	public void setUp() {
-		registry = spy(MetricRegistry.getInstance());
+		registry = spy(new MetricRegistry());
 		filter = new MeasureUserActivityFilter(registry);
 	}
 

@@ -14,7 +14,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.tqdev.metrics.core.MetricRegistry;
@@ -38,7 +37,7 @@ public class InstrumentedHandlerTest {
 	public void setUp() throws Exception {
 		registry = spy(new MetricRegistry());
 		client = new HttpClient();
-        server = new Server();
+		server = new Server();
 		when(registry.getNanos()).thenAnswer(i -> now += 123456789);
 		ServerConnector connector = new ServerConnector(server);
 		InstrumentedHandler handler = new InstrumentedHandler(registry);
