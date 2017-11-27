@@ -22,6 +22,7 @@ package com.tqdev.metrics.core;
 
 import static java.util.Collections.emptySet;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -45,22 +46,15 @@ public class MetricRegistry {
 	 * Instantiates a new metric registry.
 	 */
 	public MetricRegistry() {
-		reset();
+		values = new ConcurrentHashMap<>();
 	}
 
 	/**
 	 * Resets the metric registry.
 	 */
-	public void reset() {
-		values = new ConcurrentHashMap<>();
-	}
-
-	/**
-	 * Resets the metric registry's counters.
-	 */
 	public void resetCounters() {
-		for (String type : values.keySet()) {
-			values.put(type, new ConcurrentHashMap<String, Object>());
+		for (Map.Entry<String, ConcurrentHashMap<String, Object>> entry : values.entrySet()) {
+			entry.getValue().clear();
 		}
 	}
 
@@ -247,7 +241,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Gets the time.
+	 * Gets the elapsed time in nanoseconds (from an arbitrary point in time, probably JVM start).
 	 *
 	 * @return the time
 	 */
@@ -256,7 +250,7 @@ public class MetricRegistry {
 	}
 
 	/**
-	 * Gets the time.
+	 * Gets the current (wall clock) time in milliseconds (milliseconds elapsed since epoch).
 	 *
 	 * @return the time
 	 */

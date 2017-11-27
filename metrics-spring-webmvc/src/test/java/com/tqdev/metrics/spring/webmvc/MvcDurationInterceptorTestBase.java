@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.Before;
 import org.springframework.web.method.HandlerMethod;
 
 import com.tqdev.metrics.core.MetricRegistry;
@@ -39,10 +40,19 @@ import com.tqdev.metrics.spring.webmvc.MvcDurationInterceptor;
 abstract class MvcDurationInterceptorTestBase {
 
 	/** The registry. */
-	protected final MetricRegistry registry = spy(MetricRegistry.getInstance());
+	protected MetricRegistry registry;
 
 	/** The interceptor. */
-	private final MvcDurationInterceptor interceptor = spy(new MvcDurationInterceptor(registry));
+	private MvcDurationInterceptor interceptor;
+
+	/**
+	 * Initialize.
+	 */
+	@Before
+	public void setUp() {
+		registry = spy(MetricRegistry.getInstance());
+		interceptor = spy(new MvcDurationInterceptor(registry));
+	}
 
 	/**
 	 * Gets a mocked request.

@@ -14,25 +14,31 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
 public class InstrumentedHandlerTest {
 
-	protected final MetricRegistry registry = spy(MetricRegistry.getInstance());
+	// TODO: Javadoc
 
-	protected final HttpClient client = new HttpClient();
+	protected MetricRegistry registry;
 
-	protected final Server server = new Server();
+	protected HttpClient client;
 
-	protected String url = "http://localhost";
+	protected Server server;
+
+	protected String url;
 
 	/** The current time . */
 	protected long now = 1510373758000000000L;
 
 	@Before
 	public void setUp() throws Exception {
+		registry = spy(new MetricRegistry());
+		client = new HttpClient();
+        server = new Server();
 		when(registry.getNanos()).thenAnswer(i -> now += 123456789);
 		ServerConnector connector = new ServerConnector(server);
 		InstrumentedHandler handler = new InstrumentedHandler(registry);
@@ -41,7 +47,7 @@ public class InstrumentedHandlerTest {
 		server.setHandler(handler);
 		server.start();
 		client.start();
-		url += ":" + connector.getLocalPort();
+		url = "http://localhost:" + connector.getLocalPort();
 	}
 
 	@After

@@ -21,9 +21,11 @@
 package com.tqdev.metrics.spring.webmvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
 
 import org.junit.Before;
 import org.junit.Test;
+import com.tqdev.metrics.core.MetricRegistry;
 
 /**
  * The Class MeasureRequestPathFilterTest.
@@ -32,14 +34,6 @@ public class MeasureRequestPathFilterTest extends MeasureRequestPathFilterTestBa
 
 	/** Number of nanoseconds in a millisecond. */
 	public static long NS_IN_MS = 1000000;
-
-	/**
-	 * Initialize.
-	 */
-	@Before
-	public void setUp() {
-		registry.reset();
-	}
 
 	/**
 	 * Should measure root path.

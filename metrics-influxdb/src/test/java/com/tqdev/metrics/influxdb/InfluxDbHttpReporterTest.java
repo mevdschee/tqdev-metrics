@@ -45,7 +45,7 @@ import com.tqdev.metrics.core.MetricRegistry;
 public class InfluxDbHttpReporterTest {
 
 	/** The registry. */
-	protected final MetricRegistry registry = spy(MetricRegistry.getInstance());
+	protected MetricRegistry registry;
 
 	/**
 	 * Initialize.
@@ -53,7 +53,7 @@ public class InfluxDbHttpReporterTest {
 	@Before
 	public void setUp() {
 		when(registry.getMillis()).thenReturn(1510373758123L);
-		registry.reset();
+		registry = spy(new MetricRegistry());
 	}
 
 	/**
@@ -94,8 +94,6 @@ public class InfluxDbHttpReporterTest {
 	 *
 	 * @param inputStream
 	 *            the input stream
-	 * @param compression
-	 *            input stream has compression
 	 * @return the HTTP body reader
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.

@@ -34,14 +34,6 @@ public class MeasureUserActivityFilterTest extends MeasureUserActivityFilterTest
 	public static long NS_IN_MS = 1000000;
 
 	/**
-	 * Initialize.
-	 */
-	@Before
-	public void setUp() {
-		registry.reset();
-	}
-
-	/**
 	 * Should measure admin user.
 	 */
 	@Test

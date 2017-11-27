@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.Before;
 import com.tqdev.metrics.core.MetricRegistry;
 import com.tqdev.metrics.spring.webmvc.MeasureRequestPathFilter;
 
@@ -41,11 +42,20 @@ import com.tqdev.metrics.spring.webmvc.MeasureRequestPathFilter;
 abstract class MeasureRequestPathFilterTestBase {
 
 	/** The registry. */
-	protected final MetricRegistry registry = spy(MetricRegistry.getInstance());
+	protected MetricRegistry registry;
 
 	/** The filter. */
-	private final MeasureRequestPathFilter filter = new MeasureRequestPathFilter(registry,
-			"application/json|text/html|text/xml");
+	private MeasureRequestPathFilter filter;
+
+	/**
+	 * Initialize.
+	 */
+	@Before
+	public void setUp() {
+		registry = spy(MetricRegistry.getInstance());
+		filter = new MeasureRequestPathFilter(registry,
+				"application/json|text/html|text/xml");
+	}
 
 	/**
 	 * Gets a mocked request.

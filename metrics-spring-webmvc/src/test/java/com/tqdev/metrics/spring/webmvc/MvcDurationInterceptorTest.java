@@ -34,14 +34,6 @@ public class MvcDurationInterceptorTest extends MvcDurationInterceptorTestBase {
 	public static long NS_IN_MS = 1000000;
 
 	/**
-	 * Initialize.
-	 */
-	@Before
-	public void setUp() {
-		registry.reset();
-	}
-
-	/**
 	 * Should measure root path.
 	 * 
 	 * @throws Exception

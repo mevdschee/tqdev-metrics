@@ -32,6 +32,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.Before;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,10 +48,20 @@ import com.tqdev.metrics.core.MetricRegistry;
 abstract class MeasureUserActivityFilterTestBase {
 
 	/** The registry. */
-	protected final MetricRegistry registry = spy(MetricRegistry.getInstance());
+	protected MetricRegistry registry;
 
 	/** The filter. */
-	private final MeasureUserActivityFilter filter = new MeasureUserActivityFilter(registry);
+	private MeasureUserActivityFilter filter;
+
+
+	/**
+	 * Initialize.
+	 */
+	@Before
+	public void setUp() {
+		registry = spy(MetricRegistry.getInstance());
+		filter = new MeasureUserActivityFilter(registry);
+	}
 
 	/**
 	 * Simulate a request with authenticated user with specified username for a

@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 import javax.sql.DataSource;
 
+import org.junit.Before;
 import com.tqdev.metrics.core.MetricRegistry;
 
 /**
@@ -35,20 +36,22 @@ import com.tqdev.metrics.core.MetricRegistry;
 public class InstrumentedDataSourceTestBase {
 
 	/** The registry. */
-	protected final MetricRegistry registry = spy(MetricRegistry.getInstance());
+	protected MetricRegistry registry;
 
 	/** The data source. */
-	protected final InstrumentedDataSource dataSource;
+	protected InstrumentedDataSource dataSource;
 
 	/** The current time . */
 	protected long now = 1510373758000000000L;
 
 	/**
-	 * Instantiates a new instrumented data source.
+	 * Initialize by resetting the metric registry.
 	 */
-	public InstrumentedDataSourceTestBase() {
-		when(registry.getNanos()).thenAnswer(i -> now += 123456789);
+	@Before
+	public void setUp() {
+		registry = spy(new MetricRegistry());
 		dataSource = new InstrumentedDataSource(mock(DataSource.class, RETURNS_DEEP_STUBS), registry);
+		when(registry.getNanos()).thenAnswer(i -> now += 123456789);
 	}
 
 }

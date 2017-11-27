@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.management.ManagementFactory;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.management.OperatingSystemMXBean;
@@ -13,9 +14,16 @@ import com.tqdev.metrics.core.MetricRegistry;
 @SuppressWarnings("restriction")
 public class SystemMonitorTest {
 
-	protected final MetricRegistry registry = MetricRegistry.getInstance();
+	protected MetricRegistry registry;
+	protected SystemMonitor systemMonitor;
 
-	protected final SystemMonitor systemMonitor = new SystemMonitor(registry);
+	// TODO: fix javadoc
+
+	@Before
+	public void setUp() {
+		registry = new MetricRegistry();
+		systemMonitor = new SystemMonitor(registry);
+	}
 
 	@Test
 	public void shouldCreateGauges() {

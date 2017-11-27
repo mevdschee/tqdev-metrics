@@ -43,7 +43,7 @@ import com.tqdev.metrics.core.MetricRegistry;
 public class InfluxDbFileReporterTest {
 
 	/** The registry. */
-	protected final MetricRegistry registry = spy(MetricRegistry.getInstance());
+	protected MetricRegistry registry;
 
 	/** The reporter. */
 	private InfluxDbFileReporter reporter;
@@ -60,7 +60,7 @@ public class InfluxDbFileReporterTest {
 	@Before
 	public void setUp() throws IOException {
 		when(registry.getMillis()).thenReturn(1510373758123L);
-		registry.reset();
+		registry = spy(new MetricRegistry());
 		tempPath = Files.createTempDirectory(null);
 		reporter = new InfluxDbFileReporter(tempPath.toString(), "yyyyMMdd", 2, "localhost", registry);
 	}

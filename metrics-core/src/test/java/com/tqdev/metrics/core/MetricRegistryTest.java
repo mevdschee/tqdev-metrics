@@ -7,11 +7,11 @@ import org.junit.Test;
 
 public class MetricRegistryTest {
 
-	final MetricRegistry registry = MetricRegistry.getInstance();
+	MetricRegistry registry;
 
 	@Before
 	public void setUp() {
-		registry.reset();
+		registry = new MetricRegistry();
 	}
 
 	@Test
@@ -94,10 +94,10 @@ public class MetricRegistryTest {
 	}
 
 	@Test
-	public void shouldNotHaveTypesWhenReset() {
+	public void shouldStillHaveTypesWhenReset() {
 		registry.increment("type", "key");
-		registry.reset();
-		assertThat(registry.getTypes().iterator().hasNext()).isEqualTo(false);
+		registry.resetCounters();
+		assertThat(registry.getTypes().iterator().next()).isEqualTo("type");
 	}
 
 	@Test
@@ -111,7 +111,7 @@ public class MetricRegistryTest {
 	@Test
 	public void shouldNotHaveValueWhenReset() {
 		registry.increment("type", "key");
-		registry.reset();
+		registry.resetCounters();
 		assertThat(registry.get("type", "key")).isEqualTo(0);
 	}
 
@@ -204,8 +204,14 @@ public class MetricRegistryTest {
 	}
 
 	@Test
-	public void shouldBeSameReferenceWhenGettingInstance() {
-		MetricRegistry metricRegistry = MetricRegistry.getInstance();
-		assertThat(metricRegistry).isEqualTo(registry);
+	public void shouldBeSameReferenceWhenGettingInstance() throws InterruptedException {
+		final MetricRegistry[] registries = new MetricRegistry[2];
+		Thread run = new Thread(() -> {
+			registries[0] = MetricRegistry.getInstance();
+		});
+		run.start();
+		registries[1] = MetricRegistry.getInstance();
+		run.join();
+		assertThat(registries[0]).isSameAs(registries[1]);
 	}
 }

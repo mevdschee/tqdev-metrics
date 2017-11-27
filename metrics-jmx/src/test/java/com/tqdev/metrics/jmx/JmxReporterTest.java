@@ -55,17 +55,18 @@ import com.tqdev.metrics.core.MetricRegistry;
 public class JmxReporterTest {
 
 	/** The registry. */
-	protected final MetricRegistry registry = MetricRegistry.getInstance();
+	protected MetricRegistry registry;
 
 	/** The reporter. */
-	private final JmxReporter reporter = new JmxReporter(registry);
+	private JmxReporter reporter;
 
 	/**
 	 * Initialize.
 	 */
 	@Before
 	public void setUp() {
-		registry.reset();
+		registry = new MetricRegistry();
+		reporter = new JmxReporter(registry);
 	}
 
 	/**

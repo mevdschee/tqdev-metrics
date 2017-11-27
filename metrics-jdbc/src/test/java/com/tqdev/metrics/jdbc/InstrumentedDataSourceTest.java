@@ -36,14 +36,6 @@ import org.junit.Test;
 public class InstrumentedDataSourceTest extends InstrumentedDataSourceTestBase {
 
 	/**
-	 * Initialize by resetting the metric registry.
-	 */
-	@Before
-	public void setUp() {
-		registry.reset();
-	}
-
-	/**
 	 * Should measure prepared statement.
 	 *
 	 * @throws SQLException
