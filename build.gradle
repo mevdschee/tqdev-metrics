@@ -1,17 +1,20 @@
 buildscript {
-  repositories {
-    jcenter()
-  }
   dependencies {
     classpath 'ru.vyarus:gradle-java-lib-plugin:1.0.5'
     classpath 'ru.vyarus:gradle-github-info-plugin:1.1.0'
-    classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
   }
 }
 
 plugins {
   id 'pl.allegro.tech.build.axion-release' version '1.8.1'
+  id 'jacoco'
+  id 'com.github.kt3k.coveralls' version '2.8.1'
 }
+
+repositories {
+  mavenCentral()
+}
+
 
 scmVersion {
   tag {
@@ -42,7 +45,10 @@ subprojects {
   apply plugin: 'ru.vyarus.github-info'
   apply plugin: 'ru.vyarus.java-lib'
   apply plugin: 'jacoco'
-  apply plugin: 'com.github.kt3k.coveralls'
+
+  jacoco {
+    toolVersion = "0.7.9"
+  }
 
   group = 'com.tqdev.metrics'
 
@@ -54,33 +60,6 @@ subprojects {
   targetCompatibility = 1.8
 
   configurations.compile.transitive = false
-
-  jacoco {
-    toolVersion = "0.7.9"
-  }
-
-  test {
-    jacoco {
-      append = false
-      destinationFile = file("$buildDir/jacoco.exec")
-    }
-  }
-
-  jacocoTestReport {
-    reports {
-      xml.enabled true
-    }
-  }
-
-  build.dependsOn jacocoTestReport
-
-  coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
-  }
-
-  tasks.coveralls {
-    onlyIf { System.env.'CI' }
-  }
 
   github {
     user 'mevdschee'
@@ -102,4 +81,43 @@ subprojects {
       }
     }
   }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.0'
+}
+
+def publishedProjects = subprojects.findAll()
+
+task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+  description = 'Generates an aggregate report from all subprojects'
+
+  dependsOn(publishedProjects.test)
+
+  additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+  sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+  classDirectories = files(publishedProjects.sourceSets.main.output)
+  executionData = files(publishedProjects.jacocoTestReport.executionData)
+
+  reports {
+    html.enabled = true // human readable
+    xml.enabled = true // required by coveralls
+  }
+
+  doFirst {
+    executionData = files(executionData.findAll { it.exists() })
+  }
+}
+
+coveralls {
+  sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
+  jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+}
+
+tasks.coveralls {
+  group = 'Coverage reports'
+  description = 'Uploads the aggregated coverage report to Coveralls'
+
+  dependsOn jacocoRootReport
+  onlyIf { System.env.'CI' }
 }
