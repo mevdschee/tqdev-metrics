@@ -11,17 +11,17 @@ This is a light-weight Java library to measure the behavior of critical componen
 
 ### Modules
 
-- metrics-core stores your metrics (you always need this module)
-- metrics-aspectj instruments Java methods aggregated on method name
-- metrics-jdbc instruments SQL queries aggregated on prepared statement
-- metrics-jetty instruments HTTP requests aggregated on HTTP verb and response status and instruments thread counts
-- metrics-spring-security instruments Spring requests aggregated on authenticated username
-- metrics-spring-webmvc instruments Spring requests aggregated on request path and handler name
-- metrics-jvm instruments current JVM system properties
-- metrics-sigar _is not implemented yet_
-- metrics-influxdb exports metrics to disk (rotated) and HTTP endpoint using the InfluxDB line protocol
-- metrics-jmx exports metrics over a JMX connection
-- metrics-spring-loaders can be component scanned to load all modules
+- **metrics-core** stores your metrics (you always need this module)
+- **metrics-aspectj** instruments Java methods aggregated on method name
+- **metrics-jdbc** instruments SQL queries aggregated on prepared statement
+- **metrics-jetty** instruments HTTP requests aggregated on HTTP verb and response status and instruments thread counts
+- **metrics-spring-security** instruments Spring requests aggregated on authenticated username
+- **metrics-spring-webmvc** instruments Spring requests aggregated on request path and handler name
+- **metrics-jvm** instruments current JVM system properties
+- **metrics-sigar** _is not implemented yet_
+- **metrics-influxdb** exports metrics to disk (rotated) and HTTP endpoint using the InfluxDB line protocol
+- **metrics-jmx** exports metrics over a JMX connection
+- **metrics-spring-loaders** can be component scanned to load all modules
 
 ### Philosophy
 
