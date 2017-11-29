@@ -9,37 +9,19 @@ This is a light-weight Java library to measure the behavior of critical componen
 
 - Java 8
 
-### Counter Modules
+### Modules
 
-| Module Name             | Instruments     | Aggregates on              |
-| ----------------------- | --------------- | -------------------------- |
-| metrics-aspectj         | Java methods    | Method name                |
-| metrics-jdbc            | SQL queries     | Prepared statement         |
-| metrics-jetty           | HTTP requests   | HTTP verb, Response status |
-| metrics-spring-security | Spring requests | Authenticated username     |
-| metrics-spring-webmvc   | Spring requests | Request path, Handler name |
-
-### Gauge Modules
-
-| Module Name             | Instruments           |
-| ----------------------- | --------------------- |
-| metrics-jetty           | Threads               |
-| metrics-jvm             | JVM system properties |
-| metrics-sigar           | _not implemented yet_ |
-
-### Export Modules
-
-| Module Name             | Protocol       | On                            |
-| ----------------------- | -------------- | ----------------------------- |
-| metrics-influxdb        | InfluxDB line  | Disk (rotated), HTTP endpoint |
-| metrics-jmx             | JMX            | JMX connection                |
-
-### Other modules
-
-| Module Name             | Purpose                                                    |
-| ----------------------- | ---------------------------------------------------------- |
-| metrics-core            | Stores metrics (you always need this module)               |
-| metrics-spring-loaders  | Use component scanning on this package to load all modules |
+- metrics-core stores your metrics (you always need this module)               |
+- metrics-aspectj instruments Java methods aggregated on method name
+- metrics-jdbc instruments SQL queries aggregated on prepared statement
+- metrics-jetty instruments HTTP requests aggregated on HTTP verb and response status and also instruments current thread counts
+- metrics-spring-security instruments Spring requests aggregated on authenticated username
+- metrics-spring-webmvc instruments Spring requests aggregated on request path and handler name
+- metrics-jvm instruments current JVM system properties
+- metrics-sigar _is not implemented yet_
+- metrics-influxdb exports metrics to disk (rotated) and HTTP endpoint using the InfluxDB line protocol
+- metrics-jmx exports metrics over a JMX connection
+- metrics-spring-loaders can be component scanned to load all modules
 
 ### Philosophy
 
