@@ -20,7 +20,7 @@ This is a light-weight Java library to measure the behavior of critical componen
 - **metrics-jvm** instruments current JVM system properties
 - **metrics-sigar** _is not implemented yet_
 - **metrics-influxdb** exports metrics to disk (rotated) and HTTP endpoint using the InfluxDB line protocol
-- **metrics-jmx** exports metrics over a JMX connection
+- **metrics-jmx** exports metrics over a JMX connection using the JMX RMI protocol
 - **metrics-spring-loaders** can be component scanned to load all modules
 
 ### Philosophy
