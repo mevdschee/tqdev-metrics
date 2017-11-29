@@ -10,3 +10,4 @@ target/
 build/
 .DS_Store
 out/
+bin/
