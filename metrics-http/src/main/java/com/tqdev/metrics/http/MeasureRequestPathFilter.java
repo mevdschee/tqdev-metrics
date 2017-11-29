@@ -51,14 +51,13 @@ public class MeasureRequestPathFilter implements Filter {
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String requestURI = httpRequest.getRequestURI();
-		String contentType = response.getContentType();
 
 		final long startTime = registry.getNanos();
 		try {
 			chain.doFilter(request, response);
 		} finally {
 			final long duration = registry.getNanos() - startTime;
-			registerMeasurement(requestURI, contentType, duration);
+			registerMeasurement(requestURI, response.getContentType(), duration);
 		}
 	}
 
