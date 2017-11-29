@@ -52,23 +52,48 @@ public class InfluxDbFileReporter extends InfluxDbReporter {
 	/**
 	 * Instantiates a new InfluxDB file reporter.
 	 *
+	 * @param registry
+	 *            the registry
+	 * @param instanceName
+	 *            the instance name
 	 * @param metricPath
 	 *            the metric path
 	 * @param dateFormat
 	 *            the date format
 	 * @param maxFileCount
 	 *            the max file count
-	 * @param instanceName
-	 *            the instance name
-	 * @param registry
-	 *            the registry
 	 */
-	public InfluxDbFileReporter(String metricPath, String dateFormat, int maxFileCount, String instanceName,
-			MetricRegistry registry) {
-		super(instanceName, registry);
+	public InfluxDbFileReporter(MetricRegistry registry, String instanceName, String metricPath, String dateFormat,
+			int maxFileCount) {
+		super(registry, instanceName);
 		this.metricPath = metricPath;
 		this.dateFormat = dateFormat;
 		this.maxFileCount = maxFileCount;
+	}
+
+	/**
+	 * Instantiates a new InfluxDB file reporter.
+	 *
+	 * @param registry
+	 *            the registry
+	 * @param instanceName
+	 *            the instance name
+	 * @param metricPath
+	 *            the metric path
+	 * @param dateFormat
+	 *            the date format
+	 * @param maxFileCount
+	 *            the max file count
+	 * @param intervalInSeconds
+	 *            the interval in seconds
+	 */
+	public InfluxDbFileReporter(MetricRegistry registry, String instanceName, String metricPath, String dateFormat,
+			int maxFileCount, int intervalInSeconds) {
+		super(registry, instanceName);
+		this.metricPath = metricPath;
+		this.dateFormat = dateFormat;
+		this.maxFileCount = maxFileCount;
+		run(intervalInSeconds);
 	}
 
 	/**

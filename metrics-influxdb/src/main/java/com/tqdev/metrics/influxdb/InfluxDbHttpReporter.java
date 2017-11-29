@@ -41,16 +41,34 @@ public class InfluxDbHttpReporter extends InfluxDbReporter {
 	/**
 	 * Instantiates a new InfluxDB HTTP reporter.
 	 *
-	 * @param reportUrl
-	 *            the report URL
-	 * @param instanceName
-	 *            the instance name
 	 * @param registry
 	 *            the registry
+	 * @param instanceName
+	 *            the instance name
+	 * @param reportUrl
+	 *            the report URL
 	 */
-	public InfluxDbHttpReporter(String reportUrl, String instanceName, MetricRegistry registry) {
-		super(instanceName, registry);
+	public InfluxDbHttpReporter(MetricRegistry registry, String instanceName, String reportUrl) {
+		super(registry, instanceName);
 		this.reportUrl = reportUrl;
+	}
+
+	/**
+	 * Instantiates a new InfluxDB HTTP reporter.
+	 *
+	 * @param registry
+	 *            the registry
+	 * @param instanceName
+	 *            the instance name
+	 * @param reportUrl
+	 *            the report URL
+	 * @param intervalInSeconds
+	 *            the interval in seconds
+	 */
+	public InfluxDbHttpReporter(MetricRegistry registry, String instanceName, String reportUrl, int intervalInSeconds) {
+		super(registry, instanceName);
+		this.reportUrl = reportUrl;
+		run(intervalInSeconds);
 	}
 
 	/**

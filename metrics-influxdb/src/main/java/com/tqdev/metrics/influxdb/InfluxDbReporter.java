@@ -36,20 +36,22 @@ abstract class InfluxDbReporter {
 	protected final String instanceName;
 
 	/**
-	 * The registry in which the metrics, that this JMXReporter reports, are stored.
+	 * The registry in which the metrics, that this JMXReporter reports, are
+	 * stored.
 	 */
 	protected final MetricRegistry registry;
 
 	/**
 	 * Instantiates a new JMX reporter.
 	 *
-	 * @param instanceName
-	 *            the name of the JVM instance or machine that generates the metrics
 	 * @param registry
-	 *            the registry in which the metrics, that this JMXReporter reports,
-	 *            are stored
+	 *            the registry in which the metrics, that this JMXReporter
+	 *            reports, are stored
+	 * @param instanceName
+	 *            the name of the JVM instance or machine that generates the
+	 *            metrics
 	 */
-	public InfluxDbReporter(String instanceName, MetricRegistry registry) {
+	public InfluxDbReporter(MetricRegistry registry, String instanceName) {
 		this.instanceName = instanceName;
 		this.registry = registry;
 	}

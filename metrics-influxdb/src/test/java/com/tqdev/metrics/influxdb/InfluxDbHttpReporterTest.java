@@ -130,8 +130,8 @@ public class InfluxDbHttpReporterTest {
 	 */
 	@Test
 	public void shouldPostData() throws IOException, InterruptedException {
-		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter("http://localhost:8086/write?db=collectd", "localhost",
-				registry);
+		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter(registry, "localhost",
+				"http://localhost:8086/write?db=collectd");
 		registry.add("jdbc.Statement.Duration", "select", 123);
 		String request;
 		String content;
@@ -165,8 +165,8 @@ public class InfluxDbHttpReporterTest {
 	 */
 	@Test
 	public void shouldPostDataWithUtf8Characters() throws IOException, InterruptedException {
-		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter("http://localhost:8086/write?db=collectd", "localhost",
-				registry);
+		InfluxDbHttpReporter reporter = new InfluxDbHttpReporter(registry, "localhost",
+				"http://localhost:8086/write?db=collectd");
 		registry.add("spring.Username.Duration", "Александр", 123);
 		String request;
 		String content;
