@@ -9,13 +9,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>metrics-spring-loaders</artifactId>
+    <artifactId>metrics-http</artifactId>
 
-    <name>TQdev.com's Metrics loaders for Spring</name>
+    <name>TQdev.com's Metrics HTTP module</name>
     <description>
-        Package to scan for components in order to instrument a Spring application.
+        Metrics is a light-weight Java library to measure the behavior of critical components in a production environment.
     </description>
-
+    
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -23,35 +23,10 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>metrics-http</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>metrics-jmx</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>metrics-jdbc</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>metrics-spring-webmvc</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${servlet-api.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -66,11 +41,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
-    
 </project>
 

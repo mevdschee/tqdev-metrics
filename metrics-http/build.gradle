@@ -1,0 +1,10 @@
+dependencies {
+    compile project(":metrics-core")
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.0'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.assertj:assertj-core:3.8.0'
+    testCompile 'org.mockito:mockito-all:1.10.19'
+}
+
+project.configurations.testCompile.extendsFrom(project.configurations.compileOnly)

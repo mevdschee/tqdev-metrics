@@ -18,22 +18,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.tqdev.metrics.spring.webmvc;
+package com.tqdev.metrics.http;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
+import com.tqdev.metrics.core.MetricRegistry;
+import org.junit.Before;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-import org.junit.Before;
-
-import com.tqdev.metrics.core.MetricRegistry;
+import static org.mockito.Mockito.*;
 
 /**
  * The Class MeasureRequestPathFilterTestBase contains the engine to run the
@@ -97,7 +93,7 @@ abstract class MeasureRequestPathFilterTestBase {
 		long now = 1510373758000000000L;
 		when(registry.getNanos()).thenReturn(now, now + durationInNanoseconds);
 		try {
-			filter.doFilterInternal(getRequest(requestUri), getResponse(contentType), mock(FilterChain.class));
+			filter.doFilter(getRequest(requestUri), getResponse(contentType), mock(FilterChain.class));
 		} catch (ServletException | IOException e) {
 			e.printStackTrace();
 		}

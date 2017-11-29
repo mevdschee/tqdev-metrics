@@ -33,7 +33,7 @@ import org.springframework.web.method.HandlerMethod;
 import com.tqdev.metrics.core.MetricRegistry;
 
 /**
- * The Class MeasureRequestPathFilterTestBase contains the engine to run the
+ * The Class MvcDurationInterceptorTestBase contains the engine to run the
  * MeasureRequestPathFilter tests.
  */
 abstract class MvcDurationInterceptorTestBase {
