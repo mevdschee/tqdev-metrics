@@ -11,10 +11,10 @@ This is a light-weight Java library to measure the behavior of critical componen
 
 ### Modules
 
-- metrics-core stores your metrics (you always need this module)               |
+- metrics-core stores your metrics (you always need this module)
 - metrics-aspectj instruments Java methods aggregated on method name
 - metrics-jdbc instruments SQL queries aggregated on prepared statement
-- metrics-jetty instruments HTTP requests aggregated on HTTP verb and response status and also instruments current thread counts
+- metrics-jetty instruments HTTP requests aggregated on HTTP verb and response status and instruments thread counts
 - metrics-spring-security instruments Spring requests aggregated on authenticated username
 - metrics-spring-webmvc instruments Spring requests aggregated on request path and handler name
 - metrics-jvm instruments current JVM system properties
