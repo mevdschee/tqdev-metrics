@@ -39,6 +39,7 @@
 
     <modules>
         <module>metrics-core</module>
+        <module>metrics-http</module>
         <module>metrics-jetty</module>
         <module>metrics-aspectj</module>
         <module>metrics-jmx</module>

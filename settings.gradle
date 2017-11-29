@@ -1,5 +1,6 @@
 include 'metrics-aspectj',
         'metrics-core',
+	'metrics-http',
         'metrics-influxdb',
         'metrics-jetty',
         'metrics-jmx',

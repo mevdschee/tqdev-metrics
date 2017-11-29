@@ -1,5 +1,6 @@
 dependencies {
     compile project(":metrics-core")
+    compile project(":metrics-http")
     compile project(":metrics-jmx")
     compile project(":metrics-jdbc")
     compile project(":metrics-spring-webmvc")

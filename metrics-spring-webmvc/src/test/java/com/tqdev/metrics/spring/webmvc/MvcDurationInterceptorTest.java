@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
 /**
- * The Class MeasureRequestPathFilterTest.
+ * The Class MvcDurationInterceptorTest
  */
 public class MvcDurationInterceptorTest extends MvcDurationInterceptorTestBase {
 
