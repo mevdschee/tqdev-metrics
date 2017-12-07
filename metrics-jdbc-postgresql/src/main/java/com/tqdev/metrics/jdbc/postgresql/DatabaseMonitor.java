@@ -43,24 +43,25 @@ public class DatabaseMonitor extends DatabaseCachedAccess {
 		registry.set("pgsql.Database.Statistics", "active-connections",
 				(Gauge) () -> queryLong("SELECT count(*) FROM pg_stat_activity WHERE state='active'"));
 		registry.set("pgsql.Database.Statistics", "transactions",
-				(Gauge) () -> queryLong("SELECT xact_commit + xact_rollback FROM pg_stat_database"));
+				(Gauge) () -> queryLong("SELECT xact_commit+xact_rollback FROM pg_stat_database"));
 		registry.set("pgsql.Database.Statistics", "rollbacks",
 				(Gauge) () -> queryLong("SELECT xact_rollback FROM pg_stat_database"));
-		registry.set("pgsql.Database.Statistics", "disk-size",
-				(Gauge) () -> queryLong("SELECT SUM(pg_database_size(datname)) FROM pg_database"));
 		registry.set("pgsql.Database.Statistics", "oldest-tx", (Gauge) () -> queryLong(
 				"SELECT EXTRACT(EPOCH FROM now()-xact_start)*1000000000 FROM pg_stat_activity WHERE xact_start IS NOT NULL ORDER BY xact_start ASC LIMIT 1"));
-		registry.set("pgsql.Database.Statistics", "locks-granted",
-				(Gauge) () -> queryLong("SELECT count(*) FROM pg_locks WHERE granted='t'"));
-
-		registry.set("pgsql.Database.Statistics", "heap-hit-rate", (Gauge) () -> queryLong(
-				"SELECT  sum(heap_blks_hit) / (sum(heap_blks_hit)+sum(heap_blks_read)) FROM pg_statio_user_tables group by relname"));
-		registry.set("pgsql.Database.Statistics", "idx-hit-rate", (Gauge) () -> queryLong(
-				"SELECT 100000*sum() / (sum(idx_blks_hit)+sum(idx_blks_read)) FROM pg_statio_user_tables"));
-		registry.set("pgsql.Database.Statistics", "toast-hit-rate", (Gauge) () -> queryLong(
-				"SELECT 100000*sum(toast_blks_hit) / (sum(toast_blks_hit)+sum(toast_blks_read)) FROM pg_statio_user_tables"));
-		registry.set("pgsql.Database.Statistics", "tidx-hit-rate", (Gauge) () -> queryLong(
-				"SELECT 100000*sum(tidx_blks_hit) / (sum(tidx_blks_hit)+sum(tidx_blks_read)) FROM pg_statio_user_tables"));
+		registry.set("pgsql.Database.Statistics", "locks-not-granted",
+				(Gauge) () -> queryLong("SELECT count(*) FROM pg_locks WHERE granted='f'"));
+		registry.set("pgsql.Database.Statistics", "deadlocks",
+				(Gauge) () -> queryLong("SELECT deadlocks FROM pg_stat_database"));
+		String[] tables = queryStrings(
+				"SELECT * FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = 'public'");
+		for (String table : tables) {
+			registry.set("pgsql.Tables.Hits", table, (Gauge) () -> queryLongWithParameter(
+					"SELECT sum(heap_blks_hit)+sum(idx_blks_hit)+sum(toast_blks_hit)+sum(tidx_blks_hit) FROM pg_statio_user_tables where relname = ?",
+					table));
+			registry.set("pgsql.Tables.Misses", table, (Gauge) () -> queryLongWithParameter(
+					"SELECT sum(heap_blks_read)+sum(idx_blks_read)+sum(toast_blks_read)+sum(tidx_blks_read) FROM pg_statio_user_tables where relname = ?",
+					table));
+		}
 	}
 
 	public Map<String, String> getSystemInformation() {
