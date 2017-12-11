@@ -104,4 +104,9 @@ public class MeasureRequestPathFilter implements Filter {
 		}
 		return path;
 	}
+
+	@Override
+	public void destroy() {
+		// nothing yet
+	}
 }
