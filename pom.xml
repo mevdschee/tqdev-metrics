@@ -4,7 +4,7 @@
 
     <groupId>com.tqdev.metrics</groupId>
     <artifactId>metrics-parent</artifactId>
-    <version>0.9.21</version>
+    <version>0.9.22</version>
     <packaging>pom</packaging>
 
     <name>TQdev.com's Metrics aggregator</name>
@@ -71,7 +71,7 @@
         <mockito.version>1.10.19</mockito.version>
         <spring.version>5.0.1.RELEASE</spring.version>
         <spring-security.version>4.2.3.RELEASE</spring-security.version>
-        <servlet-api.version>4.0.0</servlet-api.version>
+        <servlet-api.version>3.1.0</servlet-api.version>
         <sigar.version>1.6.5.132-6</sigar.version>
     </properties>
 
