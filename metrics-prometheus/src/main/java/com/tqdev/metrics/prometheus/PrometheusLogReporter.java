@@ -97,11 +97,17 @@ public class PrometheusLogReporter extends PrometheusReporter {
 				return false;
 			}
 		}
+		long threadId = Thread.currentThread().getId();
+		String temp = metricPath + "/" + registry.getMillis() + "." + threadId;
 		String filename = metricPath + "/" + registry.getMillis() + ".prom";
 		try {
-			FileOutputStream fos = new FileOutputStream(filename);
+			File t = new File(temp);
+			FileOutputStream fos = new FileOutputStream(t);
 			BufferedOutputStream out = new BufferedOutputStream(fos, 8192);
 			write(out);
+			out.close();
+			File f = new File(filename);
+			t.renameTo(f);
 			remove(maxFileCount);
 		} catch (IOException e) {
 			// TODO: log

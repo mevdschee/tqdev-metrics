@@ -118,6 +118,7 @@ public class PrometheusFileReporter extends PrometheusReporter {
 			FileOutputStream fos = new FileOutputStream(filename, true);
 			BufferedOutputStream out = new BufferedOutputStream(fos, 8192);
 			write(out);
+			out.close();
 			compress(filename);
 			remove(maxFileCount);
 		} catch (IOException e) {
