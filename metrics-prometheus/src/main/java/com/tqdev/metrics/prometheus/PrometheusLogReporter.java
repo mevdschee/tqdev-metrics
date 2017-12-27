@@ -101,13 +101,12 @@ public class PrometheusLogReporter extends PrometheusReporter {
 		String temp = metricPath + "/" + registry.getMillis() + "." + threadId;
 		String filename = metricPath + "/" + registry.getMillis() + ".prom";
 		try {
-			File t = new File(temp);
-			FileOutputStream fos = new FileOutputStream(t);
+			File tempFile = new File(temp);
+			FileOutputStream fos = new FileOutputStream(tempFile);
 			BufferedOutputStream out = new BufferedOutputStream(fos, 8192);
 			write(out);
 			out.close();
-			File f = new File(filename);
-			t.renameTo(f);
+			tempFile.renameTo(new File(filename));
 			remove(maxFileCount);
 		} catch (IOException e) {
 			// TODO: log
