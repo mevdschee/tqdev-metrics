@@ -98,8 +98,9 @@ public class PrometheusLogReporter extends PrometheusReporter {
 			}
 		}
 		long threadId = Thread.currentThread().getId();
-		String temp = metricPath + "/" + registry.getMillis() + "." + threadId;
-		String filename = metricPath + "/" + registry.getMillis() + ".prom";
+		String time = String.valueOf(registry.getMillis());
+		String temp = metricPath + "/" + time + "." + threadId;
+		String filename = metricPath + "/" + time + ".prom";
 		try {
 			File tempFile = new File(temp);
 			FileOutputStream fos = new FileOutputStream(tempFile);
