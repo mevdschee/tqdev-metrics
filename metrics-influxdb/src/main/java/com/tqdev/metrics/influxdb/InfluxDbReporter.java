@@ -41,6 +41,8 @@ abstract class InfluxDbReporter {
 	 */
 	protected final MetricRegistry registry;
 
+	private final ScheduledExecutorService exec;
+
 	/**
 	 * Instantiates a new JMX reporter.
 	 *
@@ -54,6 +56,7 @@ abstract class InfluxDbReporter {
 	public InfluxDbReporter(MetricRegistry registry, String instanceName) {
 		this.instanceName = instanceName;
 		this.registry = registry;
+		this.exec = Executors.newSingleThreadScheduledExecutor();
 	}
 
 	/**
@@ -101,7 +104,13 @@ abstract class InfluxDbReporter {
 	 *            the interval in seconds
 	 */
 	public void run(int intervalInSeconds) {
-		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 		exec.scheduleAtFixedRate(() -> this.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
+	}
+
+	/**
+	 * Handler for shutdown of Executor service.
+	 */
+	public void shutdown() {
+		this.exec.shutdown();
 	}
 }
