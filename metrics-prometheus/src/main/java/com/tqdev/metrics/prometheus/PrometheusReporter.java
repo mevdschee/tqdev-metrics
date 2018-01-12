@@ -52,6 +52,7 @@ abstract class PrometheusReporter {
 	public PrometheusReporter(MetricRegistry registry, String instanceName) {
 		this.instanceName = instanceName;
 		this.registry = registry;
+		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 	}
 
 	// metric_name [
@@ -115,7 +116,13 @@ abstract class PrometheusReporter {
 	 *            the interval in seconds
 	 */
 	public void run(int intervalInSeconds) {
-		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 		exec.scheduleAtFixedRate(() -> this.report(), 1, intervalInSeconds, TimeUnit.SECONDS);
+	}
+
+	/**
+	 * Handler for shutdown of Executor service.
+	 */
+	public void shutdown() {
+		this.exec.shutdown();
 	}
 }
