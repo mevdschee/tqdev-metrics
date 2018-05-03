@@ -186,7 +186,7 @@ public class JmxReporter implements DynamicMBean {
 			return null;
 		}
 		throw new RuntimeOperationsException(new IllegalArgumentException("Cannot find operation: " + operationName),
-				"Operation not defined for this OpenMBean");
+				String.format("Operation %s not defined for this OpenMBean", operationName));
 	}
 
 	/*
