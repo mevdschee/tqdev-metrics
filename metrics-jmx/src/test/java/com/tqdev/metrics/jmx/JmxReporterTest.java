@@ -146,7 +146,7 @@ public class JmxReporterTest {
 	}
 
 	/**
-	 * Should throw exception on unknown attribute path: i.e "type.key.
+	 * Should throw exception on unknown attribute path: i.e "type.key".
 	 *
 	 * @throws MBeanException
 	 *             the MBean exception
@@ -158,7 +158,23 @@ public class JmxReporterTest {
 	@Test(expected = AttributeNotFoundException.class)
 	public void shouldThrowExceptionOnUnknownTypeInAttributePath()
 			throws MBeanException, AttributeNotFoundException, ReflectionException {
-		readJmx("jdbc.Statement.Invocations", "select");
+		readJmx("jdbc.Statement.Invocations.select");
+	}
+
+	/**
+	 * Should throw exception on empty attribute name or path.
+	 *
+	 * @throws MBeanException
+	 *             the MBean exception
+	 * @throws AttributeNotFoundException
+	 *             the attribute not found exception
+	 * @throws ReflectionException
+	 *             the reflection exception
+	 */
+	@Test(expected = RuntimeOperationsException.class)
+	public void shouldThrowExceptionOnEmptyKey()
+			throws MBeanException, AttributeNotFoundException, ReflectionException {
+		readJmx(" ");
 	}
 
 	/**
