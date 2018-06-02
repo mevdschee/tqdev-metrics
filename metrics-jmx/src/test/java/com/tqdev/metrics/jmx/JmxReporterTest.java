@@ -20,34 +20,19 @@
  */
 package com.tqdev.metrics.jmx;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.lang.management.ManagementFactory;
-import java.util.HashMap;
-
-import javax.management.Attribute;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.InstanceNotFoundException;
-import javax.management.IntrospectionException;
-import javax.management.InvalidAttributeValueException;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
-import javax.management.openmbean.CompositeDataSupport;
-import javax.management.openmbean.CompositeType;
-import javax.management.openmbean.OpenDataException;
-
-import org.junit.Assert;
+import com.tqdev.metrics.core.MetricRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.tqdev.metrics.core.MetricRegistry;
+import javax.management.*;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.InvalidKeyException;
+import javax.management.openmbean.OpenDataException;
+import java.lang.management.ManagementFactory;
+import java.util.HashMap;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The Class JmxReporterTest tests the JmxReporter.
@@ -55,7 +40,7 @@ import com.tqdev.metrics.core.MetricRegistry;
 public class JmxReporterTest {
 
 	/** The registry. */
-	protected MetricRegistry registry;
+	private MetricRegistry registry;
 
 	/** The reporter. */
 	private JmxReporter reporter;
@@ -88,6 +73,24 @@ public class JmxReporterTest {
 			throws MBeanException, AttributeNotFoundException, ReflectionException {
 		final CompositeDataSupport composite = (CompositeDataSupport) reporter.getAttribute(type);
 		return (long) composite.get(key);
+	}
+
+	/**
+	 * Overloaded Read from JMX.
+	 *
+	 * @param path
+	 *            the type.key
+	 * @return the long value assuming simple numeric metric type: Counter or Gauge
+	 * @throws MBeanException
+	 *             the MBean exception
+	 * @throws AttributeNotFoundException
+	 *             the attribute not found exception
+	 * @throws ReflectionException
+	 *             the reflection exception
+	 */
+	private long readJmx(String path)
+			throws MBeanException, AttributeNotFoundException, ReflectionException {
+		return (long) reporter.getAttribute(path);
 	}
 
 	/**
@@ -136,15 +139,26 @@ public class JmxReporterTest {
 	 * @throws ReflectionException
 	 *             the reflection exception
 	 */
-	@Test
+	@Test(expected = AttributeNotFoundException.class)
 	public void shouldThrowExceptionOnUnknownType()
 			throws MBeanException, AttributeNotFoundException, ReflectionException {
-		try {
-			readJmx("jdbc.Statement.Invocations", "select");
-			Assert.fail("readJmx should have thrown an AttributeNotFoundException");
-		} catch (Exception e) {
-			assertThat(e.getClass().getSimpleName()).isEqualTo("AttributeNotFoundException");
-		}
+		readJmx("jdbc.Statement.Invocations", "select");
+	}
+
+	/**
+	 * Should throw exception on unknown attribute path: i.e "type.key.
+	 *
+	 * @throws MBeanException
+	 *             the MBean exception
+	 * @throws AttributeNotFoundException
+	 *             the attribute not found exception
+	 * @throws ReflectionException
+	 *             the reflection exception
+	 */
+	@Test(expected = AttributeNotFoundException.class)
+	public void shouldThrowExceptionOnUnknownTypeInAttributePath()
+			throws MBeanException, AttributeNotFoundException, ReflectionException {
+		readJmx("jdbc.Statement.Invocations", "select");
 	}
 
 	/**
@@ -157,16 +171,44 @@ public class JmxReporterTest {
 	 * @throws ReflectionException
 	 *             the reflection exception
 	 */
-	@Test
+	@Test(expected = InvalidKeyException.class)
 	public void shouldThrowExceptionOnUnknownKey()
 			throws MBeanException, AttributeNotFoundException, ReflectionException {
 		registry.increment("jdbc.Statement.Invocations", "update");
-		try {
-			readJmx("jdbc.Statement.Invocations", "select");
-			Assert.fail("readJmx should have thrown an InvalidKeyException");
-		} catch (Exception e) {
-			assertThat(e.getClass().getSimpleName()).isEqualTo("InvalidKeyException");
-		}
+		readJmx("jdbc.Statement.Invocations", "select");
+	}
+
+	/**
+	 * Should throw exception on unknown attribute path.
+	 *
+	 * @throws MBeanException
+	 *             the MBean exception
+	 * @throws AttributeNotFoundException
+	 *             the attribute not found exception
+	 * @throws ReflectionException
+	 *             the reflection exception
+	 */
+	@Test(expected = InvalidKeyException.class)
+	public void shouldThrowExceptionOnUnknownKeyInAttributePath()
+			throws MBeanException, AttributeNotFoundException, ReflectionException {
+		registry.increment("jdbc.Statement.Invocations", "update");
+		readJmx("jdbc.Statement.Invocations.select");
+	}
+
+	/**
+	 * Should throw exception on unknown or malformed key.
+	 *
+	 * @throws MBeanException
+	 *             the MBean exception
+	 * @throws AttributeNotFoundException
+	 *             the attribute not found exception
+	 * @throws ReflectionException
+	 *             the reflection exception
+	 */
+	@Test(expected = AttributeNotFoundException.class)
+	public void shouldThrowExceptionOnUnknownOrMalformedKey()
+			throws MBeanException, AttributeNotFoundException, ReflectionException {
+		readJmx("j. ");
 	}
 
 	/**
@@ -179,16 +221,11 @@ public class JmxReporterTest {
 	 * @throws ReflectionException
 	 *             the reflection exception
 	 */
-	@Test
+	@Test(expected = AttributeNotFoundException.class)
 	public void shouldThrowExceptionWhenWritingToKey()
-			throws MBeanException, AttributeNotFoundException, ReflectionException {
+			throws MBeanException, AttributeNotFoundException, ReflectionException, InvalidAttributeValueException, OpenDataException {
 		registry.increment("jdbc.Statement.Invocations", "select");
-		try {
-			writeJmx("jdbc.Statement.Invocations", "select", 2);
-			Assert.fail("writeJmx should have thrown an AttributeNotFoundException");
-		} catch (Exception e) {
-			assertThat(e.getClass().getSimpleName()).isEqualTo("AttributeNotFoundException");
-		}
+		writeJmx("jdbc.Statement.Invocations", "select", 2);
 	}
 
 	/**
@@ -207,6 +244,8 @@ public class JmxReporterTest {
 		registry.add("jdbc.Statement.Durations", "select", 123456789);
 		assertThat(readJmx("jdbc.Statement.Invocations", "select")).isEqualTo(1);
 		assertThat(readJmx("jdbc.Statement.Durations", "select")).isEqualTo(123456789);
+		assertThat(readJmx("jdbc.Statement.Invocations.select")).isEqualTo(1);
+		assertThat(readJmx("jdbc.Statement.Durations.select")).isEqualTo(123456789);
 	}
 
 	/**
@@ -226,6 +265,8 @@ public class JmxReporterTest {
 		registry.add("spring.Username.Durations", "Александр", 123456789);
 		assertThat(readJmx("spring.Username.Invocations", "Александр")).isEqualTo(1);
 		assertThat(readJmx("spring.Username.Durations", "Александр")).isEqualTo(123456789);
+		assertThat(readJmx("spring.Username.Invocations.Александр")).isEqualTo(1);
+		assertThat(readJmx("spring.Username.Durations.Александр")).isEqualTo(123456789);
 	}
 
 	/**

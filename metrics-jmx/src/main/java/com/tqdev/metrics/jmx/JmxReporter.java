@@ -42,17 +42,7 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.RuntimeOperationsException;
-import javax.management.openmbean.CompositeDataSupport;
-import javax.management.openmbean.CompositeType;
-import javax.management.openmbean.OpenDataException;
-import javax.management.openmbean.OpenMBeanAttributeInfoSupport;
-import javax.management.openmbean.OpenMBeanConstructorInfoSupport;
-import javax.management.openmbean.OpenMBeanInfoSupport;
-import javax.management.openmbean.OpenMBeanOperationInfoSupport;
-import javax.management.openmbean.OpenMBeanParameterInfo;
-import javax.management.openmbean.OpenMBeanParameterInfoSupport;
-import javax.management.openmbean.OpenType;
-import javax.management.openmbean.SimpleType;
+import javax.management.openmbean.*;
 
 import com.tqdev.metrics.core.MetricRegistry;
 
@@ -90,17 +80,16 @@ public class JmxReporter implements DynamicMBean {
 	 * @see javax.management.DynamicMBean#getAttribute(java.lang.String)
 	 */
 	@Override
-	public Object getAttribute(String attributeName)
+	public Object getAttribute(String attributeNameOrPath)
 			throws AttributeNotFoundException, MBeanException, ReflectionException {
-		if (attributeName == null) {
-			throw new RuntimeOperationsException(new IllegalArgumentException("attributeName cannot be null"),
-					"Cannot call getAttribute with null attribute name");
-		} else if (attributeName.equals("enabled")) {
+		if (attributeNameOrPath == null || attributeNameOrPath.trim().length() == 0) {
+			throw new RuntimeOperationsException(new IllegalArgumentException("attributeNameOrPath cannot be null or empty"), "Cannot call getAttribute with null or empty attribute name or attribute path");
+		} else if (attributeNameOrPath.equals("enabled")) {
 			return registry.isEnabled();
 		}
-		String type = attributeName;
+		String type = attributeNameOrPath.trim();
 		if (registry.hasType(type)) {
-			Map<String, Long> items = new HashMap<String, Long>();
+			Map<String, Long> items = new HashMap<>();
 			for (String key : registry.getKeys(type)) {
 				items.put(key, registry.get(type, key));
 			}
@@ -112,8 +101,18 @@ public class JmxReporter implements DynamicMBean {
 				e.printStackTrace();
 			}
 			return result;
+		} else if (attributeNameOrPath.trim().lastIndexOf('.') > 0
+				&& attributeNameOrPath.lastIndexOf('.') < attributeNameOrPath.trim().length() - 1) {
+			String attribute = attributeNameOrPath.trim().substring(0, attributeNameOrPath.trim().lastIndexOf('.'));
+			String key = attributeNameOrPath.trim().substring(attributeNameOrPath.trim().lastIndexOf('.') + 1, attributeNameOrPath.trim().length());
+			if (registry.has(attribute, key)) {
+				return registry.get(attribute, key);
+			} else if (registry.hasType(attribute) && !registry.has(attribute, key)) {
+				throw new InvalidKeyException(
+						String.format("Key=%s is not an existing item name for CompositeData attribute=%s", key, type));
+			}
 		}
-		throw new AttributeNotFoundException("Cannot find attribute: " + attributeName);
+		throw new AttributeNotFoundException("Cannot find attribute name or attribute path: " + attributeNameOrPath);
 	}
 
 	/*
