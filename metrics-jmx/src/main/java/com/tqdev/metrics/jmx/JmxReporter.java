@@ -101,18 +101,16 @@ public class JmxReporter implements DynamicMBean {
 				e.printStackTrace();
 			}
 			return result;
-		} else if (attributeNameOrPath.trim().lastIndexOf('.') > 0
-				&& attributeNameOrPath.lastIndexOf('.') < attributeNameOrPath.trim().length() - 1) {
-			String attribute = attributeNameOrPath.trim().substring(0, attributeNameOrPath.trim().lastIndexOf('.'));
-			String key = attributeNameOrPath.trim().substring(attributeNameOrPath.trim().lastIndexOf('.') + 1, attributeNameOrPath.trim().length());
+		} else if (type.lastIndexOf('.') > 0 && type.lastIndexOf('.') < type.length() - 1) {
+			String attribute = type.substring(0, type.lastIndexOf('.'));
+			String key = type.substring(type.lastIndexOf('.') + 1, type.length());
 			if (registry.has(attribute, key)) {
 				return registry.get(attribute, key);
 			} else if (registry.hasType(attribute) && !registry.has(attribute, key)) {
-				throw new InvalidKeyException(
-						String.format("Key=%s is not an existing item name for CompositeData attribute=%s", key, type));
+				throw new InvalidKeyException(String.format("Key=%s is not an existing item name for CompositeData attribute=%s", key, attribute));
 			}
 		}
-		throw new AttributeNotFoundException("Cannot find attribute name or attribute path: " + attributeNameOrPath);
+		throw new AttributeNotFoundException("Cannot find attribute name or attribute path: " + type);
 	}
 
 	/*
@@ -207,11 +205,9 @@ public class JmxReporter implements DynamicMBean {
 		OpenMBeanOperationInfoSupport reset = new OpenMBeanOperationInfoSupport("reset", "Reset all Metrics", params,
 				SimpleType.VOID, MBeanOperationInfo.ACTION);
 
-		OpenMBeanInfoSupport PSOMBInfo = new OpenMBeanInfoSupport(this.getClass().getName(), description,
+		return new OpenMBeanInfoSupport(this.getClass().getName(), description,
 				attributes.toArray(new OpenMBeanAttributeInfoSupport[0]), new OpenMBeanConstructorInfoSupport[0],
 				new OpenMBeanOperationInfoSupport[] { reset }, new MBeanNotificationInfo[0]);
-
-		return PSOMBInfo;
 	}
 
 	@SuppressWarnings("rawtypes")
