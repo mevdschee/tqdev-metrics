@@ -55,3 +55,13 @@ If you are using Spring you can add a "ComponentScan" annotation to your applica
 This is all you have to change in your code to get started (apart from adding the dependencies to your
 maven or gradle config). After application has started you may connect to it using "jconsole" and see
 the collected metrics via JMX under "com.tqdev.metrics" (configurable).
+
+
+### Release It to Maven Central
+
+```
+$ mvn versions:set -DnewVersion=[major.minor.patch]
+$ mvn clean package deploy
+```
+
+
